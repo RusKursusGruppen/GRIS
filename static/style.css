@@ -1,0 +1,13 @@
+*{font-family:Verdana,Geneva,sans-serif;font-size:10px;margin:0 auto 0 auto;}
+h1{text-shadow:-2px 2px 1px #999999;font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;font-weight:bold;font-size:22pt;font-size-adjust:10px;text-transform:capitalize;}
+h2{text-shadow:-2px 2px 1px #999999;display:inline;font-family:"Trebuchet MS",Arial,Helvetica,sans-serif;font-weight:bold;font-size:24px;}
+h3{font:Verdana,Geneva,sans-serif;font-weight:bold;font-size:10px;}
+.navigation{position:absolute;left:10px;margin-top:20px;display:block;height:auto;width:195px;border-bottom:solid 1px #000;}.navigation a{display:block;padding-left:15px;position:block;width:180px;background:#7e7edf;color:#CCC;font:Verdana,Geneva,sans-serif;font-weight:bold;font-size:11pt;height:25px;margin-left:auto;margin-right:auto;border:solid 1px #000;border-bottom-width:0px;text-decoration:none;}.navigation a *{top:-1px;}
+.navigation a:hover{color:#FFF;background:#9e9ee7;}
+.navigation2{position:absolute;left:10px;margin-top:200px;display:block;height:auto;width:195px;border-bottom:solid 1px #000;}.navigation2 a{display:block;padding-left:15px;position:block;width:180px;background:#7e7edf;color:#CCC;font:Verdana,Geneva,sans-serif;font-weight:bold;font-size:11pt;height:25px;margin-left:auto;margin-right:auto;border:solid 1px #000;border-bottom-width:0px;text-decoration:none;}.navigation2 a *{top:-1px;}
+.navigation2 a:hover{color:#FFF;background:#9e9ee7;}
+body{background-color:#bbbbee;}
+dt{font-size:12pt;}
+input{-moz-box-shadow:1px 2px 2px #000000;-webkit-box-shadow:1px 2px 2px #000000;box-shadow:1px 2px 2px #000000;border-radius:5px;-webkit-border-radius:5px;-moz-border-radius:5px;border:1px solid #ccc;display:block;font-size:15px;height:25px;margin-bottom:10px;margin-left:auto;margin-right:auto;outline:0;width:168px;}input:focus{border-color:#222288;}
+input[type=submit]{display:block;position:block;background:#7e7edf;color:#CCC;font:Verdana,Geneva,sans-serif;font-weight:bold;font-size:11pt;height:25px;margin-left:auto;margin-right:auto;border:solid 1px #000;border-bottom-width:0px;text-decoration:none;}input[type=submit] *{top:-1px;}
+input[type=submit]:hover{color:#FFF;background:#9e9ee7;}
