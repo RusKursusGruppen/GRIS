@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+<ul class=russer>
+  {% for rus in russer %}
+  <li><a href="{{url_for('ruspage', uid=rus['uid'])}}">{{rus['navn']}}</a></li>
+  {% else %}
+  Der er ingen russer i databasen
+  {% endfor %}
+</ul>
+{% endblock %}

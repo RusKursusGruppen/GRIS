@@ -1,0 +1,19 @@
+<!doctype html>
+<title>GRIS</title>
+<link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
+<div class=page>
+  <h1>Generelt Rus Informations System</h1>
+
+  <div class=navigation>
+    <a href="foo">Ny Rus</a>
+    <a href="foo">Rusture</a>
+    <a href="foo">Tjansehold</a>
+    <a href="foo">Kender</a>
+    <a href="foo">Lister</a>
+    <a href="{{url_for('logout')}}">logout</a>
+  </div>
+  {% for message in get_flashed_messages() %}
+  <div class=flash>{{message}}</div>
+  {% endfor %}
+  {% block body %}{% endblock %}
+</div>
