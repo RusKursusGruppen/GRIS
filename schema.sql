@@ -9,12 +9,12 @@ CREATE TABLE Russer(
      opringet        integer NOT NULL,
      co              string,
      addrese         string,
-     postnummer      integer,
+     postnummer      string,
      by              string,
 
      flyttedato      string,
      ny_adresse      string,
-     ny_postnummer   integer,
+     ny_postnummer   string,
      ny_by           string,
 
      tlf             string,

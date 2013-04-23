@@ -1,99 +1,39 @@
 {% extends "layout.html" %}
 {% block body %}
-Hej rus
-<form action="{{url_for('ruspage', uid=rus['uid'])}}" method=post>
-  <dl>
-    <dt>navn</dt>
-    <dd><input type=text name=navn value="{{rus['navn']}}"></dd>
+<div class=rusdata>
+  <form action="{{url_for('ruspage', uid=rus['uid'])}}" method=post>
+    <p>
+      <input type=submit value="gem">
+      <input type=submit name="anuller" value="anuller">
+      <br/><br/>
+    </p>
+    <dl>
+      <dt>opringet:</dt>
+      <dd><input type=checkbox name=opringet {% if rus['opringet'] == 1 %}checked{% endif %}></dd>
 
-    <dt>udfyldt_af</dt>
-    <dd><input type=text name=udfyldt_af value="{{rus['udfyldt_af']}}"></dd>
+      {% for field in textfields %}
+      <dt>{{field}}:</dt>
+      <dd><input type=text name="{{field}}" value="{{rus[field]}}"></dd>
+      {% endfor %}
 
-    <dt>opringet</dt>
-    <dd><input type=checkbox name=opringet {% if rus['opringet'] == 1 %}checked{% endif %}></dd>
+      <dt><strike>kender</strike>:</dt>
+      <dd><input type=text name=kender></dd>
 
-    <dt>co</dt>
-    <dd><input type=text name=co value="{{rus['co']}}"></dd>
+      <dt>deltager_unidag:</dt>
+      <dd><input type=checkbox name=deltager_unidag {% if rus['deltager_unidag'] == 1 %}checked{% endif %}></dd>
 
-    <dt>addrese</dt>
-    <dd><input type=text name=addrese value="{{rus['addrese']}}"></dd>
+      <dt>deltager_campus:</dt>
+      <dd><input type=checkbox name=deltager_campus {% if rus['deltager_campus'] == 1 %}checked{% endif %}></dd>
 
-    <dt>postnummer</dt>
-    <dd><input type=text name=postnummer value="{{rus['postnummer']}}"></dd>
+      <dt>deltager_hytte:</dt>
+      <dd><input type=checkbox name=deltager_hytte {% if rus['deltager_hytte'] == 1 %}checked{% endif %}></dd>
 
-    <dt>by</dt>
-    <dd><input type=text name=by value="{{rus['by']}}"></dd>
+      <dt><strike>rustur</strike>:</dt>
+      <dd><input type=text name=rustur value="{{rus['rustur']}}"></dd>
 
-
-    <dt>flyttedato</dt>
-    <dd><input type=text name=flyttedato value="{{rus['flyttedato']}}"></dd>
-
-    <dt>ny_adresse</dt>
-    <dd><input type=text name=ny_adresse value="{{rus['ny_adresse']}}"></dd>
-
-    <dt>ny_postnummer</dt>
-    <dd><input type=text name=ny_postnummer value="{{rus['ny_postnummer']}}"></dd>
-
-    <dt>ny_by</dt>
-    <dd><input type=text name=ny_by value="{{rus['ny_by']}}"></dd>
-
-
-    <dt>tlf</dt>
-    <dd><input type=text name=tlf value="{{rus['tlf']}}"></dd>
-
-    <dt>email</dt>
-    <dd><input type=text name=email value="{{rus['email']}}"></dd>
-
-
-    <dt>foedselsdato</dt>
-    <dd><input type=text name=foedselsdato value="{{rus['foedselsdato']}}"></dd>
-
-
-    <dt>ferie</dt>
-    <dd><input type=text name=ferie value="{{rus['ferie']}}"></dd>
-
-    <dt>prioritet</dt>
-    <dd><input type=text name=prioritet value="{{rus['prioritet']}}"></dd>
-
-
-    <dt>gymnasie</dt>
-    <dd><input type=text name=gymnasie value="{{rus['gymnasie']}}"></dd>
-
-    <dt>lavet_efter</dt>
-    <dd><input type=text name=lavet_efter value="{{rus['lavet_efter']}}"></dd>
-
-
-    <dt>kodeerfaring</dt>
-    <dd><input type=text name=kodeerfaring value="{{rus['kodeerfaring']}}"></dd>
-
-    <dt>saerlige_behov</dt>
-    <dd><input type=text name=saerlige_behov value="{{rus['saerlige_behov']}}"></dd>
-
-    <dt>spiller_musik</dt>
-    <dd><input type=text name=spiller_musik value="{{rus['spiller_musik']}}"></dd>
-
-    <dt>andet</dt>
-    <dd><input type=text name=andet value="{{rus['andet']}}"></dd>
-
-
-    <dt>deltager_unidag</dt>
-    <dd><input type=checkbox name=deltager_unidag {% if rus['deltager_unidag'] == 1 %}checked{% endif %}></dd>
-
-    <dt>deltager_campus</dt>
-    <dd><input type=checkbox name=deltager_campus {% if rus['deltager_campus'] == 1 %}checked{% endif %}></dd>
-
-    <dt>deltager_hytte</dt>
-    <dd><input type=checkbox name=deltager_hytte {% if rus['deltager_hytte'] == 1 %}checked{% endif %}></dd>
-
-
-    <dt>rustur</dt>
-    <dd><input type=text name=rustur value="{{rus['rustur']}}"></dd>
-
-    <dt>tjansehold</dt>
-    <dd><input type=text name=tjansehold value="{{rus['tjansehold']}}"></dd>
-
-    <dd><input type=submit value="gem"></dd>
-    <dd><input type=submit value="anuller"></dd>
-  </dl>
-</form>
+      <dt><strike>tjansehold</strike>:</dt>
+      <dd><input type=text name=tjansehold value="{{rus['tjansehold']}}"></dd>
+    </dl>
+  </form>
+</div>
 {% endblock %}

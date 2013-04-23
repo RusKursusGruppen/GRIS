@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+<form action="{{url_for('new_rus')}}" method=post>
+  <p>
+    <input type=submit value="gem">
+    <input type=submit name="anuller" value="anuller">
+    <br/><br/>
+  </p>
+  <dl>
+    <dt>navn:</dt>
+    <dd><input type=text name=navn></dd>
+  </dl>
+</form>
+{% endblock %}

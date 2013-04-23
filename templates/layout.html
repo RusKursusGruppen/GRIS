@@ -1,17 +1,37 @@
 <!doctype html>
 <title>GRIS</title>
 <link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
+
+<div class=logo>
+  <img src="/static/pig-face.png" alt="GRIS" width="120" height="120">
+</div>
+<div class=navigation>
+  <div class=menu>
+    <a href="{{url_for('front')}}">/</a>
+    <a href="http://rkg.diku.dk/wiki/">wiki</a>
+    <a href="http://rkg.diku.dk/">rkg.diku.dk</a>
+
+    <a href="bar"><strike>externt regnskab</strike></a>
+    <a href="foo"><strike>Internt regnskab</strike></a>
+    <a href="foo"><strike>Ølregnskab</strike></a>
+    <a href="{{url_for('rusmanager')}}">Rusmanager</a>
+    <a href="foo"><strike>Lister</strike></a>
+    <a href="foo"><strike>Filer</strike></a>
+    <a href="foo"><strike>Billeder</strike></a>
+    <a href="{{url_for('logout')}}">log ud</a>
+  </div>
+  <br/>
+  <div class=submenu>
+    <a href="{{url_for('new_rus')}}">Ny Rus</a>
+    <a href="foo"><strike>Rusture</strike></a>
+    <a href="foo"><strike>Tjansehold</strike></a>
+    <a href="foo"><strike>Kender</strike></a>
+  </div>
+</div>
+
 <div class=page>
   <h1>Generelt Rus Informations System</h1>
-
-  <div class=navigation>
-    <a href="foo">Ny Rus</a>
-    <a href="foo">Rusture</a>
-    <a href="foo">Tjansehold</a>
-    <a href="foo">Kender</a>
-    <a href="foo">Lister</a>
-    <a href="{{url_for('logout')}}">logout</a>
-  </div>
+  <div class=greybar>{{random_greeting()|safe}}</div>
   {% for message in get_flashed_messages() %}
   <div class=flash>{{message}}</div>
   {% endfor %}

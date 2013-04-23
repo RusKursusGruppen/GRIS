@@ -1,0 +1,26 @@
+body            { font-family: sans-serif; background: #eee4e4; }
+h1, h2          { margin: 0; color: #FF76B4; border-bottom: 2px solid #eee}
+h1              { text-align: center; }
+.page           { position:absolute; left:12.3em; float:left;
+                  margin: 2em auto; width:40em;/* width: 35em; */ border: 5px solid #ccc;
+                  padding: 0.8em; background: white; }
+
+.logo           { position:absolute; left: 2.5em;}
+.navigation     { position:absolute; left:0.5em; top:8em; float:left; z-index:1; text-align:left}
+.menu           {border:solid 3px /* #a0a0a0 */ #ccc}
+.menu a         { display:block; padding-left:1em; padding-right:1em; width:10em; background:/* #ccd *//* #f0f0f0 */white;
+                  color:#FF76B4; font:sans-serif; font-weight:bold; font-size:11pt; text-decoration:none;
+                  height:1.5em; border:solid 1px /* #a0a0a0 */#eee; border-bottom-width:0px; border-right-width:0px; border-left-width:0px; /* margin-left:auto; margin-right:auto; */}
+.submenu        {border:solid 3px /* #a0a0a0 */#ccc}
+.submenu a      { display:block; padding-left:1em; padding-right:1em; width:10em; background: white;
+                  color:#FF76B4; font:sans-serif; font-weight:bold; font-size:11pt; text-decoration:none;
+                  height:1.5em; border:solid 1px /* #a0a0a0 */#ccc; border-top-width:0px; border-right-width:0px; border-left-width:0px; /* margin-left:auto; margin-right:auto; */}
+.greybar        { text-align: right; font-size: 0.7em; padding: 0.3em; margin-bottom:0.4em; background:#fffafa; color:#ffa0a0;}
+.greybar a      { color:#ffa0a0; text-decoration:none }
+.rusdata        { column-count: 2; column-gap: 5 px; -webkit-column-count: 2; -webkit-column-gap: 5 px; -moz-column-count: 2; -moz-column-gap: 5 px;}
+.flash          { background: #F0D6D6; padding=0.5em; font-size:8pt; border: 1px solid #E5BEBE; margin-bottom:0.8em;}
+/* .russer */
+/* .navigation */
+/* .submenu */
+/* .flash */
+/* .error */
