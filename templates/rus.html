@@ -1,7 +1,14 @@
 {% extends "layout.html" %}
+
+{% block submenu %}
+<div class=submenu>
+  <a href="{{url_for('new_rus')}}">Ny Rus</a>
+</div>
+{% endblock %}
+
 {% block body %}
 <div class=rusdata>
-  <form action="{{url_for('ruspage', uid=rus['uid'])}}" method=post>
+  <form action="{{url_for('ruspage', rid=rus['rid'])}}" method=post>
     <p>
       <input type=submit value="gem">
       <input type=submit name="anuller" value="anuller">
@@ -33,6 +40,9 @@
 
       <dt><strike>tjansehold</strike>:</dt>
       <dd><input type=text name=tjansehold value="{{rus['tjansehold']}}"></dd>
+
+      <dt>foedselsdato:</dt>
+      <dd><input type="date" name="foedselsdato" value="{{rus['foedselsdato']}}"></dd>
     </dl>
   </form>
 </div>

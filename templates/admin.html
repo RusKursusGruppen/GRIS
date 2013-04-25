@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block body %}
+  <h2>FORSIGTIGT</h2>
+  <strong>Brug ikke disese funkrtioner undre pårvirkelse ah akolhol!</strong>
+
+<form action="{{url_for('admin')}}" method=post>
+  <input type=submit name="anuller" value="anuller">
+  <dl>
+    <dt>Slet russer (uid list):</dt>
+    <dd><input type=text name=delete_rus></dd>
+  </dl>
+  <input type=submit name="toem_rusdatabase" value="toem_rusdatabase">
+
+  {% for i in range(0,10) %}
+  <br/>
+  {% endfor %}
+  <input type=submit value="udfør"><input type=submit name="anuller" value="anuller">
+</form>
+{% endblock %}

@@ -18,15 +18,13 @@
     <a href="foo"><strike>Lister</strike></a>
     <a href="foo"><strike>Filer</strike></a>
     <a href="foo"><strike>Billeder</strike></a>
+    {% if not session.session_admin %}
+    <a href="{{url_for('admin')}}">Admin</a>
+    {% endif %}
     <a href="{{url_for('logout')}}">log ud</a>
   </div>
   <br/>
-  <div class=submenu>
-    <a href="{{url_for('new_rus')}}">Ny Rus</a>
-    <a href="foo"><strike>Rusture</strike></a>
-    <a href="foo"><strike>Tjansehold</strike></a>
-    <a href="foo"><strike>Kender</strike></a>
-  </div>
+    {% block submenu %}{% endblock %}
 </div>
 
 <div class=page>
