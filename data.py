@@ -12,8 +12,8 @@ def connect(dbf=None):
 def russer():
     return connect(config.RUS_DATABASE)
 
-def vejledere():
-    return connect(config.VEJLEDER_DATABASE)
+def data():
+    return connect(config.DATABASE)
 
 def execute(dbf, com, *args):
     with connect(dbf) as db:

@@ -42,10 +42,11 @@ CREATE TABLE Russer(
 );
 
 
+-- It must hold that uid1 < uid2
 DROP TABLE if EXISTS Kender;
 CREATE TABLE Kender(
-       uid1           REFERENCES Russer(uid),
-       uid2           REFERENCES Russer(uid)
+       rid1           REFERENCES Russer(rid),
+       rid2           REFERENCES Russer(rid)
 );
 
 DROP TABLE if EXISTS Ture;

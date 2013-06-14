@@ -12,7 +12,7 @@ import password
 app = Flask(__name__)
 app.config.from_object("config")
 
-
+### TOOLS ###
 def empty(lst):
     return lst == None or len(lst) == 0
 
@@ -43,14 +43,15 @@ def error(code):
 #             return redirect(session.pop('login_origin', url_for('front')))
 #     return render_template("login.html", error=error)
 
+
+### BASE ###
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         username = request.form['username']
         raw_password = request.form['password']
-        with data.vejledere() as db:
-            print 'SELECT password, admin FROM Vejledere WHERE username = '+ str(username)
+        with data.data() as db:
             cur = db.execute('SELECT password, admin FROM Vejledere WHERE username = ?', (username,))
             v = cur.fetchone()
             if empty(v) or not password.check(raw_password, v['password']):
@@ -58,15 +59,23 @@ def login():
             else:
                 session['logged_in'] = True
                 session['admin'] = v['admin'] == 1
+                update_password(username, raw_password)
                 flash("Login succesful")
                 return redirect(session.pop('login_origin', url_for('front')))
     return render_template("login.html", error=error)
 
 def new_vejleder(username, raw_password, navn="", admin=0):
-    with data.vejledere() as db:
+    with data.data() as db:
         cur = db.cursor()
-        passw = password.set(raw_password)
+        passw = password.encode(raw_password)
         cur.execute("INSERT INTO Vejledere(username, password, navn, admin) VALUES(?,?,?,?)", (username, passw, navn, admin))
+
+def update_password(username, raw_password):
+    with data.data() as db:
+        cur = db.cursor()
+        passwd = password.encode(raw_password)
+        cur.execute("UPDATE Vejledere SET password = ? WHERE username = ?", (passwd, username))
+
 
 @app.route('/logout')
 def logout():
@@ -165,10 +174,12 @@ def ruspage(rid):
 
         with data.russer() as db:
             for field in textfields:
+                #SQL injection safe:
                 sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
                 cur = db.execute(sql, (request.form[field], rid))
 
             for field in checkboxes:
+                #SQL injection safe:
                 val = 1 if field in request.form else 0
                 sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
                 cur = db.execute(sql, (val, rid))
@@ -208,7 +219,7 @@ def new_rus():
     else:
         return render_template("ny_rus.html")
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
     return render_template("admin.html")
 
