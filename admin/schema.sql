@@ -64,8 +64,8 @@ CREATE TABLE Tjansehold(
 );
 
 
-DROP TABLE if EXISTS Vejledere;
-CREATE TABLE Vejledere(
+DROP TABLE if EXISTS Users;
+CREATE TABLE Users(
        --vid            integer PRIMARY KEY AUTOINCREMENT,
        username       string PRIMARY KEY NOT NULL,
        password       string NOT NULL,
@@ -81,6 +81,10 @@ CREATE TABLE Vejledere(
        tlf            string,
        email          string,
        foedselsdato   string,
+
+       diku_alder     int,
+       tidligere_ture string, --sepererat med semicolaer
+
        rustur         REFERENCES Ture(tid)
 
 );

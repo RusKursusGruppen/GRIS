@@ -38,7 +38,7 @@ def login():
         username = request.form['username']
         raw_password = request.form['password']
         with data.data() as db:
-            cur = db.execute('SELECT password, admin FROM Vejledere WHERE username = ?', (username,))
+            cur = db.execute('SELECT password, admin FROM Users WHERE username = ?', (username,))
             v = cur.fetchone()
             if empty(v) or not password.check(raw_password, v['password']):
                 flash('Invalid username or password')
@@ -54,13 +54,13 @@ def new_vejleder(username, raw_password, navn="", admin=0):
     with data.data() as db:
         cur = db.cursor()
         passw = password.encode(raw_password)
-        cur.execute("INSERT INTO Vejledere(username, password, navn, admin) VALUES(?,?,?,?)", (username, passw, navn, admin))
+        cur.execute("INSERT INTO Users(username, password, navn, admin) VALUES(?,?,?,?)", (username, passw, navn, admin))
 
 def update_password(username, raw_password):
     with data.data() as db:
         cur = db.cursor()
         passwd = password.encode(raw_password)
-        cur.execute("UPDATE Vejledere SET password = ? WHERE username = ?", (passwd, username))
+        cur.execute("UPDATE Users SET password = ? WHERE username = ?", (passwd, username))
 
 
 @app.route('/logout')
@@ -128,6 +128,7 @@ def random_greeting():
 @app.route('/')
 @logged_in
 def front():
+    return render_template("front.html")
     return redirect(url_for('rusmanager'))
 
 @app.route('/rusmanager')
