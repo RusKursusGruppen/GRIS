@@ -9,19 +9,18 @@ def connect(dbf=None):
     db.row_factory = sqlite3.Row
     return db
 
-def russer():
-    return connect(config.RUS_DATABASE)
 
 def data():
-    return connect(config.DATABASE)
+    return connect()
 
-def execute(dbf, com, *args):
-    with connect(dbf) as db:
-        v = db.execute(com,args)
+
+def execute(com, *args):
+    with connect() as db:
+        v = db.execute(com, args)
         return v.fetchall()
 
-def script(dbf, f):
-    with connect(dbf) as db:
+def script(f):
+    with connect() as db:
         with open(f) as f:
             db.cursor().executescript(f.read())
 

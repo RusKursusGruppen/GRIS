@@ -44,7 +44,7 @@ def error(code):
 #     return render_template("login.html", error=error)
 
 
-### BASE ###
+### LOGIN/USERMANAGEMENT ###
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -106,7 +106,7 @@ textfields = [ 'navn',
                'andet',]
 
 def random_greeting():
-    with data.russer() as db:
+    with data.data() as db:
         cur = db.execute("SELECT COUNT(rid) FROM Russer")
         count = cur.fetchone()[0]
 
@@ -136,7 +136,7 @@ def random_greeting():
 
 
 
-
+### PAGES ###
 
 @app.route('/')
 @logged_in
@@ -146,8 +146,8 @@ def front():
 @app.route('/rusmanager')
 @logged_in
 def rusmanager():
-    #TODO: use "with data.russer() as db:"
-    db = data.russer()
+    #TODO: use "with data.data() as db:"
+    db = data.data()
     cur = db.execute("select rid, navn from Russer")
     russer = cur.fetchall()
     db.close()
@@ -172,7 +172,7 @@ def ruspage(rid):
             flash(escape(u"Ændringer anulleret"))
             return redirect(url_for('rusmanager'))
 
-        with data.russer() as db:
+        with data.data() as db:
             for field in textfields:
                 #SQL injection safe:
                 sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
@@ -191,7 +191,7 @@ def ruspage(rid):
         flash("Rus opdateret")
         return redirect(url_for('rusmanager'))
     else:
-        with data.russer() as db:
+        with data.data() as db:
             cur = db.execute("SELECT * FROM Russer WHERE rid == ?", (rid,))
             rus = cur.fetchone()
 
@@ -209,7 +209,7 @@ def new_rus():
             flash(escape(u"Rus IKKE tilføjet"))
             return redirect(url_for('rusmanager'))
 
-        with data.russer() as db:
+        with data.data() as db:
             cur = db.cursor()
             navn = " ".join([x.capitalize() for x in request.form['navn'].split()])
             cur = cur.execute("INSERT INTO Russer(navn, opringet) VALUES(?,?)", (navn,0))

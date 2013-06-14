@@ -81,6 +81,6 @@ CREATE TABLE Vejledere(
        tlf            string,
        email          string,
        foedselsdato   string,
-       rustur         REFERENCES Ture(tid),
+       rustur         REFERENCES Ture(tid)
 
 );
