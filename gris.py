@@ -8,6 +8,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 
 import data
 import password
+import datetime
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -30,21 +31,32 @@ def logged_in(fn):
 def error(code):
     return redirect(url_for('login'))
 
+def now():
+    return str(datetime.datetime.now())
+
+def string_to_time(str):
+    format = "%Y-%m-%d %H:%M:%S.%f"
+    return datetime.datetime.strptime(str, format)
+
+
 ### LOGIN/USERMANAGEMENT ###
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
+    print("start")
     if request.method == 'POST':
         username = request.form['username']
         raw_password = request.form['password']
         with data.data() as db:
-            cur = db.execute('SELECT password, admin FROM Users WHERE username = ?', (username,))
+            cur = db.execute('SELECT password, admin, vejleder, mentor FROM Users WHERE username = ?', (username,))
             v = cur.fetchone()
             if empty(v) or not password.check(raw_password, v['password']):
                 flash('Invalid username or password')
             else:
                 session['logged_in'] = True
-                session['admin'] = v['admin'] == 1
+                session['admin']     = v['admin'] == 1
+                session['vejleder']  = v['vejleder']
+                session['mentor']    = v['mentor']
                 update_password(username, raw_password)
                 flash("Login succesful")
                 return redirect(session.pop('login_origin', url_for('front')))
@@ -128,6 +140,10 @@ def random_greeting():
 @app.route('/')
 @logged_in
 def front():
+    vejleder = session['vejleder']
+    mentor = session['mentor']
+    news = data.execute("SELECT * FROM News WHERE for_vejledere = ? OR for_mentore = ?", vejleder, mentor)
+    print(news)
     return render_template("front.html")
     return redirect(url_for('rusmanager'))
 
