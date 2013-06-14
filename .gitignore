@@ -33,3 +33,8 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+
+# Flask config and database
+config.py
+*.db
