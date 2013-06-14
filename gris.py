@@ -30,20 +30,6 @@ def logged_in(fn):
 def error(code):
     return redirect(url_for('login'))
 
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     error = None
-#     if request.method == 'POST':
-#         if (request.form['username'] != app.config['USERNAME'] or
-#             request.form['password'] != app.config['PASSWORD']):
-#             error = flash('Invalid username or password')
-#         else:
-#             session['logged_in'] = True
-#             flash('Login succesful')
-#             return redirect(session.pop('login_origin', url_for('front')))
-#     return render_template("login.html", error=error)
-
-
 ### LOGIN/USERMANAGEMENT ###
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -132,6 +118,7 @@ def random_greeting():
         , "Emacs, den objektivt bedste editor"
         , u"O(n²)"
         , u"λf.(λx.f (x x)) (λx.f (x x))"
+        , "Kodet med knytnæver!"
         , "3% kode, 79% slam"])
 
 
