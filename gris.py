@@ -207,6 +207,14 @@ def new_rus():
     else:
         return render_template("ny_rus.html")
 
+
+@app.route('/schedule')
+def schedule_overview():
+    return render_template("schedule_overview.html")
+
+#@app.route('/schedule/<sid>', methods=['GET', 'POST'])
+#def schedule_event(sid)
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     return render_template("admin.html")
