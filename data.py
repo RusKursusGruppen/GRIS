@@ -4,7 +4,7 @@ import sqlite3
 import config
 
 def connect(dbf=None):
-    dbf = dbf if dbf else config.RUS_DATABASE
+    dbf = dbf if dbf else config.DATABASE
     db = sqlite3.connect(dbf)
     db.row_factory = sqlite3.Row
     return db
