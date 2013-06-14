@@ -1,6 +1,6 @@
 -- Run this to reset/create the database.
 
-DROP TABLE if EXISTS Russer;
+DROP TABLE IF EXISTS Russer;
 CREATE TABLE Russer(
      rid              integer PRIMARY KEY AUTOINCREMENT,
 
@@ -43,19 +43,19 @@ CREATE TABLE Russer(
 
 
 -- It must hold that uid1 < uid2
-DROP TABLE if EXISTS Kender;
+DROP TABLE IF EXISTS Kender;
 CREATE TABLE Kender(
        rid1           REFERENCES Russer(rid),
        rid2           REFERENCES Russer(rid)
 );
 
-DROP TABLE if EXISTS Ture;
+DROP TABLE IF EXISTS Ture;
 CREATE TABLE Ture(
        tid            integer PRIMARY KEY AUTOINCREMENT,
        tur_navn       string
 );
 
-DROP TABLE if EXISTS Tjansehold;
+DROP TABLE IF EXISTS Tjansehold;
 CREATE TABLE Tjansehold(
        tj_id          integer PRIMARY KEY AUTOINCREMENT,
        tid            REFERENCES Ture(tid),
@@ -64,7 +64,7 @@ CREATE TABLE Tjansehold(
 );
 
 
-DROP TABLE if EXISTS Users;
+DROP TABLE IF EXISTS Users;
 CREATE TABLE Users(
        --vid            integer PRIMARY KEY AUTOINCREMENT,
        username       string PRIMARY KEY NOT NULL,
@@ -87,4 +87,14 @@ CREATE TABLE Users(
 
        rustur         REFERENCES Ture(tid)
 
+);
+
+DROP TABLE IF EXISTS News;
+CREATE TABLE News(
+       creator        REFERENCES Users(username),
+       creation_time  string NOT NULL,
+       for_vejledere  int NOT NULL default 1,
+       for_mentore    int NOT NULL default 0,
+       title          string,
+       text           string
 );
