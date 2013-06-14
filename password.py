@@ -2,6 +2,10 @@ import os
 import hashlib
 import config
 
+
+## THIS IS A TEMPORARY WAY
+## I had already updated it to use bcrypt but the changes was amonst those never pushed
+
 def generate_salt():
     return os.urandom(config.SALT_LENGTH).encode('hex')
 
