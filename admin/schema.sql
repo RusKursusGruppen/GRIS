@@ -62,3 +62,25 @@ CREATE TABLE Tjansehold(
        navn           string
 
 );
+
+
+DROP TABLE if EXISTS Vejledere;
+CREATE TABLE Vejledere(
+       --vid            integer PRIMARY KEY AUTOINCREMENT,
+       username       string PRIMARY KEY NOT NULL,
+       password       string NOT NULL,
+       admin          int NOT NULL default 0,
+       vejleder       int NOT NULL default 0,
+       mentor         int NOT NULL default 0,
+
+       navn           string,
+       koerekort      int NOT NULL default 0,
+       addresse       string,
+       postnummer     string,
+       by             string,
+       tlf            string,
+       email          string,
+       foedselsdato   string,
+       rustur         REFERENCES Ture(tid),
+
+);
