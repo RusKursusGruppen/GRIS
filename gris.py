@@ -48,25 +48,25 @@ def login():
         username = request.form['username']
         raw_password = request.form['password']
         with data.data() as db:
-            cur = db.execute('SELECT password, admin, vejleder, mentor FROM Users WHERE username = ?', (username,))
+            cur = db.execute('SELECT password, admin, tutor, mentor FROM Users WHERE username = ?', (username,))
             v = cur.fetchone()
             if empty(v) or not password.check(raw_password, v['password']):
                 flash('Invalid username or password')
             else:
                 session['logged_in'] = True
                 session['admin']     = v['admin'] == 1
-                session['vejleder']  = v['vejleder']
+                session['tutor']     = v['tutor']
                 session['mentor']    = v['mentor']
                 update_password(username, raw_password)
                 flash("Login succesful")
                 return redirect(session.pop('login_origin', url_for('front')))
     return render_template("login.html", error=error)
 
-def new_vejleder(username, raw_password, navn="", admin=0):
+def new_user(username, raw_password, name="", admin=0):
     with data.data() as db:
         cur = db.cursor()
         passw = password.encode(raw_password)
-        cur.execute("INSERT INTO Users(username, password, navn, admin) VALUES(?,?,?,?)", (username, passw, navn, admin))
+        cur.execute("INSERT INTO Users(username, password, name, admin) VALUES(?,?,?,?)", (username, passw, name, admin))
 
 def update_password(username, raw_password):
     with data.data() as db:
@@ -82,26 +82,26 @@ def logout():
     return redirect(url_for('front'))
     return redirect('http://rkg.diku.dk')
 
-textfields = [ 'navn',
-               'udfyldt_af',
+textfields = [ 'name',
+               'filled_by',
                'co',
-               'addrese',
-               'postnummer',
-               'by',
-               'flytte_tidspunkt',
-               'ny_adresse',
-               'ny_postnummer',
-               'ny_by',
-               'tlf',
+               'address',
+               'zipcode',
+               'city',
+               'move_time',
+               'new_address',
+               'new_zipcode',
+               'new_city',
+               'phone',
                'email',
-               'ferie',
-               'prioritet',
-               'gymnasie',
-               'lavet_efter',
-               'kodeerfaring',
-               'saerlige_behov',
-               'spiller_musik',
-               'andet',]
+               'vacation',
+               'priority',
+               'gymnasium',
+               'since_gymnasium',
+               'code_experience',
+               'special_needs',
+               'plays_instrument',
+               'other',]
 
 def random_greeting():
     with data.data() as db:
@@ -140,12 +140,10 @@ def random_greeting():
 @app.route('/')
 @logged_in
 def front():
-    vejleder = session['vejleder']
+    vejleder = session['tutor']
     mentor = session['mentor']
-    news = data.execute("SELECT * FROM News WHERE for_vejledere = ? OR for_mentore = ?", vejleder, mentor)
-    print(news)
-    return render_template("front.html")
-    return redirect(url_for('rusmanager'))
+    news = data.execute("SELECT * FROM News ORDER BY created DESC")# WHERE for_tutors = ? OR for_mentors = ?", tutor, mentor)
+    return render_template("front.html", news=news)
 
 @app.route('/rusmanager')
 @logged_in
@@ -164,15 +162,15 @@ def ruspage(rid):
     #form = RusForm(request.form)
     if request.method == "POST":# and form.validate():
         checkboxes = [
-            'opringet',
-            'deltager_unidag',
-            'deltager_campus',
-            'deltager_hytte',
+            'called',
+            'uniday',
+            'campus',
+            'tour',
         ]
-        'rustur'
-        'tjansehold'
+        'rustour'
+        'dutyteam'
 
-        if 'anuller' in request.form:
+        if 'cancel' in request.form:
             flash(escape(u"Ændringer anulleret"))
             return redirect(url_for('rusmanager'))
 
@@ -188,8 +186,8 @@ def ruspage(rid):
                 sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
                 cur = db.execute(sql, (val, rid))
 
-            sql = "UPDATE Russer SET foedselsdato = ? WHERE rid == ?;"
-            cur = db.execute(sql, (request.form['foedselsdato'], rid))
+            sql = "UPDATE Russer SET birthday = ? WHERE rid == ?;"
+            cur = db.execute(sql, (request.form['birthday'], rid))
 
 
         flash("Rus opdateret")
@@ -209,14 +207,14 @@ def ruspage(rid):
 @logged_in
 def new_rus():
     if request.method == "POST":
-        if 'anuller' in request.form:
+        if 'cancel' in request.form:
             flash(escape(u"Rus IKKE tilføjet"))
             return redirect(url_for('rusmanager'))
 
         with data.data() as db:
             cur = db.cursor()
-            navn = " ".join([x.capitalize() for x in request.form['navn'].split()])
-            cur = cur.execute("INSERT INTO Russer(navn, opringet) VALUES(?,?)", (navn,0))
+            name = " ".join([x.capitalize() for x in request.form['name'].split()])
+            cur = cur.execute("INSERT INTO Russer(name, called) VALUES(?,?)", (name,0))
             rus = cur.fetchone()
             flash("Rus oprettet")
             return redirect(url_for('ruspage', rid=str(cur.lastrowid)))
