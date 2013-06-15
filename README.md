@@ -19,3 +19,9 @@ vejleder = tutor
 mentor   = mentor
 rustur   = tour
 hytte    = hut
+
+Afhængigheder:
+Python 2
+python-flask 9.2
+python-bcrypt
+sqlite3

@@ -1,4 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Velkommen til GRIS</h2>
+
+{% for item in news %}
+<h3>{{item['title']}}</h3>
+{% endfor %}
+
 {% endblock %}
