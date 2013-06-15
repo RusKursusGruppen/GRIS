@@ -85,7 +85,8 @@ CREATE TABLE Users(
     diku_age            int,
     earlier_tours       string, --sepererat med semicolaer (pepsi)
 
-    rustour             REFERENCES Ture(tid)
+    rustour             REFERENCES Ture(tid),
+    deleted             int -- Field for marking a user as deleted
 );
 
 DROP TABLE IF EXISTS News;
@@ -107,4 +108,20 @@ CREATE TABLE Schedule(
 
     created             string,
     closes              string
+);
+
+DROP TABLE IF EXISTS Schedule_cols;
+CREATE TABLE Schedule_cols(
+    c_id                integer PRIMARY KEY AUTOINCREMENT,
+    s_id                REFERENCES Schedule(s_id),
+    parent              REFERENCES Schedule_cols(s_id),
+    label               string,
+    type                integer NOT NULL default 0
+);
+
+DROP TABLE IF EXISTS Schedule_answers;
+CREATE TABLE Schedule_answers(
+    user                REFERENCES Users(username),
+    c_id                REFERENCES Schedule_cols(c_id),
+    answer              int
 );

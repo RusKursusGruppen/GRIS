@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Nyt m&oslash;de</h2>
+<form action="{{url_for('new_schedule')}}" method="post">
+    <table class="adminTable">
+    <tr>
+        <td>Overskrift:</td>
+        <td><input type="text" name="title" /></td>
+    </tr>
+    <tr>
+        <td>Deadline:</td>
+        <td><input type="text" name="deadline" /></td>
+    </tr>
+    <tr>
+        <td>Beskrivelse</td>
+        <td><textarea name="description"></textarea></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <button type="submit">Opret</button>
+            <button type="submit" name="cancel" value="cancel">Annuller</button></td>
+    </tr>
+</table>
+</form>
+{% endblock %}
