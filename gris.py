@@ -62,7 +62,7 @@ def login():
                 return redirect(session.pop('login_origin', url_for('front')))
     return render_template("login.html", error=error)
 
-def new_user(username, raw_password, name="", admin=0):
+def create_user(username, raw_password, name="", admin=0):
     with data.data() as db:
         cur = db.cursor()
         passw = password.encode(raw_password)
@@ -150,7 +150,7 @@ def front():
 def rusmanager():
     #TODO: use "with data.data() as db:"
     db = data.data()
-    cur = db.execute("select rid, navn from Russer")
+    cur = db.execute("select rid, name from Russer")
     russer = cur.fetchall()
     db.close()
     # russer = [{'name':"A", 'rid':-1},{'name':"B", 'rid':-2}]
@@ -174,6 +174,7 @@ def ruspage(rid):
             flash(escape(u"Ændringer anulleret"))
             return redirect(url_for('rusmanager'))
 
+        print(request.form)
         with data.data() as db:
             for field in textfields:
                 #SQL injection safe:
@@ -229,7 +230,35 @@ def schedule_overview():
 #@app.route('/schedule/<sid>', methods=['GET', 'POST'])
 #def schedule_event(sid)
 
+
+
+@app.route('/new_user', methods=['GET', 'POST'])
+#adminrights
+def new_user():
+    print("start")
+    if request.method == "POST":
+        if 'cancel' in request.form:
+            flash("Oprettelse anulleret")
+            return redirect(url_for('front'))
+
+        username = request.form['username']
+        name = request.form['name']
+        raw_password = request.form['password']
+        admin = request.form['admin']
+        create_user(username, raw_password, name, admin)
+        flash("Ny bruger oprettet")
+        return redirect(url_for('settings'))
+    else:
+        return render_template("new_user.html")
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+@logged_in
+def settings():
+    return "bla"
+
 @app.route('/admin', methods=['GET', 'POST'])
+#adminrights
 def admin():
     return render_template("admin.html")
 

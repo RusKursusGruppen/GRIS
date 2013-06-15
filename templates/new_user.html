@@ -1,0 +1,25 @@
+
+{% extends "layout.html" %}
+{% block body %}
+<form action="{{url_for('new_user')}}" method=post>
+  <p>
+    <input type=submit value="save">
+    <input type=submit name="cancel" value="cancel">
+    <br/><br/>
+  </p>
+  <dl>
+    <dt>Brugernavn:</dt>
+    <dd><input type=text name=username></dd>
+    <dt>Fulde navn:</dt>
+    <dd><input type=text name=name></dd>
+
+    <dt>løsn:</dt>
+    <dd><input type=password name=password></dd>
+
+    <!-- midlertidig -->
+    <dt>Admin?:</dt>
+    <dd><input type=text name=admin></dd>
+
+  </dl>
+</form>
+{% endblock %}

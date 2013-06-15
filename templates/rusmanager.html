@@ -13,7 +13,7 @@
 <h2>Rusmanager</h2>
 <ul class=russer>
   {% for rus in russer %}
-  <li><a href="{{url_for('ruspage', rid=rus['rid'])}}">{{rus['navn']}}</a></li>
+  <li><a href="{{url_for('ruspage', rid=rus['rid'])}}">{{rus['name']}}</a></li>
   {% else %}
   Der er ingen russer i databasen
   {% endfor %}

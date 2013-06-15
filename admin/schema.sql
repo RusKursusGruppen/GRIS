@@ -1,11 +1,11 @@
 -- Run this to reset/create the database.
 
-DROP TABLE IF EXISTS Minions;
-CREATE TABLE Minions(
+DROP TABLE IF EXISTS Russer;
+CREATE TABLE Russer(
     rid                 integer PRIMARY KEY AUTOINCREMENT,
 
     name                string NOT NULL,
-    filled_by          string,
+    filled_by           string,
     called              integer NOT NULL,
     co                  string,
     address             string,

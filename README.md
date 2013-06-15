@@ -3,6 +3,9 @@ GRIS
 
 Generelt Rus Informations System
 
-Note
-Dette er ikke den nyeste version, den blev nakket da Søren var en spasser der ikke comittede.
-Så nu skal GRIS genskabbes ud fra dette.
+
+Afhængigheder:
+Python 2
+python-flask 9.2
+python-bcrypt
+sqlite3
