@@ -24,7 +24,7 @@
     {% if not session.session_admin %}
     <a href="{{url_for('admin')}}">Admin</a>
     {% endif %}
-    <a href="{{url_for('logout')}}">log ud</a>
+    <a href="{{url_for('usermanager.logout')}}">log ud</a>
   </div>
   <br/>
     {% block submenu %}{% endblock %}

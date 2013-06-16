@@ -8,6 +8,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 
 from applications.schedule import schedule
 from applications.rusmanager import rusmanager
+from applications.usermanager import usermanager
 
 from lib import data, password, tools
 from lib.tools import logged_in
@@ -16,56 +17,12 @@ app = Flask(__name__)
 app.config.from_object("config")
 app.register_blueprint(schedule)
 app.register_blueprint(rusmanager)
+app.register_blueprint(usermanager)
 
 ### ERROR HANDLER ###
 @app.errorhandler(401)
 def error(code):
-    return redirect(url_for('login'))
-
-### LOGIN/USERMANAGEMENT ###
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    print("start")
-    if request.method == 'POST':
-        username = request.form['username']
-        raw_password = request.form['password']
-        with data.data() as db:
-            cur = db.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', (username,))
-            v = cur.fetchone()
-            if empty(v) or not password.check(raw_password, v['password']):
-                flash('Invalid username or password')
-            else:
-                session['logged_in'] = True
-                session['username']  = username
-                session['admin']     = v['admin'] == 1
-                session['rkg']       = v['rkg']
-                session['tutor']     = v['tutor']
-                session['mentor']    = v['mentor']
-                update_password(username, raw_password)
-                flash("Login succesful")
-                return redirect(session.pop('login_origin', url_for('front')))
-    return render_template("login.html", error=error)
-
-def create_user(username, raw_password, name="", admin=0):
-    with data.data() as db:
-        cur = db.cursor()
-        passw = password.encode(raw_password)
-        cur.execute("INSERT INTO Users(username, password, name, admin) VALUES(?,?,?,?)", (username, passw, name, admin))
-
-def update_password(username, raw_password):
-    with data.data() as db:
-        cur = db.cursor()
-        passwd = password.encode(raw_password)
-        cur.execute("UPDATE Users SET password = ? WHERE username = ?", (passwd, username))
-
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    flash("Logout succesful")
-    return redirect(url_for('front'))
-    return redirect('http://rkg.diku.dk')
+    return redirect(url_for('usermanager.login'))
 
 textfields = [ 'name',
                'filled_by',
@@ -147,29 +104,6 @@ def add_news():
 
 
 
-@app.route('/new_user', methods=['GET', 'POST'])
-def new_user():
-    print("start")
-    if request.method == "POST":
-        if 'cancel' in request.form:
-            flash("Oprettelse anulleret")
-            return redirect(url_for('front'))
-
-        username = request.form['username']
-        name = request.form['name']
-        raw_password = request.form['password']
-        admin = request.form['admin']
-        create_user(username, raw_password, name, admin)
-        flash("Ny bruger oprettet")
-        return redirect(url_for('settings'))
-    else:
-        return render_template("new_user.html")
-
-
-@app.route('/settings', methods=['GET', 'POST'])
-@logged_in
-def settings():
-    return "bla"
 
 @app.route('/admin', methods=['GET', 'POST'])
 #adminrights
