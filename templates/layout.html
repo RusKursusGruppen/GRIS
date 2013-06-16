@@ -1,7 +1,10 @@
 <!doctype html>
+<html>
+<head>
 <title>GRIS</title>
 <link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
-
+</head>
+<body>
 <div class=logo>
   <img src="/static/pig-face.png" alt="GRIS" width="120" height="120">
 </div>
@@ -35,3 +38,5 @@
   {% endfor %}
   {% block body %}{% endblock %}
 </div>
+</body>
+</html>
