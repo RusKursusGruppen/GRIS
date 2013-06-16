@@ -7,7 +7,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 
 
 from lib import data, password
-from lib.tools import logged_in
+from lib.tools import logged_in, html_calendar
 import datetime
 
 schedule = Blueprint('schedule', __name__, template_folder = '../templates/schedule')
@@ -35,7 +35,8 @@ def new():
             flash(u"Oprettelse gennemført")
             return redirect(url_for('schedule.overview'))
     else:
-        return render_template("schedule.new.html")
+        calendar = html_calendar('schedule.deadline','yyyyMMdd','arrow', True, 24, False, 'future')
+        return render_template("schedule.new.html", calendar=calendar)
 
 @schedule.route('/schedule/<sid>', methods=['GET', 'POST'])
 def event(sid):

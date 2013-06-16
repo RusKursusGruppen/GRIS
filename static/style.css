@@ -31,6 +31,10 @@ h1              { text-align: center; }
 /* .flash */
 /* .error */
 
+img.calendar {
+    cursor: pointer;
+}
+
 
 /* Generelle tables */
 table {
@@ -57,6 +61,11 @@ table.formTable textarea {
 }
 table.formTable input {
     width: 50%;
+}
+
+table.formTable span.note {
+    font-size: 10pt;
+    color: grey;
 }
 
 table.overview td.noentries {
