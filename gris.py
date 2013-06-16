@@ -51,13 +51,15 @@ def login():
         username = request.form['username']
         raw_password = request.form['password']
         with data.data() as db:
-            cur = db.execute('SELECT password, admin, tutor, mentor FROM Users WHERE username = ?', (username,))
+            cur = db.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', (username,))
             v = cur.fetchone()
             if empty(v) or not password.check(raw_password, v['password']):
                 flash('Invalid username or password')
             else:
                 session['logged_in'] = True
+                session['username']  = username
                 session['admin']     = v['admin'] == 1
+                session['rkg']       = v['rkg']
                 session['tutor']     = v['tutor']
                 session['mentor']    = v['mentor']
                 update_password(username, raw_password)
@@ -133,7 +135,7 @@ def random_greeting():
         , "Emacs, den objektivt bedste editor"
         , u"O(n²)"
         , u"λf.(λx.f (x x)) (λx.f (x x))"
-        , "Kodet med knytnæver!"
+        , u"Kodet med knytnæver!"
         , "3% kode, 79% slam"])
 
 
@@ -143,10 +145,24 @@ def random_greeting():
 @app.route('/')
 @logged_in
 def front():
+    rkg      = session['rkg']
     vejleder = session['tutor']
-    mentor = session['mentor']
+    mentor   = session['mentor']
     news = data.execute("SELECT * FROM News ORDER BY created DESC")# WHERE for_tutors = ? OR for_mentors = ?", tutor, mentor)
     return render_template("front.html", news=news)
+
+@app.route('/add_news', methods=['GET', 'POST'])
+@logged_in
+def add_news():
+    if request.method == 'POST':
+        creator = session['username']
+        created = now()
+        title = request.form['title']
+        text = request.form['text']
+        data.execute("INSERT INTO News(creator, created, title, text) VALUES(?,?,?,?)", creator, created, title, text)
+        return redirect(url_for('front'))
+    else:
+        return render_template('add_news.html')
 
 @app.route('/rusmanager')
 @logged_in
@@ -228,7 +244,6 @@ def new_rus():
 
 
 @app.route('/new_user', methods=['GET', 'POST'])
-#adminrights
 def new_user():
     print("start")
     if request.method == "POST":

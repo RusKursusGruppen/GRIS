@@ -1,8 +1,17 @@
 {% extends "layout.html" %}
-{% block body %}
 
+{% block submenu %}
+<div class=submenu>
+  <a href="{{url_for('add_news')}}">Tilføj nyhed</a>
+</div>
+{% endblock %}
+
+{% block body %}
 {% for item in news %}
 <h3>{{item['title']}}</h3>
+{{item['created']}}
+{{item['creator']}}
+{{item['text']}}
 {% endfor %}
 
 {% endblock %}
