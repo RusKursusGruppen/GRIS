@@ -6,8 +6,8 @@ from contextlib import closing
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 
-import data
-import password
+from lib import data, password
+from lib.tools import logged_in
 import datetime
 
 schedule = Blueprint('schedule', __name__, template_folder = '../templates/schedule')
@@ -24,7 +24,7 @@ def new():
     if request.method == "POST":
         if 'cancel' in request.form:
             flash("Oprettelse annulleret")
-            return redirect(url_for('schedule_overview'))
+            return redirect(url_for('schedule.overview'))
         with data.data() as db:
             cur = db.execute(
                 "INSERT INTO Schedule(title, description, created, closes) VALUES(?,?,?,?)", (

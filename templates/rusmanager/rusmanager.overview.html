@@ -2,7 +2,7 @@
 
 {% block submenu %}
 <div class=submenu>
-  <a href="{{url_for('new_rus')}}">Ny Rus</a>
+  <a href="{{url_for('rusmanager.new')}}">Ny Rus</a>
   <a href="foo"><strike>Rusture</strike></a>
   <a href="foo"><strike>Tjansehold</strike></a>
   <a href="foo"><strike>Kender</strike></a>
@@ -13,7 +13,7 @@
 <h2>Rusmanager</h2>
 <ul class=russer>
   {% for rus in russer %}
-  <li><a href="{{url_for('ruspage', rid=rus['rid'])}}">{{rus['name']}}</a></li>
+  <li><a href="{{url_for('rusmanager.rus', rid=rus['rid'])}}">{{rus['name']}}</a></li>
   {% else %}
   Der er ingen russer i databasen
   {% endfor %}

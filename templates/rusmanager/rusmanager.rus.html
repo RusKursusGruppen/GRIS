@@ -2,14 +2,14 @@
 
 {% block submenu %}
 <div class=submenu>
-  <a href="{{url_for('new_rus')}}">Ny Rus</a>
+  <a href="{{url_for('rusmanager.new')}}">Ny Rus</a>
 </div>
 {% endblock %}
 
 {% block body %}
 <h2>{{rus['navn']}}</h2>
 <div class=rusdata>
-  <form action="{{url_for('ruspage', rid=rus['rid'])}}" method=post>
+  <form action="{{url_for('rusmanager.rus', rid=rus['rid'])}}" method=post>
     <p>
       <input type=submit value="gem">
       <input type=submit name="anuller" value="cancel">

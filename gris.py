@@ -7,40 +7,20 @@ from contextlib import closing
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from applications.schedule import schedule
+from applications.rusmanager import rusmanager
 
-import data
-import password
-import datetime
+from lib import data, password, tools
+from lib.tools import logged_in
 
 app = Flask(__name__)
 app.config.from_object("config")
 app.register_blueprint(schedule)
+app.register_blueprint(rusmanager)
 
-### TOOLS ###
-def empty(lst):
-    return lst == None or len(lst) == 0
-
-def logged_in(fn):
-    @wraps(fn)
-    def decorator(*args, **kwargs):
-        if not session.get('logged_in'):
-            session['login_origin'] = request.path
-            abort(401)
-        else:
-            return fn(*args, **kwargs)
-    return decorator
-
+### ERROR HANDLER ###
 @app.errorhandler(401)
 def error(code):
     return redirect(url_for('login'))
-
-def now():
-    return str(datetime.datetime.now())
-
-def string_to_time(str):
-    format = "%Y-%m-%d %H:%M:%S.%f"
-    return datetime.datetime.strptime(str, format)
-
 
 ### LOGIN/USERMANAGEMENT ###
 @app.route('/login', methods=['GET', 'POST'])
@@ -164,82 +144,6 @@ def add_news():
     else:
         return render_template('add_news.html')
 
-@app.route('/rusmanager')
-@logged_in
-def rusmanager():
-    #TODO: use "with data.data() as db:"
-    db = data.data()
-    cur = db.execute("select rid, name from Russer")
-    russer = cur.fetchall()
-    db.close()
-    # russer = [{'name':"A", 'rid':-1},{'name':"B", 'rid':-2}]
-    return render_template("rusmanager.html", russer=russer)
-
-@app.route('/rus/<rid>', methods=['GET', 'POST'])
-@logged_in
-def ruspage(rid):
-    #form = RusForm(request.form)
-    if request.method == "POST":# and form.validate():
-        checkboxes = [
-            'called',
-            'uniday',
-            'campus',
-            'tour',
-        ]
-        'rustour'
-        'dutyteam'
-
-        if 'cancel' in request.form:
-            flash(escape(u"Ændringer anulleret"))
-            return redirect(url_for('rusmanager'))
-
-        print(request.form)
-        with data.data() as db:
-            for field in textfields:
-                #SQL injection safe:
-                sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
-                cur = db.execute(sql, (request.form[field], rid))
-
-            for field in checkboxes:
-                #SQL injection safe:
-                val = 1 if field in request.form else 0
-                sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
-                cur = db.execute(sql, (val, rid))
-
-            sql = "UPDATE Russer SET birthday = ? WHERE rid == ?;"
-            cur = db.execute(sql, (request.form['birthday'], rid))
-
-
-        flash("Rus opdateret")
-        return redirect(url_for('rusmanager'))
-    else:
-        with data.data() as db:
-            cur = db.execute("SELECT * FROM Russer WHERE rid == ?", (rid,))
-            rus = cur.fetchone()
-
-            if not rus:
-                return "Den rus findes ikke din spasser!"
-
-            rus = {k:v if v != None else "" for k,v in zip(rus.keys(), rus)}
-            return render_template("rus.html", rus=rus)
-
-@app.route('/ny_rus', methods=['GET', 'POST'])
-@logged_in
-def new_rus():
-    if request.method == "POST":
-        if 'cancel' in request.form:
-            flash(escape(u"Rus IKKE tilføjet"))
-            return redirect(url_for('rusmanager'))
-
-        with data.data() as db:
-            cur = db.cursor()
-            name = " ".join([x.capitalize() for x in request.form['name'].split()])
-            cur = cur.execute("INSERT INTO Russer(name, called) VALUES(?,?)", (name,0))
-            rus = cur.fetchone()
-            flash("Rus oprettet")
-            return redirect(url_for('ruspage', rid=str(cur.lastrowid)))
-    else:
-        return render_template("ny_rus.html")
 
 
 
