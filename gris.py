@@ -9,9 +9,10 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 from applications.schedule import schedule
 from applications.rusmanager import rusmanager
 from applications.usermanager import usermanager
+from applications.rusmanager import textfields
 
 from lib import data, password, tools
-from lib.tools import logged_in
+from lib.tools import logged_in, now
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -24,26 +25,6 @@ app.register_blueprint(usermanager)
 def error(code):
     return redirect(url_for('usermanager.login'))
 
-textfields = [ 'name',
-               'filled_by',
-               'co',
-               'address',
-               'zipcode',
-               'city',
-               'move_time',
-               'new_address',
-               'new_zipcode',
-               'new_city',
-               'phone',
-               'email',
-               'vacation',
-               'priority',
-               'gymnasium',
-               'since_gymnasium',
-               'code_experience',
-               'special_needs',
-               'plays_instrument',
-               'other',]
 
 def random_greeting():
     with data.data() as db:

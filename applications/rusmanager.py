@@ -10,6 +10,27 @@ from lib import data, password
 from lib.tools import logged_in
 import datetime
 
+textfields = [ 'name',
+               'filled_by',
+               'co',
+               'address',
+               'zipcode',
+               'city',
+               'move_time',
+               'new_address',
+               'new_zipcode',
+               'new_city',
+               'phone',
+               'email',
+               'vacation',
+               'priority',
+               'gymnasium',
+               'since_gymnasium',
+               'code_experience',
+               'special_needs',
+               'plays_instrument',
+               'other',]
+
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 @rusmanager.route('/rusmanager')
 @logged_in

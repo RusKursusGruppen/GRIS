@@ -1,5 +1,7 @@
 -- Run this to reset/create the database.
 
+
+--- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer;
 CREATE TABLE Russer(
     rid                 integer PRIMARY KEY AUTOINCREMENT,
@@ -64,6 +66,8 @@ CREATE TABLE Dutyteams(
 );
 
 
+
+--- USERS ---
 DROP TABLE IF EXISTS Users;
 CREATE TABLE Users(
     --vid               integer PRIMARY KEY AUTOINCREMENT,
@@ -90,6 +94,12 @@ CREATE TABLE Users(
     deleted             int -- Field for marking a user as deleted
 );
 
+DROP TABLE IF EXISTS User_creation_keys;
+CREATE TABLE User_creation_keys(
+       key              string UNIQUE NOT NULL
+);
+
+--- FRONT PAGE ---
 DROP TABLE IF EXISTS News;
 CREATE TABLE News(
     creator             REFERENCES Users(username),
@@ -100,6 +110,7 @@ CREATE TABLE News(
     text                string
 );
 
+--- SCHEDULE ---
 DROP TABLE IF EXISTS Schedule;
 CREATE TABLE Schedule(
     s_id                integer PRIMARY KEY AUTOINCREMENT,
