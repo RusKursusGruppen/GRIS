@@ -70,6 +70,7 @@ CREATE TABLE Users(
     username            string PRIMARY KEY NOT NULL,
     password            string NOT NULL,
     admin               int NOT NULL default 0,
+    rkg                 int NOT NULL default 0,
     tutor               int NOT NULL default 0,
     mentor              int NOT NULL default 0,
 

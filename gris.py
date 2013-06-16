@@ -160,6 +160,7 @@ def add_news():
         return redirect(url_for('front'))
     else:
         return render_template('add_news.html')
+
 @app.route('/rusmanager')
 @logged_in
 def rusmanager():
