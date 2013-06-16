@@ -2,7 +2,7 @@
 
 {% block submenu %}
 <div class="submenu">
-    <a href="{{url_for('new_schedule')}}">Nyt m&oslash;de</>
+    <a href="{{url_for('schedule.new')}}">Nyt m&oslash;de</>
     <a href=""></a>
 </div>
 {% endblock %}
@@ -20,7 +20,7 @@
 <tbody>
     {% for event in events %}
     <tr>
-        <td><a href="{{url_for('schedule_event', sid=event['s_id'])}}">{{event['title']}}</a></td>
+        <td><a href="{{url_for('schedule.event', sid=event['s_id'])}}">{{event['title']}}</a></td>
         <td>{{event['closes']}}</td>
     </tr>
     {% else %}

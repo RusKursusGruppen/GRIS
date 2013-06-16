@@ -4,7 +4,9 @@ import sqlite3
 import random
 from functools import wraps
 from contextlib import closing
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
+
+from applications.schedule import schedule
 
 import data
 import password
@@ -12,6 +14,7 @@ import datetime
 
 app = Flask(__name__)
 app.config.from_object("config")
+app.register_blueprint(schedule)
 
 ### TOOLS ###
 def empty(lst):
@@ -239,38 +242,6 @@ def new_rus():
         return render_template("ny_rus.html")
 
 
-@app.route('/schedule')
-def schedule_overview():
-    with data.data() as db:
-        cur = db.execute("SELECT s_id, title, closes FROM Schedule")
-        events = cur.fetchall()
-        cur.close()
-        return render_template("schedule_overview.html",events=events)
-
-@app.route('/schedule/new', methods=['GET','POST'])
-def new_schedule():
-    if request.method == "POST":
-        if 'cancel' in request.form:
-            flash("Oprettelse annulleret")
-            return redirect(url_for('schedule_overview'))
-        with data.data() as db:
-            cur = db.execute(
-                "INSERT INTO Schedule(title, description, created, closes) VALUES(?,?,?,?)", (
-                request.form['title'],
-                request.form['description'],
-                str(datetime.datetime.now()),
-                request.form['deadline']))
-            flash(u"Oprettelse gennemført")
-            return redirect(url_for('schedule_overview'))
-    else:
-        return render_template("new_schedule.html")
-
-@app.route('/schedule/<sid>', methods=['GET', 'POST'])
-def schedule_event(sid):
-    with data.data() as db:
-        cur = db.execute("SELECT s_id, title, description, created, closes FROM Schedule WHERE s_id = ?", sid)
-        event = cur.fetchone()
-    return render_template("schedule_event.html", event=event)
 
 @app.route('/new_user', methods=['GET', 'POST'])
 def new_user():
