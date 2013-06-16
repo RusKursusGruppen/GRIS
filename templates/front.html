@@ -8,10 +8,12 @@
 
 {% block body %}
 {% for item in news %}
-<h3>{{item['title']}}</h3>
-{{item['created']}}
-{{item['creator']}}
-{{item['text']}}
+<div class=news_title>{{item['title']}}</div>
+<div class=news_bar>
+  {{item['created']}}
+  <div class=right>{{item['creator']}}</div>
+</div>
+{{item['text']|safe}}
 {% endfor %}
 
 {% endblock %}
