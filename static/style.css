@@ -31,6 +31,10 @@ h1              { text-align: center; }
 /* .flash */
 /* .error */
 
+img.calendar {
+    cursor: pointer;
+}
+
 
 /* Generelle tables */
 table {
@@ -39,24 +43,29 @@ table {
     padding: 0;
 }
 
-table.adminTable td:first-of-type {
+table.formTable td:first-of-type {
     font-weight: bold;
     vertical-align: top;
     width: 150px;
 }
-table.adminTable tr:nth-of-type(2n) td {
+table.formTable tr:nth-of-type(2n) td {
     background-color: #E5E5E5;
 }
-table.adminTable tr:last-of-type td {
+table.formTable tr:last-of-type td {
     border-top: 1px solid black;
     background-color: #E0E0E0;
 }
-table.adminTable textarea {
+table.formTable textarea {
     width: 80%;
     height: 100px;
 }
-table.adminTable input {
+table.formTable input {
     width: 50%;
+}
+
+table.formTable span.note {
+    font-size: 10pt;
+    color: grey;
 }
 
 table.overview td.noentries {

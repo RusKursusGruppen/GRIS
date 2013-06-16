@@ -2,14 +2,17 @@
 {% block body %}
 <h2>Nyt m&oslash;de</h2>
 <form action="{{url_for('schedule.new')}}" method="post">
-    <table class="adminTable">
+    <table class="formTable">
     <tr>
         <td>Overskrift:</td>
         <td><input type="text" name="title" /></td>
     </tr>
     <tr>
         <td>Deadline:</td>
-        <td><input type="text" name="deadline" /></td>
+        <td><input type="text" id="schedule.deadline" maxlength="25" size="25" name="deadline" />
+            {{calendar|safe}}
+            <span class="note">(Format: yyyy-MM-dd HH:mm)</span>
+        </td>
     </tr>
     <tr>
         <td>Beskrivelse</td>
@@ -18,7 +21,8 @@
     <tr>
         <td colspan="2">
             <button type="submit">Opret</button>
-            <button type="submit" name="cancel" value="cancel">Annuller</button></td>
+            <button type="submit" name="cancel" value="cancel">Annuller</button>
+        </td>
     </tr>
 </table>
 </form>
