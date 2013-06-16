@@ -10,11 +10,14 @@ Så nu skal GRIS genskabbes ud fra dette.
 
 # Conventions
 
-Always write in English
+Always write in English.
+"Rus", "russer" and "rkg" are excepted from this
 
 Translations
 <Danish> = <English>
-rus      = noob
+rus      = rus
+russer   = russer
+rkg      = rkg
 vejleder = tutor
 mentor   = mentor
 rustur   = tour
