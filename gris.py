@@ -238,7 +238,12 @@ def new_schedule():
             flash("Oprettelse annulleret")
             return redirect(url_for('schedule_overview'))
         with data.data() as db:
-            cur = db.execute("INSERT INTO Schedule(title, description, created, closes) VALUES(?,?,?,?)",(request.form['title'], request.form['description'], str(datetime.datetime.now()), request.form['deadline']))
+            cur = db.execute(
+                "INSERT INTO Schedule(title, description, created, closes) VALUES(?,?,?,?)", (
+                request.form['title'],
+                request.form['description'],
+                str(datetime.datetime.now()),
+                request.form['deadline']))
             flash(u"Oprettelse gennemført")
             return redirect(url_for('schedule_overview'))
     else:
@@ -246,7 +251,10 @@ def new_schedule():
 
 @app.route('/schedule/<sid>', methods=['GET', 'POST'])
 def schedule_event(sid):
-    return render_template("schedule_event.html")
+    with data.data() as db:
+        cur = db.execute("SELECT s_id, title, description, created, closes FROM Schedule WHERE s_id = ?", sid)
+        event = cur.fetchone()
+    return render_template("schedule_event.html", event=event)
 
 @app.route('/new_user', methods=['GET', 'POST'])
 #adminrights
