@@ -25,3 +25,10 @@ Python 2
 python-flask 9.2
 python-bcrypt
 sqlite3
+
+
+
+# Application structure
+Folder                      Description
+applications/               sub-application files for each module
+templates/<application>     sub-application templates for each module
