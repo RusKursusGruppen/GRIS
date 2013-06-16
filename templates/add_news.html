@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<form action="{{url_for('add_news')}}" method=post>
+  <table class="adminTable">
+    <tr>
+      <td>Overskrift</td>
+      <td><input type="text" name="title"/></td>
+    </tr>
+    <tr>
+      <td>Tekst</td>
+      <td><textarea name="text"></textarea></td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <button type="submit">Opret</button>
+        <button type="submit" name="cancel" value="cancel">Annuller</button></td>
+    </tr>
+  </table>
+</form>
+{% endblock %}

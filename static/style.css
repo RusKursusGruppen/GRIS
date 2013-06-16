@@ -19,6 +19,12 @@ h1              { text-align: center; }
 .greybar a      { color:#ffa0a0; text-decoration:none }
 .rusdata        { column-count: 2; column-gap: 5 px; -webkit-column-count: 2; -webkit-column-gap: 5 px; -moz-column-count: 2; -moz-column-gap: 5 px;}
 .flash          { background: #F0D6D6; padding=0.5em; font-size:8pt; border: 1px solid #E5BEBE; margin-bottom:0.8em;}
+
+.right          { float:right;}
+
+.news_title     { display: block; margin 0; margin-top: 2em; color: #FF76B4; font-size: 16pt}
+.news_bar       { display: block; margin 0; margin-bottom: 1em; background: #eee; /* color:#4444ee; */ font-size: 6pt; font-style: italic;}
+.news_text      {  }
 /* .russer */
 /* .navigation */
 /* .submenu */
