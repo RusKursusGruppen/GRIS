@@ -18,7 +18,7 @@ def overview():
 def git_pull():
     if request.method == "POST":
         response = subprocess.check_output(["git", "pull"])
-        response = response.replace("\n", "<br />")
+        #response = subprocess.check_output(["ls", "-l"])
     else:
         response = ""
     return render_template("admin/git_pull.html",response=response)
