@@ -17,7 +17,7 @@ def overview():
         cur = db.execute("SELECT s_id, title, closes FROM Schedule")
         events = cur.fetchall()
         cur.close()
-        return render_template("overview.html",events=events)
+        return render_template("schedule/overview.html",events=events)
 
 @schedule.route('/schedule/new', methods=['GET','POST'])
 def new():
@@ -36,11 +36,11 @@ def new():
             return redirect(url_for('schedule.overview'))
     else:
         calendar = html_calendar('schedule.deadline','yyyyMMdd','arrow', True, 24, False, 'future')
-        return render_template("new.html", calendar=calendar)
+        return render_template("schedule/new.html", calendar=calendar)
 
 @schedule.route('/schedule/<sid>', methods=['GET', 'POST'])
 def event(sid):
     with data.data() as db:
         cur = db.execute("SELECT s_id, title, description, created, closes FROM Schedule WHERE s_id = ?", sid)
         event = cur.fetchone()
-    return render_template("event.html", event=event)
+    return render_template("schedule/event.html", event=event)

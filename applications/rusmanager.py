@@ -41,7 +41,7 @@ def overview():
     russer = cur.fetchall()
     db.close()
     # russer = [{'name':"A", 'rid':-1},{'name':"B", 'rid':-2}]
-    return render_template("overview.html", russer=russer)
+    return render_template("rusmanager/overview.html", russer=russer)
 
 @rusmanager.route('/rusmanager/<rid>', methods=['GET', 'POST'])
 @logged_in
@@ -89,7 +89,7 @@ def rus(rid):
                 return "Den rus findes ikke din spasser!"
 
             rus = {k:v if v != None else "" for k,v in zip(rus.keys(), rus)}
-            return render_template("rus.html", rus=rus)
+            return render_template("rusmanager/rus.html", rus=rus)
 
 @rusmanager.route('/rusmanager/new', methods=['GET', 'POST'])
 @logged_in
@@ -107,4 +107,4 @@ def new():
             flash("Rus oprettet")
             return redirect(url_for('rusmanager.rus', rid=str(cur.lastrowid)))
     else:
-        return render_template("new.html")
+        return render_template("rusmanager/new.html")

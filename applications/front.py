@@ -19,7 +19,7 @@ def frontpage():
     vejleder = session['tutor']
     mentor   = session['mentor']
     news = data.execute("SELECT * FROM News ORDER BY created DESC")# WHERE for_tutors = ? OR for_mentors = ?", tutor, mentor)
-    return render_template("frontpage.html", news=news)
+    return render_template("front/frontpage.html", news=news)
 
 @front.route('/add_news', methods=['GET', 'POST'])
 @logged_in
@@ -34,4 +34,4 @@ def add_news():
         data.execute("INSERT INTO News(creator, created, title, text) VALUES(?,?,?,?)", creator, created, title, text)
         return redirect(url_front())
     else:
-        return render_template('add_news.html')
+        return render_template('front/add_news.html')

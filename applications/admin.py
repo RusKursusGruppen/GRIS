@@ -12,7 +12,7 @@ admin = Blueprint('admin', __name__, template_folder = '../templates/admin')
 @admin.route('/admin', methods=['GET', 'POST'])
 def overview():
     #adminrights
-    return render_template("admin.html")
+    return render_template("admin/admin.html")
 
 @admin.route('/admin/git_pull', methods=["GET", "POST"])
 def git_pull():
@@ -21,4 +21,4 @@ def git_pull():
         response = response.replace("\n", "<br />")
     else:
         response = ""
-    return render_template("git_pull.html",response=response)
+    return render_template("admin/git_pull.html",response=response)
