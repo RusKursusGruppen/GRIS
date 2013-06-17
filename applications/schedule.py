@@ -5,9 +5,8 @@ from functools import wraps
 from contextlib import closing
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-
-from lib import data, password
-from lib.tools import logged_in, html_calendar
+from lib import data, password, html
+from lib.tools import logged_in
 import datetime
 
 schedule = Blueprint('schedule', __name__, template_folder = '../templates/schedule')
@@ -35,7 +34,7 @@ def new():
             flash(u"Oprettelse gennemført")
             return redirect(url_for('schedule.overview'))
     else:
-        calendar = html_calendar('schedule.deadline','yyyyMMdd','arrow', True, 24, False, 'future')
+        calendar = html.calendar('schedule.deadline','yyyyMMdd','arrow', True, 24, False, 'future')
         return render_template("schedule/new.html", calendar=calendar)
 
 @schedule.route('/schedule/<sid>', methods=['GET', 'POST'])
