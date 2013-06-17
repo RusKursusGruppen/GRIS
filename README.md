@@ -29,6 +29,7 @@ python-flask 9.2
 python-bcrypt
 sqlite3
 python2-itsdangerous (a dependency of flask that might not be satisfied automaticly)
+python2-markdown
 
 
 # Application structure

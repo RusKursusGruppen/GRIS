@@ -1,5 +1,6 @@
 
-import re
+#import re
+import markdown as md
 
 from jinja2 import evalcontextfilter, Markup, escape
 
@@ -19,4 +20,8 @@ from jinja2 import evalcontextfilter, Markup, escape
 def nl2br(text):
     print text
     result = str(text).replace("\n", "<br/>")
+    return Markup(result)
+
+def markdown(text):
+    result = md.markdown(text)
     return Markup(result)

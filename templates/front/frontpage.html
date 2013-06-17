@@ -11,7 +11,7 @@
   {{item['created']}}
   <div class=right>{{item['creator']}}</div>
 </div>
-{{item['text']|safe}}
+{{item['text']|markdown}}
 {% endfor %}
 
 {% endblock %}
