@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
-import sqlite3
-import random
-from functools import wraps
-from contextlib import closing
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
+import random, datetime, string, time
+
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail
 from lib.tools import logged_in, empty, url_front
+
 import config
-import datetime, string, time
 
 usermanager = Blueprint('usermanager', __name__, template_folder = '../templates/usermanager')
 

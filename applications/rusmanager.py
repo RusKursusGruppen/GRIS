@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sqlite3
-import random
-from functools import wraps
-from contextlib import closing
+import random, datetime
+
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password
 from lib.tools import logged_in
-import datetime
 
 textfields = [ 'name',
                'filled_by',

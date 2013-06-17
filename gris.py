@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sqlite3
 import random
-from functools import wraps
-from contextlib import closing
+
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
+
+from lib import data, tools
+from lib.tools import logged_in, now
 
 from applications.schedule import schedule
 from applications.rusmanager import rusmanager
@@ -12,9 +13,6 @@ from applications.usermanager import usermanager
 from applications.rusmanager import textfields
 from applications.front import front
 from applications.admin import admin
-
-from lib import data, password, tools
-from lib.tools import logged_in, now
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -27,6 +25,7 @@ app.register_blueprint(admin)
 ### ERROR HANDLER ###
 @app.errorhandler(401)
 def error(code):
+    flash("Error {0}".format(code))
     return redirect(url_for('usermanager.login'))
 
 

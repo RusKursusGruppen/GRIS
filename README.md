@@ -23,15 +23,28 @@ mentor   = mentor
 rustur   = tour
 hytte    = hut
 
-Afhængigheder:
-Python 2
+Dependencies:
+Python2
 python-flask 9.2
 python-bcrypt
 sqlite3
-
+python2-itsdangerous (a dependency of flask that might not be satisfied automaticly)
 
 
 # Application structure
 Folder                      Description
 applications/               sub-application files for each module
 templates/<application>     sub-application templates for each module
+
+
+# import convention:
+import generic python modules
+
+from flask import ...
+
+from lib import ...
+from lib.tools import ...
+
+import config
+
+from application. ... import ...

@@ -1,14 +1,11 @@
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
-
-
-from lib import data, password, mail
-from lib.tools import logged_in, empty
-import config
 import datetime, string, time
 
-from lib import data, password, tools
-from lib.tools import logged_in, now, url_front
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
+from lib import data, password, mail
+from lib.tools import logged_in, empty, now, url_front
+
+import config
 
 front = Blueprint('front', __name__, template_folder = '../templates/front')
 
