@@ -11,7 +11,7 @@ from applications.rusmanager import rusmanager
 from applications.usermanager import usermanager
 from applications.rusmanager import textfields
 from applications.front import front
-
+from applications.admin import admin
 
 from lib import data, password, tools
 from lib.tools import logged_in, now
@@ -22,6 +22,7 @@ app.register_blueprint(front)
 app.register_blueprint(schedule)
 app.register_blueprint(rusmanager)
 app.register_blueprint(usermanager)
+app.register_blueprint(admin)
 
 ### ERROR HANDLER ###
 @app.errorhandler(401)
@@ -65,14 +66,6 @@ def random_greeting():
 
 
 ### PAGES ###
-
-
-
-
-@app.route('/admin', methods=['GET', 'POST'])
-#adminrights
-def admin():
-    return render_template("admin.html")
 
 app.jinja_env.globals.update(url_front=tools.url_front)
 app.jinja_env.globals.update(random_greeting=random_greeting)

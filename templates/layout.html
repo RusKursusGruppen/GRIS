@@ -24,12 +24,16 @@
     <a href="foo"><strike>Filer</strike></a>
     <a href="foo"><strike>Billeder</strike></a>
     {% if not session.session_admin %}
-    <a href="{{url_for('admin')}}">Admin</a>
+    <a href="{{url_for('admin.overview')}}">Admin</a>
     {% endif %}
     <a href="{{url_for('usermanager.logout')}}">log ud</a>
   </div>
   <br/>
+  {% if self.submenu() %}
+  <div class=submenu>
     {% block submenu %}{% endblock %}
+  </div>
+  {% endif %}
 </div>
 
 <div class=page>
