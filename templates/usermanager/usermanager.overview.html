@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block submenu %}
+<div class=submenu>
+  <a href="{{url_for('usermanager.settings')}}">Indtast detaljer</a>
+  <a href="{{url_for('usermanager.invite')}}">Inviter ny bruger</a>
+</div>
+{% endblock %}
+
+{% block body %}
+<h2>Usermanager</h2>
+<ul class=users>
+  {% for user in users %}
+  <li><a href="{{url_for('usermanager.user', username=user['username'])}}">{{user['name']}}</a></li>
+  {% else %}
+  Der er ingen brugere i databasen
+  {% endfor %}
+</ul>
+{% endblock %}
