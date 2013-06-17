@@ -96,6 +96,7 @@ def settings():
 def user(username):
     user = data.execute("SELECT * FROM Users WHERE username = ?", username)
     user = user[0]
+    user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
     return render_template("usermanager/usermanager.user.html", user=user)
 
 
