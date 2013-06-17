@@ -10,12 +10,15 @@ from applications.schedule import schedule
 from applications.rusmanager import rusmanager
 from applications.usermanager import usermanager
 from applications.rusmanager import textfields
+from applications.front import front
+
 
 from lib import data, password, tools
 from lib.tools import logged_in, now
 
 app = Flask(__name__)
 app.config.from_object("config")
+app.register_blueprint(front)
 app.register_blueprint(schedule)
 app.register_blueprint(rusmanager)
 app.register_blueprint(usermanager)
@@ -45,6 +48,9 @@ def random_greeting():
         , ":(){ :|:& };:"
         , "public static void main(String[] args) {"
         , u"Søren lavede denne side"
+        , u"Caro har også hjulpet"
+        , "Formanden er dum!"
+        , "Er du bange for tyngdekraften?"
         , "Robert'); DROP TABLE Students;--"
         , "[]"
         , "<a href=\"http://en.wikipedia.org/wiki/Special:Random\">Learn more:</a>"
@@ -60,29 +66,6 @@ def random_greeting():
 
 ### PAGES ###
 
-@app.route('/')
-@logged_in
-def front():
-    rkg      = session['rkg']
-    vejleder = session['tutor']
-    mentor   = session['mentor']
-    news = data.execute("SELECT * FROM News ORDER BY created DESC")# WHERE for_tutors = ? OR for_mentors = ?", tutor, mentor)
-    return render_template("front.html", news=news)
-
-@app.route('/add_news', methods=['GET', 'POST'])
-@logged_in
-def add_news():
-    if request.method == 'POST':
-        creator = session['username']
-        created = now()
-        title = request.form['title']
-        text = request.form['text']
-        data.execute("INSERT INTO News(creator, created, title, text) VALUES(?,?,?,?)", creator, created, title, text)
-        return redirect(url_for('front'))
-    else:
-        return render_template('add_news.html')
-
-
 
 
 
@@ -91,6 +74,7 @@ def add_news():
 def admin():
     return render_template("admin.html")
 
+app.jinja_env.globals.update(url_front=tools.url_front)
 app.jinja_env.globals.update(random_greeting=random_greeting)
 app.jinja_env.globals.update(textfields=textfields)
 

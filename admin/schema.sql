@@ -70,7 +70,6 @@ CREATE TABLE Dutyteams(
 --- USERS ---
 DROP TABLE IF EXISTS Users;
 CREATE TABLE Users(
-    --vid               integer PRIMARY KEY AUTOINCREMENT,
     username            string PRIMARY KEY NOT NULL,
     password            string NOT NULL,
     admin               int NOT NULL default 0,

@@ -7,7 +7,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 
 
 from lib import data, password, mail
-from lib.tools import logged_in, empty
+from lib.tools import logged_in, empty, url_front
 import config
 import datetime, string, time
 
@@ -34,7 +34,7 @@ def login():
                 session['mentor']    = v['mentor']
                 update_password(username, raw_password)
                 flash("Login succesful")
-                return redirect(session.pop('login_origin', url_for('front')))
+                return redirect(session.pop('login_origin', url_front()))
     return render_template("usermanager.login.html", error=error)
 
 def create_user(username, raw_password, name="", admin=0):
@@ -54,7 +54,7 @@ def update_password(username, raw_password):
 def logout():
     session.pop('logged_in', None)
     flash("Logout succesful")
-    return redirect(url_for('front'))
+    return redirect(url_front())
 
 
 @usermanager.route('/usermanager/settings', methods=['GET', 'POST'])
@@ -78,11 +78,17 @@ def generate_key():
 
 @usermanager.route('/usermanager/new/<key>', methods=['GET', 'POST'])
 def new(key):
-    time.sleep(3)
+    #time.sleep(3)
+
+    result = data.execute("select key from User_creation_keys where key = ?", key)
+    if empty(result):
+        return redirect(url_front())
+
     if request.method == "POST":
+        data.execute("DELETE FROM User_creation_keys WHERE key = ?", key)
         if 'cancel' in request.form:
             flash("Oprettelse anulleret")
-            return redirect(url_for('front'))
+            return redirect(url_front())
 
         username = request.form['username']
         name = request.form['name']
@@ -90,6 +96,7 @@ def new(key):
         admin = request.form['admin']
         create_user(username, raw_password, name, admin)
         flash("Ny bruger oprettet")
+
         return redirect(url_for('usermanager.settings'))
     else:
         data.execute("SELECT * FROM User_creation_keys")
@@ -99,13 +106,24 @@ def new(key):
 def invite():
     if request.method == "POST":
         if 'cancel' in request.form:
-            return redirect(url_for('front'))
+            return redirect(url_front)
         key = generate_key()
         data.execute("INSERT INTO User_creation_keys VALUES (?)", key)
-        mail.send(invite_mail(key))
+
+        email_address = request.form['email']
+        text = invite_mail.format(key)
+
+        mail.send(email_address, "Invitation til GRIS", text)
         flash("Invitation sendt")
-        return redirect(url_for('front'))
+
+        return redirect(url_front())
     return render_template("usermanager.invite.html")
 
-def invite_mail(key):
-    return "Hej tryk her rkg.diku.dk/usermanager/new/{0}".format(key)
+invite_mail = u"""
+Hej du er blevet inviteret til GRIS.
+GRIS er RKGs intranet, hvis du skal være med i RKG skal du have en bruger her.
+For at oprette en bruger skal du følge det følgende link.
+Linket er unikt og virker kun en enkelt gang.
+
+<a href="http://rkg.diku.dk/gris/usermanger/new/{0}>Opret bruger</a>
+"""

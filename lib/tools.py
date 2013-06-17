@@ -18,6 +18,9 @@ def logged_in(fn):
             return fn(*args, **kwargs)
     return decorator
 
+def url_front():
+    return url_for('front.frontpage')
+
 def now():
     return str(datetime.datetime.now())
 
