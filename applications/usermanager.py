@@ -35,7 +35,7 @@ def login():
                 update_password(username, raw_password)
                 flash("Login succesful")
                 return redirect(session.pop('login_origin', url_front()))
-    return render_template("usermanager.login.html", error=error)
+    return render_template("login.html", error=error)
 
 def create_user(username, raw_password, name="", admin=0):
     with data.data() as db:
@@ -60,7 +60,7 @@ def logout():
 @logged_in
 def overview():
     users = data.execute("select username, name from Users")
-    return render_template("usermanager.overview.html", users=users)
+    return render_template("overview.html", users=users)
 
 
 
@@ -89,7 +89,7 @@ def settings():
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
         user = user[0]
         user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
-        return render_template("usermanager/usermanager.settings.html", user=user)
+        return render_template("usermanager/settings.html", user=user)
 
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
 @logged_in
@@ -97,7 +97,7 @@ def user(username):
     user = data.execute("SELECT * FROM Users WHERE username = ?", username)
     user = user[0]
     user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
-    return render_template("usermanager/usermanager.user.html", user=user)
+    return render_template("usermanager/user.html", user=user)
 
 
 ### USER INVITATION ###
@@ -137,7 +137,7 @@ def new(key):
         return redirect(url_for('usermanager.settings'))
     else:
         data.execute("SELECT * FROM User_creation_keys")
-        return render_template("usermanager.new.html", key=key)
+        return render_template("new.html", key=key)
 
 @usermanager.route('/usermanager/invite', methods=['GET', 'POST'])
 def invite():
@@ -154,7 +154,7 @@ def invite():
         flash("Invitation sendt")
 
         return redirect(url_front())
-    return render_template("usermanager.invite.html")
+    return render_template("invite.html")
 
 invite_mail = u"""
 Hej du er blevet inviteret til GRIS.
