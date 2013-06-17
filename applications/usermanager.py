@@ -143,7 +143,7 @@ def new(key):
 def invite():
     if request.method == "POST":
         if 'cancel' in request.form:
-            return redirect(url_front)
+            return redirect(url_front())
         key = generate_key()
         data.execute("INSERT INTO User_creation_keys VALUES (?)", key)
 
