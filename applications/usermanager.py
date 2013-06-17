@@ -56,11 +56,47 @@ def logout():
     flash("Logout succesful")
     return redirect(url_for('front'))
 
+@usermanager.route('/usermanager')
+@logged_in
+def overview():
+    users = data.execute("select username, name from Users")
+    return render_template("usermanager.overview.html", users=users)
+
+
 
 @usermanager.route('/usermanager/settings', methods=['GET', 'POST'])
 @logged_in
 def settings():
-    return "bla"
+    if request.method == "POST":
+        if 'cancel' in request.form:
+            flash(escape(u"Ændringer annulleret"))
+            return redirect(url_for('usermanager.overview'))
+
+        username = session["username"]
+        name = request.form["name"]
+        address = request.form["address"]
+        zipcode = request.form["zipcode"]
+        city = request.form["city"]
+        phone = request.form["phone"]
+        email = request.form["email"]
+        birthday = request.form["birthday"]
+        driverslicence = 1 if "driverslicence" in request.form else 0
+        diku_age = request.form["diku_age"]
+        earlier_tours = request.form["earlier_tours"]
+        data.execute("UPDATE Users SET name=?,address=?,zipcode=?,city=?,phone=?,email=?,birthday=?,driverslicence=?,diku_age=?,earlier_tours=? WHERE username = ?", name, address,zipcode,city,phone,email,birthday,driverslicence,diku_age,earlier_tours,username)
+        return redirect(url_for('usermanager.overview'))
+    else:
+        user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
+        user = user[0]
+        user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
+        return render_template("usermanager/usermanager.settings.html", user=user)
+
+@usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
+@logged_in
+def user(username):
+    user = data.execute("SELECT * FROM Users WHERE username = ?", username)
+    user = user[0]
+    return render_template("usermanager/usermanager.user.html", user=user)
 
 
 ### USER INVITATION ###

@@ -87,7 +87,7 @@ CREATE TABLE Users(
     email               string,
     birthday            string,
 
-    diku_age            int,
+    diku_age            string,
     earlier_tours       string, --sepererat med semicolaer (pepsi)
 
     rustour             REFERENCES Ture(tid),
