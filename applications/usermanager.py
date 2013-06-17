@@ -81,7 +81,8 @@ def settings():
         driverslicence = 1 if "driverslicence" in request.form else 0
         diku_age = request.form["diku_age"]
         earlier_tours = request.form["earlier_tours"]
-        data.execute("UPDATE Users SET name=?,address=?,zipcode=?,city=?,phone=?,email=?,birthday=?,driverslicence=?,diku_age=?,earlier_tours=? WHERE username = ?", name, address,zipcode,city,phone,email,birthday,driverslicence,diku_age,earlier_tours,username)
+        about_me = request.form["about_me"]
+        data.execute("UPDATE Users SET name=?,address=?,zipcode=?,city=?,phone=?,email=?,birthday=?,driverslicence=?,diku_age=?,earlier_tours=?, about_me=? WHERE username = ?", name, address,zipcode,city,phone,email,birthday,driverslicence,diku_age,earlier_tours,about_me,username)
         return redirect(url_for('usermanager.overview'))
     else:
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
