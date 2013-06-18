@@ -26,63 +26,18 @@ def script(f):
             db.cursor().executescript(f.read())
 
 def store(bucket, sql, *args):
-    # setstatm = ", ".join(["{0} = ?".format(c) for c in bucket])
-    # if sql.lower().find(" set ") == -1:
-    #     sql = sql.replace("$", "SET $")
-    # sql = sql.replace("$", setstatm)
-
-    # values = [bucket[c] for c in bucket]
-    # values.extend(args)
-
-    # with connect() as db:
-    #     db.execute(sql, values)
     bucket >> [sql]+list(args)
 
 class Bucket(object):
-    def __init__(self, **kwargs):
-        self.__filter__ = []
-        for k,v in kwargs:
-            self.k = v
+    def __init__(self, *unsafe,  **kwargs):
+        self.__lock__ = False
 
-    def __getitem__(self, item):
-        return self.__getattribute__(item)
-    def __setitem__(self, item, value):
-        if hasattr(self, item):
-            self.__setattr__(item, value)
-        else:
-            raise AttributeError("To prevent sqlinjections you cant declare new attributes like this")
-
-    def __iter__(self):
-        return (x for x in dir(self) if not x.startswith("_") and x not in self.__filter__)
-        #return itertools.ifilter(lambda x: not x.startswith("_"), dir(self))
-
-    def __or__(self, filter):
-        self.__filter__.append(filter)
-
-    def __rshift__(self, args):
-        """Pour, into database"""
-        sql = args[0]
-        args = args[1:]
-
-        setstatm = ", ".join(["{0} = ?".format(c) for c in self])
-        if sql.lower().find(" set ") == -1:
-            sql = sql.replace("$", "SET $")
-        sql = sql.replace("$", setstatm)
-
-        values = [self[c] for c in self]
-        values.extend(args)
-
-        with connect() as db:
-            db.execute(sql, values)
-
-class Crazy(object):
-    def __init__(self,  *unsafe, **kwargs):
         self.__unsafe__ = {}
         for d in unsafe:
             self.__unsafe__.update(d)
-        self.__unsafe__.update(kwargs)
-        self.__lock__ = False
-        self.__filter__ = []
+
+        for k,v in kwargs:
+            self.k = v
 
     def __getattribute__(self, item):
         """If there is an attribute 'item' in self, return it.
@@ -101,20 +56,50 @@ class Crazy(object):
 
         return object.__getattribute__(self, item)
 
+    def __getitem__(self, item):
+        prevlock = self.__lock__
+        + self
+        try:
+            return self.__getattribute__(item)
+        finally:
+            self.__lock__ = prevlock
+
+    def __setitem__(self, item, value):
+        prevlock = self.__lock__
+        + self
+        try:
+            if hasattr(self, item): #erroneoussssss
+                self.__setattr__(item, value)
+            else:
+                raise AttributeError("To prevent sqlinjections you cant declare new attributes like this")
+        finally:
+            self.__lock__ = prevlock
+
     def __pos__(self):
         self.__lock__ = True
 
     def __neg__(self):
         self.__lock__ = False
-    def __iter__(self):
-        return (x for x in dir(self) if not x.startswith("_") and x not in self.__filter__)
-        #return (x for x in dir(self) if not x.startswith("_") and x not in object.__getattribute__(self, "__filter__"))
-c = Crazy({"x":"xval", "y":"yval", "z":"zval"})
 
-b = Bucket()
-b.x = "xval"
-b.y = "yval"
-b.z = "zval"
+
+    def __iter__(self):
+        return (x for x in dir(self) if not x.startswith("_"))
+
+    def __rshift__(self, args):
+        """Pour, into database"""
+        sql = args[0]
+        args = args[1:]
+
+        setstatm = ", ".join(["{0} = ?".format(c) for c in self])
+        if sql.lower().find(" set ") == -1:
+            sql = sql.replace("$", "SET $")
+        sql = sql.replace("$", setstatm)
+
+        values = [self[c] for c in self]
+        values.extend(args)
+
+        with connect() as db:
+            db.execute(sql, values)
 
 if __name__ == "__mainn__":
     if len(sys.argv) < 3:
