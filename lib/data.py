@@ -26,29 +26,97 @@ def script(f):
             db.cursor().executescript(f.read())
 
 def store(bucket, sql, *args):
-    setstatm = ", ".join(["{0} = ?".format(c) for c in bucket])
-    if sql.lower().find(" set ") == -1:
-        sql = sql.replace("$", "SET $")
-    sql = sql.replace("$", setstatm)
+    # setstatm = ", ".join(["{0} = ?".format(c) for c in bucket])
+    # if sql.lower().find(" set ") == -1:
+    #     sql = sql.replace("$", "SET $")
+    # sql = sql.replace("$", setstatm)
 
-    values = [bucket[c] for c in bucket]
-    values.extend(args)
+    # values = [bucket[c] for c in bucket]
+    # values.extend(args)
 
-    with connect() as db:
-        db.execute(sql, values)
+    # with connect() as db:
+    #     db.execute(sql, values)
+    bucket >> [sql]+list(args)
 
 class Bucket(object):
     def __init__(self, **kwargs):
+        self.__filter__ = []
         for k,v in kwargs:
             self.k = v
+
     def __getitem__(self, item):
         return self.__getattribute__(item)
     def __setitem__(self, item, value):
-        self.__setattr__(item, value)
-    def __iter__(self):
-        return itertools.ifilter(lambda x: not x.startswith("_"), dir(self))
+        if hasattr(self, item):
+            self.__setattr__(item, value)
+        else:
+            raise AttributeError("To prevent sqlinjections you cant declare new attributes like this")
 
-if __name__ == "__main__":
+    def __iter__(self):
+        return (x for x in dir(self) if not x.startswith("_") and x not in self.__filter__)
+        #return itertools.ifilter(lambda x: not x.startswith("_"), dir(self))
+
+    def __or__(self, filter):
+        self.__filter__.append(filter)
+
+    def __rshift__(self, args):
+        """Pour, into database"""
+        sql = args[0]
+        args = args[1:]
+
+        setstatm = ", ".join(["{0} = ?".format(c) for c in self])
+        if sql.lower().find(" set ") == -1:
+            sql = sql.replace("$", "SET $")
+        sql = sql.replace("$", setstatm)
+
+        values = [self[c] for c in self]
+        values.extend(args)
+
+        with connect() as db:
+            db.execute(sql, values)
+
+class Crazy(object):
+    def __init__(self,  *unsafe, **kwargs):
+        self.__unsafe__ = {}
+        for d in unsafe:
+            self.__unsafe__.update(d)
+        self.__unsafe__.update(kwargs)
+        self.__lock__ = False
+        self.__filter__ = []
+
+    def __getattribute__(self, item):
+        """If there is an attribute 'item' in self, return it.
+        If there is a key 'item' in __kv__ return the corresponding value, and insert it into the attributes.
+        Else try to look up 'item' in self anyway probably triggering an exception"""
+
+        if item in object.__getattribute__(self, "__dict__"):
+            return object.__getattribute__(self, item)
+
+        if not object.__getattribute__(self, "__lock__"):
+            unsafe = object.__getattribute__(self, "__unsafe__")
+            if item in unsafe:
+                value = unsafe[item]
+                object.__setattr__(self, item, value)
+                return value
+
+        return object.__getattribute__(self, item)
+
+    def __pos__(self):
+        self.__lock__ = True
+
+    def __neg__(self):
+        self.__lock__ = False
+    def __iter__(self):
+        return (x for x in dir(self) if not x.startswith("_") and x not in self.__filter__)
+        #return (x for x in dir(self) if not x.startswith("_") and x not in object.__getattribute__(self, "__filter__"))
+c = Crazy({"x":"xval", "y":"yval", "z":"zval"})
+
+b = Bucket()
+b.x = "xval"
+b.y = "yval"
+b.z = "zval"
+
+if __name__ == "__mainn__":
     if len(sys.argv) < 3:
         print ("Usage: python data.py DATABASE SCRIPT")
     else:

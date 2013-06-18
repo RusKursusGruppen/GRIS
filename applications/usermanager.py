@@ -70,23 +70,30 @@ def settings():
             flash(escape(u"Ændringer annulleret"))
             return redirect(url_for('usermanager.overview'))
 
+
+
         username = session["username"]
 
         s = data.Bucket()
-        s.name = request.form["name"]
-        s.address = request.form["address"]
-        s.zipcode = request.form["zipcode"]
-        s.city = request.form["city"]
-        s.phone = request.form["phone"]
-        s.email = request.form["email"]
-        s.birthday = request.form["birthday"]
+        s.name           = request.form["name"]
+        s.address        = request.form["address"]
+        s.zipcode        = request.form["zipcode"]
+        s.city           = request.form["city"]
+        s.phone          = request.form["phone"]
+        s.email          = request.form["email"]
+        s.birthday       = request.form["birthday"]
         s.driverslicence = 1 if "driverslicence" in request.form else 0
-        s.diku_age = request.form["diku_age"]
-        s.earlier_tours = request.form["earlier_tours"]
-        s.about_me = request.form["about_me"]
+        s.diku_age       = request.form["diku_age"]
+        s.earlier_tours  = request.form["earlier_tours"]
+        s.about_me       = request.form["about_me"]
 
         data.store(s, "UPDATE Users $ WHERE username = ?", username)
 
+        print(type(request.form))
+        for x in request.form:
+            print x, request.form[x]
+
+        print request.form
         # username = session["username"]
         # name = request.form["name"]
         # address = request.form["address"]
