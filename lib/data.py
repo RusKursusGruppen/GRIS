@@ -24,6 +24,23 @@ def script(f):
         with open(f) as f:
             db.cursor().executescript(f.read())
 
+def store(store, sql, *args):
+    columns = [c for c in dir(store) if not c.startswith("__")]
+    setstatm = ", ".join(["{0} = ?".format(c) for c in columns])
+    if sql.lower().find(" set ") == -1:
+        sql = sql.replace("$", "SET $")
+    sql = sql.replace("$", setstatm)
+
+    values = [store.__getattribute__(c) for c in columns]
+    values.extend(args)
+
+    with connect() as db:
+        db.execute(sql, values)
+
+class Bucket(object):
+    def __init__(self, **kwargs):
+        for k,v in kwargs:
+            self.k = v
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

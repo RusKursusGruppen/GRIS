@@ -71,18 +71,35 @@ def settings():
             return redirect(url_for('usermanager.overview'))
 
         username = session["username"]
-        name = request.form["name"]
-        address = request.form["address"]
-        zipcode = request.form["zipcode"]
-        city = request.form["city"]
-        phone = request.form["phone"]
-        email = request.form["email"]
-        birthday = request.form["birthday"]
-        driverslicence = 1 if "driverslicence" in request.form else 0
-        diku_age = request.form["diku_age"]
-        earlier_tours = request.form["earlier_tours"]
-        about_me = request.form["about_me"]
-        data.execute("UPDATE Users SET name=?,address=?,zipcode=?,city=?,phone=?,email=?,birthday=?,driverslicence=?,diku_age=?,earlier_tours=?, about_me=? WHERE username = ?", name, address,zipcode,city,phone,email,birthday,driverslicence,diku_age,earlier_tours,about_me,username)
+
+        s = data.Bucket()
+        s.name = request.form["name"]
+        s.address = request.form["address"]
+        s.zipcode = request.form["zipcode"]
+        s.city = request.form["city"]
+        s.phone = request.form["phone"]
+        s.email = request.form["email"]
+        s.birthday = request.form["birthday"]
+        s.driverslicence = 1 if "driverslicence" in request.form else 0
+        s.diku_age = request.form["diku_age"]
+        s.earlier_tours = request.form["earlier_tours"]
+        s.about_me = request.form["about_me"]
+
+        data.store(s, "UPDATE Users $ WHERE username = ?", username)
+
+        # username = session["username"]
+        # name = request.form["name"]
+        # address = request.form["address"]
+        # zipcode = request.form["zipcode"]
+        # city = request.form["city"]
+        # phone = request.form["phone"]
+        # email = request.form["email"]
+        # birthday = request.form["birthday"]
+        # driverslicence = 1 if "driverslicence" in request.form else 0
+        # diku_age = request.form["diku_age"]
+        # earlier_tours = request.form["earlier_tours"]
+        # about_me = request.form["about_me"]
+        # data.execute("UPDATE Users SET name=?,address=?,zipcode=?,city=?,phone=?,email=?,birthday=?,driverslicence=?,diku_age=?,earlier_tours=?, about_me=? WHERE username = ?", name, address,zipcode,city,phone,email,birthday,driverslicence,diku_age,earlier_tours,about_me,username)
         return redirect(url_for('usermanager.overview'))
     else:
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
