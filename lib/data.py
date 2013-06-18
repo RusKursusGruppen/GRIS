@@ -2,6 +2,7 @@
 import sys
 import sqlite3
 import config
+import itertools
 
 def connect(dbf=None):
     dbf = dbf if dbf else config.DATABASE
@@ -24,14 +25,14 @@ def script(f):
         with open(f) as f:
             db.cursor().executescript(f.read())
 
-def store(store, sql, *args):
-    columns = [c for c in dir(store) if not c.startswith("__")]
+def store(bucket, sql, *args):
+    columns = [c for c in bucket]
     setstatm = ", ".join(["{0} = ?".format(c) for c in columns])
     if sql.lower().find(" set ") == -1:
         sql = sql.replace("$", "SET $")
     sql = sql.replace("$", setstatm)
 
-    values = [store.__getattribute__(c) for c in columns]
+    values = [bucket[c] for c in columns]
     values.extend(args)
 
     with connect() as db:
@@ -41,6 +42,12 @@ class Bucket(object):
     def __init__(self, **kwargs):
         for k,v in kwargs:
             self.k = v
+    def __getitem__(self, item):
+        return self.__getattribute__(item)
+    def __setitem__(self, item, value):
+        self.__setattr__(item, value)
+    def __iter__(self):
+        return itertools.ifilter(lambda x: not x.startswith("_"), dir(self))
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
