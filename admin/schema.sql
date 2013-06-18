@@ -88,8 +88,10 @@ CREATE TABLE Users(
 
     diku_age            string,
     earlier_tours       string, --sepererat med semicolaer (pepsi)
+    about_me            string     
 
     rustour             REFERENCES Ture(tid),
+
     deleted             int -- Field for marking a user as deleted
 );
 
