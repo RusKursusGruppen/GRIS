@@ -26,13 +26,12 @@ def script(f):
             db.cursor().executescript(f.read())
 
 def store(bucket, sql, *args):
-    columns = [c for c in bucket]
-    setstatm = ", ".join(["{0} = ?".format(c) for c in columns])
+    setstatm = ", ".join(["{0} = ?".format(c) for c in bucket])
     if sql.lower().find(" set ") == -1:
         sql = sql.replace("$", "SET $")
     sql = sql.replace("$", setstatm)
 
-    values = [bucket[c] for c in columns]
+    values = [bucket[c] for c in bucket]
     values.extend(args)
 
     with connect() as db:
