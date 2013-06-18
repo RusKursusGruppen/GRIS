@@ -2,7 +2,7 @@ import datetime, string, time
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-from lib import data, password, mail
+from lib import data, password, mail, html
 from lib.tools import logged_in, empty, now, url_front
 
 import config
@@ -27,6 +27,12 @@ def add_news():
         creator = session['username']
         created = now()
         title = request.form['title']
+
+        get_flashed_messages()
+        if title == "":
+            flash("Please enter a title")
+            return html.back()
+
         text = request.form['text']
         data.execute("INSERT INTO News(creator, created, title, text) VALUES(?,?,?,?)", creator, created, title, text)
         return redirect(url_front())
