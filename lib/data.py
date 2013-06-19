@@ -36,8 +36,8 @@ class Bucket(object):
         for d in unsafe:
             self.__unsafe__.update(d)
 
-        for k,v in kwargs:
-            self.k = v
+        for k,v in kwargs.iteritems():
+            object.__setattr__(self, k, v)
 
     def __getattribute__(self, item):
         """If there is an attribute 'item' in self, return it.
