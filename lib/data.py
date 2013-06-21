@@ -1,8 +1,9 @@
 #!/usr/bin/python2
 import sys
 import sqlite3
-import config
 import itertools
+
+import config
 
 def connect(dbf=None):
     dbf = dbf if dbf else config.DATABASE
@@ -57,12 +58,15 @@ class Bucket(object):
                 object.__setattr__(self, item, value)
                 return value
 
-        return object.__getattribute__(self, item)
-        # try:
-        #     pass
-        # except AttributeError:
-        #     print "fail"
-        #     return None
+        try:
+            return object.__getattribute__(self, item)
+        except AttributeError as e:
+            if config.DEBUG:
+                raise e
+            else:
+                if not item.startswith("_"):
+                    print "FAIL: ", item
+                return None
 
     def __getitem__(self, item):
         prevlock = self.__lock__
