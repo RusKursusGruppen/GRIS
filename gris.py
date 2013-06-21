@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import random
 
@@ -44,11 +45,11 @@ def random_greeting():
         , "Der er <i>n</i> dage til rusturen"
         , "git push -f"
         , "8"+("="*random.randint(1,17))+"D"
-        , (u"_-‾-"*random.randint(1,10))+"=:>"
+        , ("_-‾-"*random.randint(1,10))+"=:>"
         , ":(){ :|:& };:"
         , "public static void main(String[] args) {"
-        , u"Søren lavede denne side"
-        , u"Caro har også hjulpet"
+        , "Søren lavede denne side"
+        , "Caro har også hjulpet"
         , "Formanden er dum!"
         , "Er du bange for tyngdekraften?"
         , "git@github.com:RusKursusGruppen/GRIS.git"
@@ -60,9 +61,9 @@ def random_greeting():
         , "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
         , "Der er {0} russer i databasen".format(count)
         , "Emacs, den objektivt bedste editor"
-        , u"O(n²)"
-        , u"λf.(λx.f (x x)) (λx.f (x x))"
-        , u"Kodet med knytnæver!"
+        , "O(n²)"
+        , "λf.(λx.f (x x)) (λx.f (x x))"
+        , "Kodet med knytnæver!"
         , "3% kode, 79% slam"])
 
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import random, datetime, string, time
 
@@ -20,9 +19,12 @@ def login():
         username = request.form['username']
         raw_password = request.form['password']
         with data.data() as db:
-            cur = db.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', (username,))
-            v = cur.fetchone()
-            if empty(v) or not password.check(raw_password, v['password']):
+            v = data.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', username)
+            v = v[0]
+            print "QQQQQ"
+            print v[str('password')]
+            print "XXXXX"
+            if empty(v) or not password.check(raw_password, v[str('password')]):
                 flash('Invalid username or password')
             else:
                 session['logged_in'] = True
@@ -53,7 +55,7 @@ def update_password(username, raw_password):
 def logout():
     session.pop('logged_in', None)
     flash("Logout succesful")
-    return redirect(url_front())
+    return redirect(url_for('login'))
 
 @usermanager.route('/usermanager')
 @logged_in
@@ -89,10 +91,12 @@ def settings():
 
         return redirect(url_for('usermanager.overview'))
     else:
-        print "WTF??????????"
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
         user = user[0]
         user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
+
+        print "x"
+        print user["name"]
 
         w = html.WebBuilder()
         w.form()
@@ -103,7 +107,7 @@ def settings():
         w.textfield("city", "By")
         w.textfield("phone", "Telefonnummer")
         w.textfield("email", "Email")
-        w.textfield("birthday", "Fødselsdag")
+        w.textfield("birthday", u"Fødselsdag")
         w.checkbox("driverslicence", u"Har du kørekort?")
         w.textfield("diku_age", u"Hvornår startede du på DIKU?")
         w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 CSRF_ENABLED = True
 DATABASE = 'example.db'
 DEBUG = False

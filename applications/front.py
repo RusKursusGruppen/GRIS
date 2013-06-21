@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import datetime, string, time
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
@@ -37,4 +40,11 @@ def add_news():
         data.execute("INSERT INTO News(creator, created, title, text) VALUES(?,?,?,?)", creator, created, title, text)
         return redirect(url_front())
     else:
+        w = html.WebBuilder(db_query=False)
+        w.form()
+        w.formtable()
+        w.textfield("title", "Overskrift")
+        w.textarea("text", "Tekst")
+
+        form = w.create()
         return render_template('front/add_news.html')

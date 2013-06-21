@@ -1,4 +1,6 @@
 #!/usr/bin/python2
+# -*- coding: utf-8 -*-
+
 import sys
 import sqlite3
 import itertools
@@ -110,11 +112,6 @@ class Bucket(object):
         values = [self[c] for c in self]
         values.extend(args)
 
-        # print type(values[0])
-        # print sql
-        # print values
-        t = sql.replace("?", '"{0}"')
-        #print t.format(*values)
         with connect() as db:
             db.execute(sql, values)
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from jinja import Markup
 
 def calendar(id, d_Format = 'yyyyMMdd', selector = 'arrow', time = False, t_Format = 24, seconds = False, futurepast = ''):
@@ -13,15 +14,24 @@ def back():
 
 
 class WebBuilder(object):
-    def __init__(self):
+    def __init__(self, db_query=True):
         self.__data__ = []
+        self.db_query = db_query
 
     def __lshift__(self, args):
         sql = args[0]
         args = args[1:]
 
 
-    def create(self, kw):
+    def _newobj(self, obj):
+        obj.db_query = self.db_query
+        if not hasattr(obj, "modifier"):
+            obj.modifier = False
+        if not hasattr(obj, "description"):
+            obj.description = ""
+        self.__data__.append(obj)
+
+    def create(self, kv=None):
         data = self.__data__
         dbqs = [d.dbq for d in data if hasattr(d, "dbq")]
 
@@ -35,7 +45,11 @@ class WebBuilder(object):
                 continue
 
             if hasattr(w, "dbq"):
-                temp = w.compile(kw[w.dbq])
+                if kv == None:
+                    dbqv = ""
+                else :
+                    dbqv = kv[w.dbq]
+                temp = w.compile(dbqv)
             else:
                 temp = w.compile()
             result += reduce((lambda s, f: f.modify(w, s)), mstack, temp)
@@ -55,34 +69,26 @@ class WebBuilder(object):
         self.__data__.append("CLOSE")
 
     def form(self):
-        w = _Form()
-        self.__data__.append(w)
+        self._newobj(_Form())
 
     def formtable(self):
-        w = _FormTable()
-        self.__data__.append(w)
+        self._newobj(_FormTable())
 
     def waaah(self):
-        w = _Waaah()
-        self.__data__.append(w)
+        self._newobj(_Waaah())
 
     def textfield(self, dbq="", description="", **kwargs):
-        w = _Textfield(dbq, description, kwargs)
-        self.__data__.append(w)
+        self._newobj(_Textfield(dbq, description, kwargs))
 
     def textarea(self, dbq="", description="", **kwargs):
-        w = _Textarea(dbq, description, kwargs)
-        self.__data__.append(w)
+        self._newobj(_Textarea(dbq, description, kwargs))
 
     def checkbox(self, dbq="", description="", **kwargs):
-        w = _Checkbox(dbq, description, kwargs)
-        self.__data__.append(w)
+        self._newobj(_Checkbox(dbq, description, kwargs))
 
     #passwordfield
     #radio
-    def submit(self):
-        w = _Submit(self, description="")
-
+    #submit
 
 class _Webobject(object):
     def __init__(self, dbq, description, attributes):
@@ -102,7 +108,9 @@ class _Webobject(object):
 
     def _attributes_convert(self, dbqv):
         f = lambda x : x if x != "$" else dbqv
-        attributes = {"name":self.dbq, "value":dbqv}
+        attributes = {"name":self.dbq}
+        if self.db_query:
+            attributes["value"] = dbqv
         attributes.update(self.attributes)
         return attributes
 
@@ -124,21 +132,26 @@ class _Textfield(_Webobject):
 class _Textarea(_Webobject):
     def compile(self, dbqv):
         attributes = self._attributes_convert(dbqv)
-        value = attributes["value"]
-        del attributes["value"]
+
+        if "value" in attributes:
+            value = attributes["value"]
+            del attributes["value"]
 
         result = "<textarea "
         result += self._attributes_string(attributes)
         result += ">"
-        result += value
+        if "value" in attributes:
+            result += value
         result += "</textarea>"
         return result
 
 class _Checkbox(_Webobject):
     def compile(self, dbqv):
         attributes = self._attributes_convert(dbqv)
-        value = attributes["value"]
-        del attributes["value"]
+
+        if "value" in attributes:
+            value = attributes["value"]
+            del attributes["value"]
 
         result = "<input type=checkbox "
         if dbqv:
@@ -149,7 +162,6 @@ class _Checkbox(_Webobject):
 
 class _Form(_Webobject):
     def __init__(self):
-        self.description = ""
         self.modifier = True
     def compile(self):
         return "<form method=post>"
@@ -158,10 +170,8 @@ class _Form(_Webobject):
 
 class _FormTable(_Webobject):
     def __init__(self):
-        self.description = ""
         self.modifier = True
     def modify(self, w, html):
-        print w.description, html
         return "<tr>\n<td>{0}</td>\n<td>{1}</td>\n</tr>".format(w.description, html)
     def compile(self):
         return '<table class="formTable">'
@@ -178,7 +188,6 @@ class _FormTable(_Webobject):
 
 class _Waaah(_Webobject):
     def __init__(self):
-        self.description = ""
         self.modifier = True
     def modify(self, w, html):
         return "<WAAAAAAAAAAAAAAAHHHHHHH>{0}</waaah>".format(html)
@@ -187,31 +196,31 @@ class _Waaah(_Webobject):
     def close(self):
         return "waaahend"
 
-w = WebBuilder()
-w.form()
-w.formtable()
-w.textfield("name", "Fulde navn")
-w.textfield("address", "Adresse")
-w.textfield("zipcode", "Postnummer")
-w.textfield("city", "By")
-w.textfield("phone", "Telefonnummer")
-w.textfield("email", "Email")
-w.textfield("birthday", "Fødselsdag")
-w.checkbox("driverslicence", u"Har du kørekort?")
-w.textfield("diku_age", u"Hvornår startede du på DIKU?")
-w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
-w.textarea("about_me", "Lidt om mig")
-#w.submit()
-# w.concel()
+# w = WebBuilder()
+# w.form()
+# w.formtable()
+# w.textfield("name", "Fulde navn")
+# w.textfield("address", "Adresse")
+# w.textfield("zipcode", "Postnummer")
+# w.textfield("city", "By")
+# w.textfield("phone", "Telefonnummer")
+# w.textfield("email", "Email")
+# w.textfield("birthday", "Fødselsdag")
+# w.checkbox("driverslicence", u"Har du kørekort?")
+# w.textfield("diku_age", u"Hvornår startede du på DIKU?")
+# w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
+# w.textarea("about_me", "Lidt om mig")
+# #w.submit()
+# # w.concel()
 
-print w.create({"name":"mig",
-                "address":"vej",
-                "zipcode":"1234",
-                "city":"bybybyby",
-                "phone":"12345678",
-                "email":"abc@def.ghi",
-                "birthday":"1.2.3",
-                "driverslicence":1,
-                "diku_age":"x",
-                "earlier_tours":"a b c",
-                "about_me":"Jeg er sej"})
+# print w.create({"name":"mig",
+#                 "address":"vej",
+#                 "zipcode":"1234",
+#                 "city":"bybybyby",
+#                 "phone":"12345678",
+#                 "email":"abc@def.ghi",
+#                 "birthday":"1.2.3",
+#                 "driverslicence":1,
+#                 "diku_age":"x",
+#                 "earlier_tours":"a b c",
+#                 "about_me":"Jeg er sej"})
