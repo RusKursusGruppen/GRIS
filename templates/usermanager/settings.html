@@ -1,57 +1,5 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form method=post>
-  <table class="formTable">
-    <tr>
-      <td>Fulde navn</td>
-      <td><input type="text" name="name" value="{{user["name"]}}"></td>
-    </tr>
-    <tr>
-      <td>Adresse</td>
-      <td><input type="text" name="address" value="{{user["address"]}}"></td>
-    </tr>
-    <tr>
-      <td>Postnummer</td>
-      <td><input type="text" name="zipcode" value="{{user["zipcode"]}}"></td>
-    </tr>
-    <tr>
-      <td>By</td>
-      <td><input type="text" name="city" value="{{user["city"]}}"></td>
-    </tr>
-    <tr>
-      <td>Telefonnummer</td>
-      <td><input type="text" name="phone" value="{{user["phone"]}}"></td>
-    </tr>
-    <tr>
-      <td>Email</td>
-      <td><input type="text" name="email" value="{{user["email"]}}"></td>
-    </tr>
-    <tr>
-      <td>Fødselsdag</td>
-      <td><input type="text" name="birthday" value="{{user["birthday"]}}"></td>
-    </tr>
-    <tr>
-      <td>Har du kørekort?</td>
-      <td><input type="checkbox" name="driverslicence" {% if user['driverslicence'] == 1 %}checked{% endif %}></td>
-    </tr>
-    <tr>
-      <td>Hvornår startede du på DIKU?</td>
-      <td><input type="text" name="diku_age" value="{{user["diku_age"]}}"></td>
-    </tr>
-    <tr>
-      <td>Tidligere rusture (brug ; mellem de forskellige turnavne)</td>
-      <td><input type="text" name="earlier_tours" value="{{user["earlier_tours"]}}"></td>
-    </tr>
-    <tr>
-      <td>Lidt om mig</td>
-      <td><textarea name="about_me">{{user["about_me"]}}</textarea></td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <button type="submit">Opret</button>
-        <button type="submit" name="cancel" value="cancel">Annuller</button></td>
-    </tr>
-  </table>
-</form>
+{{form|safe}}
 {% endblock %}

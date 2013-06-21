@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import random, datetime, string, time
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-from lib import data, password, mail
+from lib import data, password, mail, html
 from lib.tools import logged_in, empty, url_front
 
 import config
@@ -88,10 +89,28 @@ def settings():
 
         return redirect(url_for('usermanager.overview'))
     else:
+        print "WTF??????????"
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
         user = user[0]
         user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
-        return render_template("usermanager/settings.html", user=user)
+
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.textfield("name", "Fulde navn")
+        w.textfield("address", "Adresse")
+        w.textfield("zipcode", "Postnummer")
+        w.textfield("city", "By")
+        w.textfield("phone", "Telefonnummer")
+        w.textfield("email", "Email")
+        w.textfield("birthday", "Fødselsdag")
+        w.checkbox("driverslicence", u"Har du kørekort?")
+        w.textfield("diku_age", u"Hvornår startede du på DIKU?")
+        w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
+        w.textarea("about_me", "Lidt om mig")
+
+        form = w.create(user)
+        return render_template("usermanager/settings.html", form=form)
 
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
 @logged_in
