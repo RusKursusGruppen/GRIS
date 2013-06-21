@@ -40,7 +40,7 @@ def add_news():
         data.execute("INSERT INTO News(creator, created, title, text) VALUES(?,?,?,?)", creator, created, title, text)
         return redirect(url_front())
     else:
-        w = html.WebBuilder(db_query=False)
+        w = html.WebBuilder()
         w.form()
         w.formtable()
         w.textfield("title", "Overskrift")

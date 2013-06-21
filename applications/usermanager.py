@@ -21,9 +21,6 @@ def login():
         with data.data() as db:
             v = data.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', username)
             v = v[0]
-            print "QQQQQ"
-            print v[str('password')]
-            print "XXXXX"
             if empty(v) or not password.check(raw_password, v[str('password')]):
                 flash('Invalid username or password')
             else:
@@ -94,9 +91,6 @@ def settings():
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
         user = user[0]
         user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
-
-        print "x"
-        print user["name"]
 
         w = html.WebBuilder()
         w.form()

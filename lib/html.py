@@ -14,9 +14,8 @@ def back():
 
 
 class WebBuilder(object):
-    def __init__(self, db_query=True):
+    def __init__(self):
         self.__data__ = []
-        self.db_query = db_query
 
     def __lshift__(self, args):
         sql = args[0]
@@ -24,7 +23,6 @@ class WebBuilder(object):
 
 
     def _newobj(self, obj):
-        obj.db_query = self.db_query
         if not hasattr(obj, "modifier"):
             obj.modifier = False
         if not hasattr(obj, "description"):
@@ -44,9 +42,10 @@ class WebBuilder(object):
                 result += m.close()
                 continue
 
+
             if hasattr(w, "dbq"):
                 if kv == None:
-                    dbqv = ""
+                    dbqv = None
                 else :
                     dbqv = kv[w.dbq]
                 temp = w.compile(dbqv)
@@ -109,21 +108,20 @@ class _Webobject(object):
     def _attributes_convert(self, dbqv):
         f = lambda x : x if x != "$" else dbqv
         attributes = {"name":self.dbq}
-        if self.db_query:
+        if dbqv != None:
             attributes["value"] = dbqv
         attributes.update(self.attributes)
         return attributes
 
     def _attributes_string(self, attributes=None):
         if type(attributes) != dict:
-            attributes = self._attributes_convert(attributes)
+            dbqv = attributes
+            attributes = self._attributes_convert(dbqv)
         string = ' '.join('{0}="{1}"'.format(k,v) for k,v in attributes.iteritems())
         return string
 
 class _Textfield(_Webobject):
     def compile(self, dbqv):
-
-
         result = "<input type=text "
         result += self._attributes_string(dbqv)
         result += ">"
@@ -133,14 +131,12 @@ class _Textarea(_Webobject):
     def compile(self, dbqv):
         attributes = self._attributes_convert(dbqv)
 
-        if "value" in attributes:
-            value = attributes["value"]
-            del attributes["value"]
+        value = attributes.pop("value", None)
 
         result = "<textarea "
         result += self._attributes_string(attributes)
         result += ">"
-        if "value" in attributes:
+        if "value" != None:
             result += value
         result += "</textarea>"
         return result
@@ -149,9 +145,7 @@ class _Checkbox(_Webobject):
     def compile(self, dbqv):
         attributes = self._attributes_convert(dbqv)
 
-        if "value" in attributes:
-            value = attributes["value"]
-            del attributes["value"]
+        value = attributes.pop("value", None)
 
         result = "<input type=checkbox "
         if dbqv:
