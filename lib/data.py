@@ -34,7 +34,10 @@ class Bucket(object):
 
         self.__unsafe__ = {}
         for d in unsafe:
-            self.__unsafe__.update(d)
+            # You cant use self.__unsafe__.update(d) here as the request.form
+            # for some reason wyll pack its values in lists
+            for k,v in d.iteritems():
+                self.__unsafe__[k] = v
 
         for k,v in kwargs.iteritems():
             object.__setattr__(self, k, v)
@@ -55,6 +58,11 @@ class Bucket(object):
                 return value
 
         return object.__getattribute__(self, item)
+        # try:
+        #     pass
+        # except AttributeError:
+        #     print "fail"
+        #     return None
 
     def __getitem__(self, item):
         prevlock = self.__lock__
@@ -98,6 +106,11 @@ class Bucket(object):
         values = [self[c] for c in self]
         values.extend(args)
 
+        # print type(values[0])
+        # print sql
+        # print values
+        t = sql.replace("?", '"{0}"')
+        #print t.format(*values)
         with connect() as db:
             db.execute(sql, values)
 

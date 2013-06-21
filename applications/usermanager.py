@@ -80,10 +80,10 @@ def settings():
         b.phone
         b.email
         b.birthday
-        b.driverslicence
+        b.driverslicence = 1 if "driverslicence" in request.form else 0
         b.diku_age
         b.earlier_tours
-        b.about_me
+        b.about_me# = request.form["about_me"]
         b >> ("UPDATE Users $ WHERE username = ?", username)
 
         return redirect(url_for('usermanager.overview'))
