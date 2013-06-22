@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 from jinja import Markup
 
@@ -166,7 +165,7 @@ class _FormTable(_Webobject):
     def __init__(self):
         self.modifier = True
     def modify(self, w, html):
-        return "<tr>\n<td>{0}</td>\n<td>{1}</td>\n</tr>".format(w.description, html)
+        return u"<tr>\n<td>{0}</td>\n<td>{1}</td>\n</tr>".format(w.description, html)
     def compile(self):
         return '<table class="formTable">'
     def close(self):

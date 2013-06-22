@@ -5,45 +5,8 @@
 {% endblock %}
 
 {% block body %}
-<h2>{{rus['navn']}}</h2>
+<h2>{{name}}</h2>
 <div class=rusdata>
-  <form action="{{url_for('rusmanager.rus', rid=rus['rid'])}}" method=post>
-    <p>
-      <input type=submit value="gem">
-      <input type=submit name="anuller" value="cancel">
-      <br/><br/>
-    </p>
-    <br/>
-    <dl>
-      <dt>opringet:</dt>
-      <dd><input type=checkbox name=called {% if rus['called'] == 1 %}checked{% endif %}></dd>
-
-      {% for field in textfields %}
-      <dt>{{field}}:</dt>
-      <dd><input type=text name="{{field}}" value="{{rus[field]}}"></dd>
-      {% endfor %}
-
-      <dt><strike>kender</strike>:</dt>
-      <dd><input type=text name=Friends></dd>
-
-      <dt>deltager_unidag:</dt>
-      <dd><input type=checkbox name=uniday {% if rus['uniday'] == 1 %}checked{% endif %}></dd>
-
-      <dt>deltager_campus:</dt>
-      <dd><input type=checkbox name=campus {% if rus['campus'] == 1 %}checked{% endif %}></dd>
-
-      <dt>deltager_hytte:</dt>
-      <dd><input type=checkbox name=tour {% if rus['tour'] == 1 %}checked{% endif %}></dd>
-
-      <dt><strike>rustur</strike>:</dt>
-      <dd><input type=text name=rustour value="{{rus['rustour']}}"></dd>
-
-      <dt><strike>tjansehold</strike>:</dt>
-      <dd><input type=text name=dutyteam value="{{rus['dutyteam']}}"></dd>
-
-      <dt>foedselsdato:</dt>
-      <dd><input type="date" name="birthday" value="{{rus['birthday']}}"></dd>
-    </dl>
-  </form>
+{{form|safe}}
 </div>
 {% endblock %}

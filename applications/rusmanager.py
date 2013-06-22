@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import random, datetime
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-from lib import data, password
+from lib import data, password, html
 from lib.tools import logged_in
 
 textfields = [ 'name',
@@ -44,50 +43,83 @@ def overview():
 @rusmanager.route('/rusmanager/<rid>', methods=['GET', 'POST'])
 @logged_in
 def rus(rid):
-    #form = RusForm(request.form)
-    if request.method == "POST":# and form.validate():
-        checkboxes = [
-            'called',
-            'uniday',
-            'campus',
-            'tour',
-        ]
-        'rustour'
-        'dutyteam'
-
+    if request.method == "POST":
         if 'cancel' in request.form:
             flash(escape(u"Ændringer anulleret"))
             return redirect(url_for('rusmanager.overview'))
 
-        print(request.form)
-        with data.data() as db:
-            for field in textfields:
-                #SQL injection safe:
-                sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
-                cur = db.execute(sql, (request.form[field], rid))
-
-            for field in checkboxes:
-                #SQL injection safe:
-                val = 1 if field in request.form else 0
-                sql = "UPDATE Russer SET {0} = ? WHERE rid == ?;".format(field)
-                cur = db.execute(sql, (val, rid))
-
-            sql = "UPDATE Russer SET birthday = ? WHERE rid == ?;"
-            cur = db.execute(sql, (request.form['birthday'], rid))
-
+        b = data.Bucket(request.form)
+        b.filled_by = session["username"]
+        b.called = 1 if "called" in request.form else 0
+        b.name
+        b.co
+        b.address
+        b.zipcode
+        b.city
+        b.move_time
+        b.new_address
+        b.new_zipcode
+        b.new_city
+        b.phone
+        b.email
+        b.vacation
+        b.priority
+        b.gymnasium
+        b.since_gymnasium
+        b.code_experience
+        b.special_needs
+        b.plays_instrument
+        b.other
+        b.uniday = 1 if "uniday" in request.form else 0
+        b.campus = 1 if "campus" in request.form else 0
+        b.tour = 1 if "tour" in request.form else 0
+        b.rustour
+        b.dutyteam
+        b.birthday
+        b >> ("UPDATE Russer SET $ WHERE rid = ?", rid)
 
         flash("Rus opdateret")
         return redirect(url_for('rusmanager.overview'))
     else:
-        with data.data() as db:
-            cur = db.execute("SELECT * FROM Russer WHERE rid == ?", (rid,))
-            rus = cur.fetchone()
+        rus = data.execute("SELECT * FROM Russer WHERE rid == ?", rid)
+        if len(rus) == 0:
+            return "Den rus findes ikke din spasser!"
+        else:
+            rus = rus[0]
 
-            if not rus:
-                return "Den rus findes ikke din spasser!"
+        wb = html.WebBuilder()
+        wb.form()
+        wb.formtable()
+        wb.checkbox("called", "Opringet")
+        wb.textfield("name", "Navn")
+        wb.textfield("co", "co")
+        wb.textfield("address", "Adresse")
+        wb.textfield("zipcode", "Postnummer")
+        wb.textfield("city", "By")
+        wb.textfield("move_time", "Flyttedato")
+        wb.textfield("new_address", "Ny adresse")
+        wb.textfield("new_zipcode", "Nyt postnummer")
+        wb.textfield("new_city", "Ny by")
+        wb.textfield("phone", "Tlf")
+        wb.textfield("email", "email")
+        wb.textfield("vacation", "Ferie")
+        wb.textfield("priority", "DIKU prioritet")
+        wb.textfield("gymnasium", "Gymnasium")
+        wb.textfield("since_gymnasium", u"Lavet efterfølgende")
+        wb.textfield("code_experience", "Kode erfaring")
+        wb.textfield("special_needs", "Specielle behov")
+        wb.textfield("plays_instrument", "Spiller instrument")
+        wb.textfield("other", "Andet")
+        #wb.textfield("Friends", "Kender")
+        wb.checkbox("uniday", "Deltager unidag")
+        wb.checkbox("campus", "Deltager campus")
+        wb.checkbox("tour", "Deltager rustur")
+        wb.textfield("rustour", u"Skal på turen")
+        wb.textfield("dutyteam", "Tjansehold")
+        wb.textfield("birthday", u"Fødselsdag")
+        form = wb.create(rus)
 
-            rus = {k:v if v != None else "" for k,v in zip(rus.keys(), rus)}
-            return render_template("rusmanager/rus.html", rus=rus)
+        return render_template("rusmanager/rus.html", form=form, name=rus['name'])
 
 @rusmanager.route('/rusmanager/new', methods=['GET', 'POST'])
 @logged_in
