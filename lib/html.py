@@ -46,6 +46,7 @@ class WebBuilder(object):
                 if kv == None:
                     dbqv = None
                 else :
+                    print w.dbq
                     dbqv = kv[w.dbq]
                 temp = w.compile(dbqv)
             else:
@@ -135,7 +136,7 @@ class _Textarea(_Webobject):
         result = "<textarea "
         result += self._attributes_string(attributes)
         result += ">"
-        if "value" != None:
+        if value != None:
             result += value
         result += "</textarea>"
         return result

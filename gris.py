@@ -14,6 +14,7 @@ from applications.usermanager import usermanager
 from applications.rusmanager import textfields
 from applications.front import front
 from applications.admin import admin
+from applications.bookkeeper import bookkeeper
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -22,6 +23,7 @@ app.register_blueprint(schedule)
 app.register_blueprint(rusmanager)
 app.register_blueprint(usermanager)
 app.register_blueprint(admin)
+app.register_blueprint(bookkeeper)
 
 ### ERROR HANDLER ###
 @app.errorhandler(401)
@@ -32,7 +34,7 @@ def error(code):
 
 def random_greeting():
     with data.data() as db:
-        cur = db.execute("SELECT COUNT(rid) FROM Russer")
+        cur = db.execute("SELECT COUNT(r_id) FROM Russer")
         count = cur.fetchone()[0]
 
     return random.choice(

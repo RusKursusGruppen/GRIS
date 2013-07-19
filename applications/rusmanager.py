@@ -34,15 +34,15 @@ rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/r
 def overview():
     #TODO: use "with data.data() as db:"
     db = data.data()
-    cur = db.execute("select rid, name from Russer")
+    cur = db.execute("select r_id, name from Russer")
     russer = cur.fetchall()
     db.close()
-    # russer = [{'name':"A", 'rid':-1},{'name':"B", 'rid':-2}]
+    # russer = [{'name':"A", 'r_id':-1},{'name':"B", 'r_id':-2}]
     return render_template("rusmanager/overview.html", russer=russer)
 
-@rusmanager.route('/rusmanager/<rid>', methods=['GET', 'POST'])
+@rusmanager.route('/rusmanager/<r_id>', methods=['GET', 'POST'])
 @logged_in
-def rus(rid):
+def rus(r_id):
     if request.method == "POST":
         if 'cancel' in request.form:
             flash(escape(u"Ændringer anulleret"))
@@ -70,18 +70,20 @@ def rus(rid):
         b.special_needs
         b.plays_instrument
         b.other
+        b.tshirt
+        b.paid
         b.uniday = 1 if "uniday" in request.form else 0
         b.campus = 1 if "campus" in request.form else 0
         b.tour = 1 if "tour" in request.form else 0
         b.rustour
         b.dutyteam
         b.birthday
-        b >> ("UPDATE Russer SET $ WHERE rid = ?", rid)
+        b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
 
         flash("Rus opdateret")
         return redirect(url_for('rusmanager.overview'))
     else:
-        rus = data.execute("SELECT * FROM Russer WHERE rid == ?", rid)
+        rus = data.execute("SELECT * FROM Russer WHERE r_id == ?", r_id)
         if len(rus) == 0:
             return "Den rus findes ikke din spasser!"
         else:
@@ -117,6 +119,9 @@ def rus(rid):
         wb.textfield("rustour", u"Skal på turen")
         wb.textfield("dutyteam", "Tjansehold")
         wb.textfield("birthday", u"Fødselsdag")
+
+        wb.textfield("tshirt", u"Tshirt størrelse")
+        wb.checkbox("paid", "Betalt")
         form = wb.create(rus)
 
         return render_template("rusmanager/rus.html", form=form, name=rus['name'])
@@ -135,6 +140,6 @@ def new():
             cur = cur.execute("INSERT INTO Russer(name, called) VALUES(?,?)", (name,0))
             rus = cur.fetchone()
             flash("Rus oprettet")
-            return redirect(url_for('rusmanager.rus', rid=str(cur.lastrowid)))
+            return redirect(url_for('rusmanager.rus', r_id=str(cur.lastrowid)))
     else:
         return render_template("rusmanager/new.html")
