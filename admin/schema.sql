@@ -156,11 +156,11 @@ CREATE TABLE Books(
 DROP TABLE IF EXISTS Entries;
 CREATE TABLE Entries(
     e_id                integer PRIMARY KEY AUTOINCREMENT,
-    b_id                REFERENCES Books(b_id),
+    b_id                REFERENCES Books(b_id) NOT NULL,
     created             string,
     creditor            REFERENCES Users(username),
-    description         string
-    price               integer
+    description         string,
+    amount              integer
 );
 
 

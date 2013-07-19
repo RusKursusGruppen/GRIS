@@ -1,37 +1,39 @@
 {% extends "layout.html" %}
 
 {% block submenu %}
-  <a href="{{url_for('bookkeeper.new_book')}}">Nyt regnskab</a>
+    <a href="{{url_for('bookkeeper.new_book')}}">Nyt regnskab</a>
 {% endblock %}
 
 {% block body %}
 
-hej
+<!-- hej -->
 
-<link rel="stylesheet" href="static/jquery-ui-1.10.3.custom.min.css" />
-<script src="static/js/jquery-1.9.1.js"></script>
-<script src="static/js/jquery-ui-1.10.3.custom.min.js"></script>
+<!-- <link rel="stylesheet" href="static/jquery-ui-1.10.3.custom.min.css" /> -->
+<!-- <script src="static/js/jquery-1.9.1.js"></script> -->
+<!-- <script src="static/js/jquery-ui-1.10.3.custom.min.js"></script> -->
 
-<script>
-  $(function() {
-    var availableTags = [
-      "NB",
-      "Caro",
-      "Pilen",
-      "Vidir"
-    ];
-    $( "#tags" ).autocomplete({
-      source: availableTags
-    })
-  })
-</script>
-<div class="ui-widget">
-  <label for="tags">People: </label>
-  <input id="tags" />
-</div>
+<!-- <script> -->
+<!--   $(function() { -->
+<!--     var availableTags = [ -->
+<!--       "NB", -->
+<!--       "Caro", -->
+<!--       "Pilen", -->
+<!--       "Vidir" -->
+<!--     ]; -->
+<!--     $( "#tags" ).autocomplete({ -->
+<!--       source: availableTags -->
+<!--     }) -->
+<!--   }) -->
+<!-- </script> -->
+<!-- <div class="ui-widget"> -->
+<!--   <label for="tags">People: </label> -->
+<!--   <input id="tags" /> -->
+<!-- </div> -->
 
 
 {% for book in books %}
-<a href="{{url_for('bookkeeper.book', b_id=book['b_id'])}}">{{book['title']}}</a>
+<p>
+  <a href="{{url_for('bookkeeper.book', b_id=book['b_id'])}}">{{book['title']}}</a>
+</p>
 {% endfor %}
 {% endblock %}
