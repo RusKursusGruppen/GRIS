@@ -4,7 +4,7 @@
 --- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer;
 CREATE TABLE Russer(
-    rid                 integer PRIMARY KEY AUTOINCREMENT,
+    r_id                integer PRIMARY KEY AUTOINCREMENT,
 
     name                string NOT NULL,
     filled_by           string,
@@ -34,33 +34,35 @@ CREATE TABLE Russer(
     special_needs       string,
     plays_instrument    string,
     other               string,
+    tshirt              string,
+    paid                integer NOT NULL default 0,
 
     uniday              integer,
     campus              integer,
     tour                integer,
 
-    rustour             REFERENCES Ture(tid),
-    dutyteam            REFERENCES Tjansehold(tj_id)
+    rustour             REFERENCES Tours(t_id),
+    dutyteam            REFERENCES Dutyteams(tj_id)
 );
 
 
 -- It must hold that uid1 < uid2
 DROP TABLE IF EXISTS Friends;
 CREATE TABLE Friends(
-    rid1                REFERENCES Russer(rid),
-    rid2                REFERENCES Russer(rid)
+    r_id1               REFERENCES Russer(r_id),
+    r_id2               REFERENCES Russer(r_id)
 );
 
 DROP TABLE IF EXISTS Tours;
 CREATE TABLE Tours(
-    tid                 integer PRIMARY KEY AUTOINCREMENT,
+    t_id                integer PRIMARY KEY AUTOINCREMENT,
     tour_name           string
 );
 
 DROP TABLE IF EXISTS Dutyteams;
 CREATE TABLE Dutyteams(
-    tjid                integer PRIMARY KEY AUTOINCREMENT,
-    tid                 REFERENCES Ture(tid),
+    tj_id               integer PRIMARY KEY AUTOINCREMENT,
+    t_id                REFERENCES Tours(t_id),
     name                string
 
 );
@@ -88,9 +90,9 @@ CREATE TABLE Users(
 
     diku_age            string,
     earlier_tours       string, --sepererat med semicolaer (pepsi)
-    about_me            string     
+    about_me            string
 
-    rustour             REFERENCES Ture(tid),
+    rustour             REFERENCES Tours(t_id),
 
     deleted             int -- Field for marking a user as deleted
 );
@@ -137,4 +139,34 @@ CREATE TABLE Schedule_answers(
     user                REFERENCES Users(username),
     c_id                REFERENCES Schedule_cols(c_id),
     answer              int
+);
+
+
+
+--- BOOKKEEPER ---
+DROP TABLE IF EXISTS Books;
+CREATE TABLE Books(
+    b_id                integer PRIMARY KEY AUTOINCREMENT,
+    creator             REFERENCES Users(username),
+    created             string,
+    title               string,
+    description         string
+);
+
+DROP TABLE IF EXISTS Entries;
+CREATE TABLE Entries(
+    e_id                integer PRIMARY KEY AUTOINCREMENT,
+    b_id                REFERENCES Books(b_id),
+    created             string,
+    creditor            REFERENCES Users(username),
+    description         string
+    price               integer
+);
+
+
+DROP TABLE IF EXISTS Debts;
+CREATE TABLE Debts(
+    e_id                REFERENCES Entries(e_id),
+    debtor              REFERENCES Users(username),
+    share               integer
 );
