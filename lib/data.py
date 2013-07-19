@@ -115,6 +115,24 @@ class Bucket(object):
         with connect() as db:
             db.execute(sql, values)
 
+    def __ge__(self, dest):
+        """Create entry in database"""
+        sql = "INSERT INTO {0}(".format(dest)
+        keys = [c for c in self]
+        questions = ["?"] * len(keys)
+        values = [self[c] for c in self]
+        print keys
+        print values
+
+        sql += ",".join(keys)
+        sql += ") VALUES ("
+        sql += ",".join(questions)
+        sql += ")"
+
+        with connect() as db:
+            db.execute(sql, values)
+
+
 if __name__ == "__mainn__":
     if len(sys.argv) < 3:
         print ("Usage: python data.py DATABASE SCRIPT")
