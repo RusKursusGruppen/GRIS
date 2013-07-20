@@ -46,4 +46,4 @@ def add_news():
         w.textarea("text", "Tekst")
 
         form = w.create()
-        return render_template('front/add_news.html')
+        return render_template('front/add_news.html', form=form)

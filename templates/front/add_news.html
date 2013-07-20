@@ -1,21 +1,5 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form method=post>
-  <table class="formTable">
-    <tr>
-      <td>Overskrift</td>
-      <td><input type="text" name="title"/></td>
-    </tr>
-    <tr>
-      <td>Tekst</td>
-      <td><textarea name="text"></textarea></td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <button type="submit">Opret</button>
-        <button type="submit" name="cancel" value="cancel">Annuller</button></td>
-    </tr>
-  </table>
-</form>
+{{form|safe}}
 {% endblock %}

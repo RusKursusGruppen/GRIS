@@ -32,7 +32,7 @@ rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/r
 @rusmanager.route('/rusmanager')
 @logged_in
 def overview():
-    #TODO: use "with data.data() as db:"
+    # TODO: use "with data.data() as db:"
     db = data.data()
     cur = db.execute("select r_id, name from Russer")
     russer = cur.fetchall()
@@ -142,4 +142,9 @@ def new():
             flash("Rus oprettet")
             return redirect(url_for('rusmanager.rus', r_id=str(cur.lastrowid)))
     else:
-        return render_template("rusmanager/new.html")
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.textfield("name", "Navn")
+        form = w.create()
+        return render_template("rusmanager/new.html", form=form)

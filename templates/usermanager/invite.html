@@ -1,17 +1,5 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form method=post>
-  <table class="formTable">
-    <tr>
-      <td>Email:</td>
-      <td><input type=email name="email"/></td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <button type="submit">Opret</button>
-        <button type="submit" name="cancel" value="cancel">Annuller</button></td>
-    </tr>
-  </table>
-</form>
+{{form|safe}}
 {% endblock %}

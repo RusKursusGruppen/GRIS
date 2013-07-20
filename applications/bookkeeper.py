@@ -52,17 +52,25 @@ def modify_book(b_id):
         b.description
         b >> ("UPDATE Books $ WHERE b_id = ?", b_id)
 
-        print request.form['abcs']
-        return redirect(url_for("bookkeeper.overview"))
+        string = request.form['users']
+        string = string.replace('"', '')
+        usernames = [name.split()[0] for name in re.split(';\s', string)]
+        usernames = sorted(set(usernames))
+        # TODO: ensure no one with debts/outstandings is removed
+
+        print (request.form['scba'])
+        return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
         book = data.execute("SELECT * FROM Books where b_id = ?", b_id)[0]
+        raw_users =  data.execute("SELECT username, name FROM Users")
+        users = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in raw_users]
 
         w = html.WebBuilder()
         w.form()
         w.formtable()
         w.textfield("title", "Overskrift")
         w.textarea("description", "beskrivelse")
-        w.html(html.autocomplete(["NB", "Caro", "Pilen", "Vidir"], "abcs"))
+        w.html(html.autocomplete_multiple(users, "users"), description="Deltagere")
         form = w.create(book)
         return render_template("bookkeeper/modify_book.html", form=form)
 

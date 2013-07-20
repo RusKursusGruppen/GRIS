@@ -38,8 +38,70 @@ $(function() {
 """
     return javascript % (text, key, key, name)
 
-def autocomplete_multiple(items, seperator="; "):
-    pass
+def autocomplete_multiple(items, name,  seperator=";"):
+    key = _semiunique_key()
+    print key
+    items = (u'"{0}"'.format(i) for i in items)
+    text = ",\n    ".join(items)
+    javascript = """
+<link rel="stylesheet" href="/static/jquery-ui-1.10.3.custom.min.css" />
+<script src="/static/js/jquery-1.9.1.js"></script>
+<script src="/static/js/jquery-ui-1.10.3.custom.min.js"></script>
+
+<script>
+  $(function() {
+    var availableTags = [
+    %s
+    ];
+    function split( val ) {
+      return val.split( /%s\s*/ );
+    }
+    function extractLast( term ) {
+      return split( term ).pop();
+    }
+
+    $( "#%s" )
+      // don't navigate away from the field on tab when selecting an item
+      .bind( "keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).data( "ui-autocomplete" ).menu.active ) {
+          event.preventDefault();
+        }
+      })
+      .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          // delegate back to autocomplete, but extract the last term
+          response( $.ui.autocomplete.filter(
+            availableTags, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          // prevent value inserted on focus
+          return false;
+        },
+        select: function( event, ui ) {
+          var terms = split( this.value );
+          // remove the current input
+          terms.pop();
+          // add the selected item
+          terms.push( ui.item.value );
+          // add placeholder to get the comma-and-space at the end
+          terms.push( "" );
+          this.value = terms.join( "%s " );
+          return false;
+        }
+      });
+  });
+  </script>
+</head>
+<body>
+
+<div class="ui-widget">
+  <input id="%s" name="%s" size="50" />
+</div>
+"""
+    return javascript % (text, seperator, key, seperator, key, name)
+
 def calendar(id, d_Format = 'yyyyMMdd', selector = 'arrow', time = False, t_Format = 24, seconds = False, futurepast = ''):
     html = '<img src="/static/images/cal.gif" onclick="javascript:NewCssCal(\'{0}\',\'{1}\',\'{2}\',{3},{4},{5},\'{6}\')" class="calendar" />'.format(
         id, d_Format, selector, str(time).lower(), str(t_Format), str(seconds).lower(), futurepast)
@@ -123,8 +185,8 @@ class WebBuilder(object):
     def checkbox(self, dbq="", description="", **kwargs):
         self._newobj(_Checkbox(dbq, description, kwargs))
 
-    def html(self,code):
-        self._newobj(_Html(code))
+    def html(self, code, description="", **kwargs):
+        self._newobj(_Html(code, description, kwargs))
 
     #passwordfield
     #radio
@@ -196,8 +258,10 @@ class _Checkbox(_Webobject):
         return result
 
 class _Html(_Webobject):
-    def __init__(self, code):
+    def __init__(self, code, description, attributes):
         self.code = code
+        self.description = description
+        self.attributes = attributes
     def compile(self):
         return self.code
 

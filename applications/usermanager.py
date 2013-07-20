@@ -5,7 +5,7 @@ import random, datetime, string, time
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front
+from lib.tools import logged_in, empty, url_front, now
 
 import config
 
@@ -26,7 +26,7 @@ def login():
             else:
                 session['logged_in'] = True
                 session['username']  = username
-                session['admin']     = v['admin'] == 1
+                session['admin']     = (v['admin'] == 1)
                 session['rkg']       = v['rkg']
                 session['tutor']     = v['tutor']
                 session['mentor']    = v['mentor']
@@ -134,13 +134,22 @@ def generate_key():
 
 def sanitize_username(username):
     #check that no such user already exists
-    return ";" not in username
+    illegal_characters = [';', '"',' ']
+    return not any(illegal in username for illegal in illegal_characters)
 @usermanager.route('/usermanager/new/<key>', methods=['GET', 'POST'])
 def new(key):
+    time.sleep(random.randint(2,6))
     #time.sleep(3)
 
-    result = data.execute("select key from User_creation_keys where key = ?", key)
+    # TODO: weed out old creation keys
+    overtime = str(datetime.datetime.now() - datetime.timedelta(days=30))
+    data.execute("DELETE FROM User_creation_keys WHERE created <= ?", overtime)
+
+    # EXPLANATION: Check if key exists/is valid
+    result = data.execute("SELECT key FROM User_creation_keys WHERE key = ?", key)
     if empty(result):
+        time.sleep(random.randint(5,21))
+        # TODO: Send to errorpage?
         return redirect(url_front())
 
     if request.method == "POST":
@@ -158,9 +167,8 @@ def new(key):
         create_user(username, raw_password, name, admin)
         flash("Ny bruger oprettet")
 
-        return redirect(url_for('usermanager.settings'))
+        return redirect(url_for('usermanager.login'))
     else:
-        data.execute("SELECT * FROM User_creation_keys")
         return render_template("usermanager/new.html", key=key)
 
 @usermanager.route('/usermanager/invite', methods=['GET', 'POST'])
@@ -169,7 +177,8 @@ def invite():
         if 'cancel' in request.form:
             return redirect(url_front())
         key = generate_key()
-        data.execute("INSERT INTO User_creation_keys VALUES (?)", key)
+        data.execute("INSERT INTO User_creation_keys(key, created) VALUES (?, ?)", key, now())
+        print key
 
         email_address = request.form['email']
         text = invite_mail.format(key)
@@ -178,7 +187,14 @@ def invite():
         flash("Invitation sendt")
 
         return redirect(url_front())
-    return render_template("usermanager/invite.html")
+
+    else:
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.textfield("email", "Email")
+        form = w.create()
+        return render_template("usermanager/invite.html", form=form)
 
 invite_mail = u"""
 Hej du er blevet inviteret til GRIS.

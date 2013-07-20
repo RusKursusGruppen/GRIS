@@ -1,15 +1,5 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form action="{{url_for('rusmanager.new')}}" method=post>
-  <p>
-    <input type=submit value="save">
-    <input type=submit name="cancel" value="cancel">
-    <br/><br/>
-  </p>
-  <dl>
-    <dt>navn:</dt>
-    <dd><input type=text name=name></dd>
-  </dl>
-</form>
+{{form|safe}}
 {% endblock %}

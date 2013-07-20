@@ -37,8 +37,9 @@ class Bucket(object):
 
         self.__unsafe__ = {}
         for d in unsafe:
+            # EXPLANATION:
             # You cant use self.__unsafe__.update(d) here as the request.form
-            # for some reason wyll pack its values in lists
+            # for some reason will pack its values in lists
             for k,v in d.iteritems():
                 self.__unsafe__[k] = v
 

@@ -99,7 +99,8 @@ CREATE TABLE Users(
 
 DROP TABLE IF EXISTS User_creation_keys;
 CREATE TABLE User_creation_keys(
-       key              string UNIQUE NOT NULL
+       key              string UNIQUE NOT NULL,
+       created          string NOT NULL
 );
 
 --- FRONT PAGE ---
