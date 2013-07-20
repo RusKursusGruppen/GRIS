@@ -41,10 +41,46 @@ def new_book():
         form = w.create()
         return render_template("bookkeeper/new_book.html", form=form)
 
+@bookkeeper.route("/bookkeeper/book/<b_id>/modify", methods=["GET", "POST"])
+def modify_book(b_id):
+    if request.method == "POST":
+        if 'cancel' in request.form:
+            flash(escape(u"Ændringer annulleret"))
+            return redirect(url_for('bookkeeper.overview'))
+        b = data.Bucket(request.form)
+        b.title
+        b.description
+        b >> ("UPDATE Books $ WHERE b_id = ?", b_id)
+
+        print request.form['abcs']
+        return redirect(url_for("bookkeeper.overview"))
+    else:
+        book = data.execute("SELECT * FROM Books where b_id = ?", b_id)[0]
+
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.textfield("title", "Overskrift")
+        w.textarea("description", "beskrivelse")
+        w.html(html.autocomplete(["NB", "Caro", "Pilen", "Vidir"], "abcs"))
+        form = w.create(book)
+        return render_template("bookkeeper/modify_book.html", form=form)
+
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
 def book(b_id):
     book = data.execute("SELECT * FROM Books WHERE b_id = ?", b_id)[0]
-    return render_template("bookkeeper/book.html", book=book)
+    raw_entries = data.execute("SELECT * FROM entries WHERE b_id = ? ORDER BY created ASC", b_id)
+    entries = []
+    for entry in raw_entries:
+        d = {}
+        d.update(entry)
+        d.update({"share":"3/4", "owes":"40,-"})
+        entries += [d]
+    print entries
+
+    local_totals = [{"name":"Ole", "amount":"40"}]
+    global_totals = [{"name":"Ole", "amount":"70"}]
+    return render_template("bookkeeper/book.html", book=book, entries=entries, local_totals=local_totals, global_totals=global_totals)
 
 @bookkeeper.route("/bookkeeper/book/<b_id>/new_entry", methods=["GET", "POST"])
 def new_entry(b_id):
@@ -68,6 +104,22 @@ def new_entry(b_id):
         return render_template("bookkeeper/new_entry.html", form=form)
 
 
+@bookkeeper.route("/bookkeeper/book/<b_id>/entry/<e_id>", methods=["GET", "POST"])
+def entry(b_id, e_id):
+    if request.method == "POST":
+        b = data.Bucket(request.form)
+        b.description
+        b.amount
+        b >> ("UPDATE Entries WHERE e_id = ?", e_id)
+
+        b = data.Bucket(request.form)
+        return redirect(url_for("bookkeeper.book", b_id=b_id))
+    else:
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.textfield("description", "Hvad")
+        w.textfield("amount", "Beløb")
 
 # bookkeeper - regnskabssystemet
 # record / book - regnskab (S-togstur)

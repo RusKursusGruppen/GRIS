@@ -15,6 +15,55 @@
       {{book['description']}}
     </p>
 
-    <div class=news_bar>Hej</div>
+    <div class=news_bar>-</div>
+<p>
+  Posteringer:
+</p>
+<table border=1>
+  <tr>
+    <td></td>
+    <td>Kreditor</td>
+    <td>Beløb</td>
+    <td>andel</td>
+    <td>skylder</td>
+  </tr>
+
+  {% for entry in entries %}
+  <tr>
+    <td> {{entry['description']}} </td>
+    <td> {{entry['creditor']}} </td>
+    <td> {{entry['amount']}} </td>
+    <td> {{entry['share']}} </td>
+    <td> {{entry['owes']}} </td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+
+<p>
+  Du skylder totalt for dette regnskab:
+</p>
+<table border=1>
+  {% for entry in local_totals %}
+  <tr>
+    <td> {{entry['name']}} </td>
+    <td> {{entry['amount']}} </td>
+  </tr>
+  {% endfor %}
+</table>
+
+
+<p>
+  === TOTALE skyld: ===
+</p>
+<table border=1>
+  {% for entry in global_totals %}
+  <tr>
+    <td> {{entry['name']}} </td>
+    <td> {{entry['amount']}} </td>
+  </tr>
+  {% endfor %}
+</table>
 
 {% endblock %}

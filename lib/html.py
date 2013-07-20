@@ -1,7 +1,45 @@
 # -*- coding: utf-8 -*-
 
+import itertools, string
+
 from jinja import Markup
 
+def _semiunique_key():
+    if not hasattr(_semiunique_key, "_keys"):
+        combi = itertools.combinations_with_replacement(string.letters, 6)
+        _semiunique_key._keys = itertools.cycle(combi)
+    key = "".join(next(_semiunique_key._keys))
+    return key
+
+
+def autocomplete(items, name):
+    key = _semiunique_key()
+    print key
+    items = ('"{0}"'.format(i) for i in items)
+    text = ",\n    ".join(items)
+    javascript = """
+<link rel="stylesheet" href="/static/jquery-ui-1.10.3.custom.min.css" />
+<script src="/static/js/jquery-1.9.1.js"></script>
+<script src="/static/js/jquery-ui-1.10.3.custom.min.js"></script>
+
+<script>
+$(function() {
+    var availableTags = [
+    %s
+    ];
+    $( "#%s" ).autocomplete({
+        source: availableTags
+    })
+  })
+</script>
+<div class="ui-widget">
+<input id="%s" name="%s" />
+</div>
+"""
+    return javascript % (text, key, key, name)
+
+def autocomplete_multiple(items, seperator="; "):
+    pass
 def calendar(id, d_Format = 'yyyyMMdd', selector = 'arrow', time = False, t_Format = 24, seconds = False, futurepast = ''):
     html = '<img src="/static/images/cal.gif" onclick="javascript:NewCssCal(\'{0}\',\'{1}\',\'{2}\',{3},{4},{5},\'{6}\')" class="calendar" />'.format(
         id, d_Format, selector, str(time).lower(), str(t_Format), str(seconds).lower(), futurepast)
@@ -85,6 +123,9 @@ class WebBuilder(object):
     def checkbox(self, dbq="", description="", **kwargs):
         self._newobj(_Checkbox(dbq, description, kwargs))
 
+    def html(self,code):
+        self._newobj(_Html(code))
+
     #passwordfield
     #radio
     #submit
@@ -154,6 +195,12 @@ class _Checkbox(_Webobject):
         result += ">"
         return result
 
+class _Html(_Webobject):
+    def __init__(self, code):
+        self.code = code
+    def compile(self):
+        return self.code
+
 class _Form(_Webobject):
     def __init__(self):
         self.modifier = True
@@ -178,7 +225,6 @@ class _FormTable(_Webobject):
 </tr>
 </table>"""
         return result
-
 
 class _Waaah(_Webobject):
     def __init__(self):

@@ -52,7 +52,7 @@ def update_password(username, raw_password):
 def logout():
     session.pop('logged_in', None)
     flash("Logout succesful")
-    return redirect(url_for('login'))
+    return redirect(url_for('usermanager.login'))
 
 @usermanager.route('/usermanager')
 @logged_in
@@ -132,6 +132,9 @@ def generate_key():
         if empty(result):
             return key
 
+def sanitize_username(username):
+    #check that no such user already exists
+    return ";" not in username
 @usermanager.route('/usermanager/new/<key>', methods=['GET', 'POST'])
 def new(key):
     #time.sleep(3)
@@ -147,6 +150,8 @@ def new(key):
             return redirect(url_front())
 
         username = request.form['username']
+        if not sanitize_username(username):
+            raise Exception()
         name = request.form['name']
         raw_password = request.form['password']
         admin = request.form['admin']
