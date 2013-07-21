@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import random, datetime, string, time
+import random, datetime, string, time, re
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
@@ -47,30 +47,51 @@ def modify_book(b_id):
         if 'cancel' in request.form:
             flash(escape(u"Ændringer annulleret"))
             return redirect(url_for('bookkeeper.overview'))
+
+        # TOPIC: insert descriptors
         b = data.Bucket(request.form)
         b.title
         b.description
         b >> ("UPDATE Books $ WHERE b_id = ?", b_id)
 
-        string = request.form['users']
-        string = string.replace('"', '')
-        usernames = [name.split()[0] for name in re.split(';\s', string)]
+        # TOPIC: fetch new participants
+        usernames = request.form['users']
+        print usernames
+        usernames = usernames.replace('"', '')
+        usernames = usernames.replace('&quot;', '')
+        usernames = [name.split()[0] for name in re.split(';\s', usernames) if name != ""]
         usernames = sorted(set(usernames))
-        # TODO: ensure no one with debts/outstandings is removed
+        print usernames
 
-        print (request.form['scba'])
+        old = data.execute("SELECT participant FROM Book_participants where b_id = ?", b_id)
+        old = [u[0] for u in old]
+
+        # TOPIC: update list of participants in database, deleting missing and inserting new
+        for user in set(old) - set(usernames):
+            data.execute("DELETE FROM Book_participants where b_id = ? AND participant = ?", b_id, user)
+        for user in sorted(set(usernames) - set(old)):
+            data.execute("INSERT INTO Book_participants(b_id, participant) VALUES (?, ?)", b_id, user)
+
+        # TODO: maybe we should ensure no one with debts/outstandings is removed?
+
         return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
         book = data.execute("SELECT * FROM Books where b_id = ?", b_id)[0]
         raw_users =  data.execute("SELECT username, name FROM Users")
         users = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in raw_users]
 
+        # TODO: fill with current
+        participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
+        participants = ['&quot;{0}&quot; {1}; '.format(p['username'], p['name']) for p in participants]
+        participants = "".join(participants)
+        print participants
+
         w = html.WebBuilder()
         w.form()
         w.formtable()
         w.textfield("title", "Overskrift")
         w.textarea("description", "beskrivelse")
-        w.html(html.autocomplete_multiple(users, "users"), description="Deltagere")
+        w.html(html.autocomplete_multiple(users, "users", default=participants), description="Deltagere", value="abekat")
         form = w.create(book)
         return render_template("bookkeeper/modify_book.html", form=form)
 

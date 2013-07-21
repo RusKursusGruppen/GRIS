@@ -1,5 +1,5 @@
 -- Run this to reset/create the database.
-
+PRAGMA foreign_keys = ON;
 
 --- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer;
@@ -170,4 +170,11 @@ CREATE TABLE Debts(
     e_id                REFERENCES Entries(e_id),
     debtor              REFERENCES Users(username),
     share               integer
+);
+
+DROP TABLE If EXISTS Book_participants;
+CREATE TABLE Book_participants(
+    b_id                integer, -- REFERENCES Books(b_id),
+    participant         REFERENCES Users(username),
+    Unique(b_id, participant) ON CONFLICT IGNORE
 );

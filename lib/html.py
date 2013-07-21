@@ -12,9 +12,8 @@ def _semiunique_key():
     return key
 
 
-def autocomplete(items, name):
+def autocomplete(items, name, default=""):
     key = _semiunique_key()
-    print key
     items = ('"{0}"'.format(i) for i in items)
     text = ",\n    ".join(items)
     javascript = """
@@ -33,14 +32,13 @@ $(function() {
   })
 </script>
 <div class="ui-widget">
-<input id="%s" name="%s" />
+<input id="%s" name="%s" value="%s"/>
 </div>
 """
-    return javascript % (text, key, key, name)
+    return javascript % (text, key, key, name, default)
 
-def autocomplete_multiple(items, name,  seperator=";"):
+def autocomplete_multiple(items, name,  seperator=";", default=""):
     key = _semiunique_key()
-    print key
     items = (u'"{0}"'.format(i) for i in items)
     text = ",\n    ".join(items)
     javascript = """
@@ -97,10 +95,10 @@ def autocomplete_multiple(items, name,  seperator=";"):
 <body>
 
 <div class="ui-widget">
-  <input id="%s" name="%s" size="50" />
+  <input id="%s" name="%s" size="50" value="%s"/>
 </div>
 """
-    return javascript % (text, seperator, key, seperator, key, name)
+    return javascript % (text, seperator, key, seperator, key, name, default)
 
 def calendar(id, d_Format = 'yyyyMMdd', selector = 'arrow', time = False, t_Format = 24, seconds = False, futurepast = ''):
     html = '<img src="/static/images/cal.gif" onclick="javascript:NewCssCal(\'{0}\',\'{1}\',\'{2}\',{3},{4},{5},\'{6}\')" class="calendar" />'.format(
@@ -146,7 +144,7 @@ class WebBuilder(object):
                 if kv == None:
                     dbqv = None
                 else :
-                    print w.dbq
+                   # print w.dbq
                     dbqv = kv[w.dbq]
                 temp = w.compile(dbqv)
             else:

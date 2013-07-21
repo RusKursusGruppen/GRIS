@@ -20,6 +20,7 @@ def data():
 
 def execute(com, *args):
     with connect() as db:
+        db.execute("PRAGMA foreign_keys = ON").fetchone()
         v = db.execute(com, args)
         return v.fetchall()
 
@@ -122,8 +123,6 @@ class Bucket(object):
         keys = [c for c in self]
         questions = ["?"] * len(keys)
         values = [self[c] for c in self]
-        print keys
-        print values
 
         sql += ",".join(keys)
         sql += ") VALUES ("
