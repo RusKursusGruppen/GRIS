@@ -150,6 +150,15 @@ def entry(b_id, e_id):
         w.textfield("description", "Hvad")
         w.textfield("amount", "Beløb")
 
+
+
+
+
+
+
+
+
+
 # bookkeeper - regnskabssystemet
 # record / book - regnskab (S-togstur)
 # entry - indtastning (1 ramme øl, 200,-)
