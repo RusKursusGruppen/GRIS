@@ -135,11 +135,12 @@ def new_entry(b_id):
 
 @bookkeeper.route("/bookkeeper/book/<b_id>/entry/<e_id>", methods=["GET", "POST"])
 def entry(b_id, e_id):
+    print "fisk"
     if request.method == "POST":
         b = data.Bucket(request.form)
         b.description
         b.amount
-        b >> ("UPDATE Entries WHERE e_id = ?", e_id)
+        b >> ("UPDATE Entries $ WHERE b_id = ?", b_id)
 
         b = data.Bucket(request.form)
         return redirect(url_for("bookkeeper.book", b_id=b_id))
@@ -148,8 +149,9 @@ def entry(b_id, e_id):
         w.form()
         w.formtable()
         w.textfield("description", "Hvad")
-        w.textfield("amount", "Beløb")
-
+        w.textfield("amount", u"Beløb")
+        form = w.create()
+        return render_template("form.html", form=form)
 
 
 
