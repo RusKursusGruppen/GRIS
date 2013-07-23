@@ -79,7 +79,7 @@ CREATE TABLE Users(
     tutor               int NOT NULL default 0,
     mentor              int NOT NULL default 0,
 
-    name                string,
+    name                string DEFAULT "RUS",
     driverslicence      int NOT NULL default 0,
     address             string,
     zipcode             string,
@@ -169,12 +169,13 @@ DROP TABLE IF EXISTS Debts;
 CREATE TABLE Debts(
     e_id                REFERENCES Entries(e_id),
     debtor              REFERENCES Users(username),
-    share               integer
+    share               integer,
+    UNIQUE(e_id, debtor) ON CONFLICT REPLACE
 );
 
 DROP TABLE If EXISTS Book_participants;
 CREATE TABLE Book_participants(
     b_id                integer, -- REFERENCES Books(b_id),
     participant         REFERENCES Users(username),
-    Unique(b_id, participant) ON CONFLICT IGNORE
+    UNIQUE(b_id, participant) ON CONFLICT IGNORE
 );

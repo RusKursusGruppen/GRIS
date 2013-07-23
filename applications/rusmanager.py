@@ -147,4 +147,4 @@ def new():
         w.formtable()
         w.textfield("name", "Navn")
         form = w.create()
-        return render_template("rusmanager/new.html", form=form)
+        return render_template("form.html", form=form)

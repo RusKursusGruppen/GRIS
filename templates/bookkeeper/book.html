@@ -2,8 +2,7 @@
 
 {% block submenu %}
     <a href="{{url_for('bookkeeper.modify_book', b_id=book['b_id'])}}">Ret regnskab</a>
-    <a href="{{url_for('bookkeeper.new_book')}}">Nyt regnskab</a>
-    <a href="{{url_for('bookkeeper.new_entry', b_id=book['b_id'])}}">Ny postering</a>
+    <a href="{{url_for('bookkeeper.entry', b_id=book['b_id'])}}">Ny postering</a>
 {% endblock %}
 
 {% block body %}

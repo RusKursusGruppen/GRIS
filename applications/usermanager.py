@@ -108,7 +108,7 @@ def settings():
         w.textarea("about_me", "Lidt om mig")
 
         form = w.create(user)
-        return render_template("usermanager/settings.html", form=form)
+        return render_template("form.html", form=form)
 
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
 @logged_in
@@ -194,7 +194,7 @@ def invite():
         w.formtable()
         w.textfield("email", "Email")
         form = w.create()
-        return render_template("usermanager/invite.html", form=form)
+        return render_template("form.html", form=form)
 
 invite_mail = u"""
 Hej du er blevet inviteret til GRIS.

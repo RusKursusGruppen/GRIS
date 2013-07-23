@@ -39,7 +39,7 @@ def new_book():
         w.textfield("title", "Overskrift")
         w.textarea("description", "beskrivelse")
         form = w.create()
-        return render_template("bookkeeper/new_book.html", form=form)
+        return render_template("form.html", form=form)
 
 @bookkeeper.route("/bookkeeper/book/<b_id>/modify", methods=["GET", "POST"])
 def modify_book(b_id):
@@ -84,7 +84,6 @@ def modify_book(b_id):
         participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
         participants = ['&quot;{0}&quot; {1}; '.format(p['username'], p['name']) for p in participants]
         participants = "".join(participants)
-        print participants
 
         w = html.WebBuilder()
         w.form()
@@ -93,7 +92,7 @@ def modify_book(b_id):
         w.textarea("description", "beskrivelse")
         w.html(html.autocomplete_multiple(users, "users", default=participants), description="Deltagere", value="abekat")
         form = w.create(book)
-        return render_template("bookkeeper/modify_book.html", form=form)
+        return render_template("form.html", form=form)
 
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
 def book(b_id):
@@ -111,38 +110,50 @@ def book(b_id):
     global_totals = [{"name":"Ole", "amount":"70"}]
     return render_template("bookkeeper/book.html", book=book, entries=entries, local_totals=local_totals, global_totals=global_totals)
 
+# @bookkeeper.route("/bookkeeper/book/<b_id>/new_entry", methods=["GET", "POST"])
+# def new_entry(b_id):
+#     if request.method == "POST":
+#         if 'cancel' in request.form:
+#             flash(escape(u"Ændringer annulleret"))
+#             return redirect(url_for('bookkeeper.overview'))
+
+#         b = data.Bucket(request.form)
+#         b.b_id = b_id
+#         b.created = now()
+#         b.creditor = session['username']
+#         b.description
+#         b.amount
+#         b >= "Entries"
+
+#         return redirect(url_for("bookkeeper.book", b_id=b_id))
+#     else:
+#         w = html.WebBuilder()
+#         w.form()
+#         w.formtable()
+#         w.textfield("description", "Hvad")
+#         w.textfield("amount", u"Beløb")
+#         form = w.create()
+#         return render_template("bookkeeper/new_entry.html", form=form)
+
 @bookkeeper.route("/bookkeeper/book/<b_id>/new_entry", methods=["GET", "POST"])
-def new_entry(b_id):
-    if request.method == "POST":
-        b = data.Bucket(request.form)
-        b.b_id = b_id
-        b.created = now()
-        b.creditor = session['username']
-        b.description
-        b.amount
-        b >= "Entries"
-
-        return redirect(url_for("bookkeeper.book", b_id=b_id))
-    else:
-        w = html.WebBuilder()
-        w.form()
-        w.formtable()
-        w.textfield("description", "Hvad")
-        w.textfield("amount", u"Beløb")
-        form = w.create()
-        return render_template("bookkeeper/new_entry.html", form=form)
-
-
 @bookkeeper.route("/bookkeeper/book/<b_id>/entry/<e_id>", methods=["GET", "POST"])
-def entry(b_id, e_id):
-    print "fisk"
+def entry(b_id, e_id=None):
     if request.method == "POST":
+        if 'cancel' in request.form:
+            flash(escape(u"Ændringer annulleret"))
+            return redirect(url_for('bookkeeper.overview'))
+
         b = data.Bucket(request.form)
         b.description
         b.amount
-        b >> ("UPDATE Entries $ WHERE b_id = ?", b_id)
+        if e_id == None:
+            b.b_id = b_id
+            b.created = now()
+            b.creditor = session['username']
+            b >= "Entries"
+        else:
+            b >> ("UPDATE Entries $ WHERE b_id = ?", b_id)
 
-        b = data.Bucket(request.form)
         return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
         w = html.WebBuilder()
@@ -150,6 +161,15 @@ def entry(b_id, e_id):
         w.formtable()
         w.textfield("description", "Hvad")
         w.textfield("amount", u"Beløb")
+
+        participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
+        print participants
+        participants = ['&quot;{0}&quot; {1}; '.format(p['username'], p['name']) for p in participants]
+        print ""
+        print participants
+
+        for (i, user) in enumerate(participants):
+            w.textfield("participant_%s"%str(i), user)
         form = w.create()
         return render_template("form.html", form=form)
 
@@ -157,7 +177,10 @@ def entry(b_id, e_id):
 
 
 
-
+@bookkeeper.route("/bookkeeper/a/")
+@bookkeeper.route("/bookkeeper/b/<id>")
+def a(id=None):
+    return "a"+str(id)
 
 
 
