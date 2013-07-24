@@ -169,6 +169,8 @@ DROP TABLE IF EXISTS Debts;
 CREATE TABLE Debts(
     e_id                REFERENCES Entries(e_id),
     debtor              REFERENCES Users(username),
+    -- share is currently being used as a string.
+    -- We might want to store share as both a string and a number
     share               integer,
     UNIQUE(e_id, debtor) ON CONFLICT REPLACE
 );

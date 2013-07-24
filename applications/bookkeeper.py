@@ -177,6 +177,7 @@ def entry(b_id, e_id=None):
 
 
         # TODO: The following is not harming, but is it necessary?
+        # TODO: Think more about this line, is the previous statement true?
         data.execute("DELETE FROM Debts WHERE e_id = ?", e_id)
 
         for debtor, share in debts:
@@ -193,38 +194,32 @@ def entry(b_id, e_id=None):
             amount = ""
         else:
             entry = data.execute("SELECT * FROM Entries WHERE e_id = ?", e_id)[0]
-            print entry
             description = entry['description']
             amount = entry['amount']
-        print description, amount
         w.textfield("description", "Hvad", value=description)
         w.textfield("amount", u"Beløb", value=amount)
 
-        # TODO: fetch correct previous share
+        # Extract users
         if e_id == None:
-            previous_entries = []
+            previous_debtors = []
         else:
-            previous_entries = data.execute("SELECT * FROM Debts as D INNER JOIN Users as U ON D.debtor = U.username WHERE e_id = ?", e_id)
+            previous_debtors = data.execute("SELECT username, name, share FROM Debts as D INNER JOIN Users as U ON D.debtor = U.username WHERE e_id = ?", e_id)
 
+        usernames = [debtor['username'] for debtor in previous_debtors]
         participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
-        usernames = [p['username'] for p in participants]
 
-        carry_over = [p for p in previous_entries if p['username'] not in usernames]
-        participants = [{'username':p['username'], 'name':p['name'], 'share':''} for p in participants]
-        participants.extend(carry_over)
-        participants = sorted(participants, cmp=lambda x, y: cmp(x['username'],y['username']))
+        new_participants = [{'username':p['username'], 'name':p['name'], 'share':''} for p in participants if p['username'] not in usernames]
 
-        for user in participants:
+        all_participants = previous_debtors + new_participants
+        all_participants = sorted(all_participants, cmp=lambda x, y: cmp(x['username'],y['username']))
+
+        for user in all_participants:
             name = 'participant_{0}'.format(user['username'])
             description = '&quot;{0}&quot; {1}'.format(user['username'], user['name'])
             value = user['share']
             w.textfield(name, description, value=value)
-        # participants = ['&quot;{0}&quot; {1}'.format(p['username'], p['name']) for p in participants]
-        # print ""
-        # print participants
 
-        # for (username, participant) in zip(usernames, participants):
-        #     w.textfield("participant_%s"%str(username), participant)
+
         form = w.create()
         return render_template("form.html", form=form)
 
