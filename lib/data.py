@@ -24,6 +24,13 @@ def execute(com, *args):
         v = db.execute(com, args)
         return v.fetchall()
 
+def execute_lastrowid(com, *args):
+    with connect() as db:
+        c = db.cursor()
+        c.execute("PRAGMA foreign_keys = ON").fetchone()
+        c.execute(com, args)
+        return c.lastrowid
+
 def script(f):
     with connect() as db:
         with open(f) as f:
@@ -115,7 +122,8 @@ class Bucket(object):
         values.extend(args)
 
         with connect() as db:
-            db.execute(sql, values)
+            c = db.execute(sql, values)
+            return c.lastrowid
 
     def __ge__(self, dest):
         """Create entry in database"""
@@ -130,8 +138,8 @@ class Bucket(object):
         sql += ")"
 
         with connect() as db:
-            db.execute(sql, values)
-
+            c = db.execute(sql, values)
+            return c.lastrowid
 
 if __name__ == "__mainn__":
     if len(sys.argv) < 3:
