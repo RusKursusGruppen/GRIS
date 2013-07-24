@@ -218,7 +218,7 @@ class _Webobject(object):
         if type(attributes) != dict:
             dbqv = attributes
             attributes = self._attributes_convert(dbqv)
-        string = ' '.join('{0}="{1}"'.format(k,v) for k,v in attributes.iteritems())
+        string = u' '.join(u'{0}="{1}"'.format(k,v) for k,v in attributes.iteritems())
         return string
 
 class _Textfield(_Webobject):

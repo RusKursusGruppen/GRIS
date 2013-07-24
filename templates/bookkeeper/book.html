@@ -30,7 +30,7 @@
 
   {% for entry in entries %}
   <tr>
-    <td> {{entry['description']}} </td>
+    <td> <a href="{{url_for('bookkeeper.entry', b_id=book['b_id'], e_id=entry['e_id'])}}">{{entry['description']}}</a> </td>
     <td> {{entry['creditor']}} </td>
     <td> {{entry['amount']}} </td>
     <td> {{entry['share']}} </td>

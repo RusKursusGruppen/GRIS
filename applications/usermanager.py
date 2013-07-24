@@ -133,15 +133,18 @@ def generate_key():
             return key
 
 def sanitize_username(username):
+    legal_characters = string.letters + "æøåÆØÅ-_0123456789"
+    return all(c in legal_characters for c in username)
+
     #check that no such user already exists
-    illegal_characters = [';', '"',' ']
+    illegal_characters = [';" ']
     return not any(illegal in username for illegal in illegal_characters)
 @usermanager.route('/usermanager/new/<key>', methods=['GET', 'POST'])
 def new(key):
     time.sleep(random.randint(2,6))
     #time.sleep(3)
 
-    # TODO: weed out old creation keys
+    # EXPLANATION: weed out old creation keys
     overtime = str(datetime.datetime.now() - datetime.timedelta(days=30))
     data.execute("DELETE FROM User_creation_keys WHERE created <= ?", overtime)
 
