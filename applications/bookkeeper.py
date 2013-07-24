@@ -4,7 +4,7 @@ import random, datetime, string, time, re
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-from lib import data, password, mail, html
+from lib import data, password, mail, html, expinterpreter
 from lib.tools import logged_in, empty, url_front, now
 
 import config
@@ -160,18 +160,28 @@ def entry(b_id, e_id=None):
             b >> ("UPDATE Entries $ WHERE b_id = ? and e_id = ?", b_id, e_id)
 
 
-        # TODO: ensure all 'share's are valid integers before any database modification
-
-        # TODO: The following is not harming, but is it necessary?
-        data.execute("DELETE FROM Debts WHERE e_id = ?", e_id)
-
+        # EXPLANATION: ensure all 'share's are valid integers before any database modification
+        debts = []
         for req in request.form.iterkeys():
             if req.startswith("participant_"):
                 debtor = req[12:] # len("participant_") == 12
                 share = request.form[req]
+                try:
+                    # EXPLANATION: we should store the string as the user specified but ensure it is calculates to a number
+                    expinterpreter.interpret(share)
+                except expinterpreter.ExpinterpreterException as e:
+                    flash("Invalid expression in " + debtor + ": " + share)
+                    return(html.back())
                 if share != "":
-                    # EXPLANATION: insert automaticly replaces old entries
-                    data.execute("INSERT INTO Debts(e_id, debtor, share) VALUES (?, ?, ?)", e_id, debtor, share)
+                    debts.append((debtor, share))
+
+
+        # TODO: The following is not harming, but is it necessary?
+        data.execute("DELETE FROM Debts WHERE e_id = ?", e_id)
+
+        for debtor, share in debts:
+            # NOTE: insert automaticly replaces old entries
+            data.execute("INSERT INTO Debts(e_id, debtor, share) VALUES (?, ?, ?)", e_id, debtor, share)
 
         return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
