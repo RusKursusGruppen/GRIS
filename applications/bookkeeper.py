@@ -56,12 +56,10 @@ def modify_book(b_id):
 
         # TOPIC: fetch new participants
         usernames = request.form['users']
-        print usernames
         usernames = usernames.replace('"', '')
         usernames = usernames.replace('&quot;', '')
         usernames = [name.split()[0] for name in re.split(';\s', usernames) if name != ""]
-        usernames = sorted(set(usernames))
-        print usernames
+        #usernames = sorted(set(usernames))
 
         old = data.execute("SELECT participant FROM Book_participants where b_id = ?", b_id)
         old = [u[0] for u in old]
@@ -79,11 +77,15 @@ def modify_book(b_id):
         book = data.execute("SELECT * FROM Books where b_id = ?", b_id)[0]
         raw_users =  data.execute("SELECT username, name FROM Users")
         users = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in raw_users]
+        users.sort()
+
 
         # TODO: fill with current
         participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
         participants = ['&quot;{0}&quot; {1}; '.format(p['username'], p['name']) for p in participants]
+        participants.sort()
         participants = "".join(participants)
+        print participants
 
         w = html.WebBuilder()
         w.form()
@@ -140,10 +142,7 @@ def entry(b_id, e_id=None):
     if request.method == "POST":
         if 'cancel' in request.form:
             flash(escape(u"Ændringer annulleret"))
-            if e_id == None:
-                return redirect(url_for('bookkeeper.overview'))
-            else:
-                return redirect(url_for('bookkeeper.book', b_id=b_id))
+            return redirect(url_for('bookkeeper.book', b_id=b_id))
 
         b = data.Bucket(request.form)
         if b.description == "":
@@ -155,8 +154,14 @@ def entry(b_id, e_id=None):
             b.b_id = b_id
             # TODO: distinguish between creator and creditor
             b.creditor = session['username']
-            b >= "Entries"
+            e_id = b >= "Entries"
+            e_id = str(e_id)
         else:
+            b.creditor = b.creditor.replace('"', '').replace('&quot;', '')
+            if b.creditor == "":
+                flash("Please enter creditor")
+                return(html.back())
+            b.creditor = b.creditor.split()[0]
             b >> ("UPDATE Entries $ WHERE b_id = ? and e_id = ?", b_id, e_id)
 
 
@@ -166,10 +171,10 @@ def entry(b_id, e_id=None):
             if req.startswith("participant_"):
                 debtor = req[12:] # len("participant_") == 12
                 share_string = request.form[req]
-                if share != "":
+                if share_string != "":
                     try:
                         # EXPLANATION: we store both the string and its result, if it evaluates to something meaningful
-                        share = expinterpreter.interpret(share)
+                        share = expinterpreter.interpret(share_string)
                         debts.append((debtor, share_string, share))
                     except expinterpreter.ExpinterpreterException as e:
                         flash("Invalid expression in " + debtor + ": " + share)
@@ -179,7 +184,7 @@ def entry(b_id, e_id=None):
         # TODO: Think more about this line, is the previous statement true?
         data.execute("DELETE FROM Debts WHERE e_id = ?", e_id)
 
-        for debtor, share in debts:
+        for debtor, share_string, share in debts:
             # NOTE: insert automaticly replaces old entries
             data.execute("INSERT INTO Debts(e_id, debtor, share_string, share) VALUES (?, ?, ?, ?)", e_id, debtor, share_string, share)
 
@@ -192,17 +197,24 @@ def entry(b_id, e_id=None):
             description = ""
             amount = ""
             date = ""
+            creditor = session['username']
         else:
             entry = data.execute("SELECT * FROM Entries WHERE e_id = ?", e_id)[0]
             description = entry['description']
             amount = entry['amount']
             date = entry['date']
+            creditor = entry['creditor']
         w.textfield("description", "Hvad", value=description)
         w.textfield("amount", u"Beløb", value=amount)
         # TODO: make WebBuilder understand calendars
         w.html('<input type="text" id="bookkeeper.date" maxlength="25" size="25" name="date" value="'+date+'">' +
                html.calendar("bookkeeper.date")
-               + '<span class="note">(Format: yyyy-MM-dd)</span>')
+               + '<span class="note">(Format: yyyy-MM-dd)</span>', description=u"Hvornår")
+
+        participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
+        participant_names = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in participants]
+        #participant_names = [user['username'] for user in participants]
+        w.html(html.autocomplete(participant_names, "creditor", default=creditor), description=u"Udlægger", value="abekat")
 
         # Extract users
         if e_id == None:
@@ -211,7 +223,7 @@ def entry(b_id, e_id=None):
             previous_debtors = data.execute("SELECT username, name, share_string FROM Debts as D INNER JOIN Users as U ON D.debtor = U.username WHERE e_id = ?", e_id)
 
         usernames = [debtor['username'] for debtor in previous_debtors]
-        participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
+        #participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
 
         new_participants = [{'username':p['username'], 'name':p['name'], 'share_string':''} for p in participants if p['username'] not in usernames]
 
@@ -246,3 +258,14 @@ def a(id=None):
 
 # creditor - udlægger
 # debitor - bruger
+
+
+def to_usernamelist(users):
+    return ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in users]
+
+def from_usernamelist(usernames):
+    usernames = usernames.replace('"', '')
+    usernames = usernames.replace('&quot;', '')
+    usernames = [name.split()[0] for name in re.split(';\s', usernames) if name != ""]
+    usernames = sorted(set(usernames))
+    return usernames
