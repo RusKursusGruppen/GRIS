@@ -158,7 +158,7 @@ DROP TABLE IF EXISTS Entries;
 CREATE TABLE Entries(
     e_id                integer PRIMARY KEY AUTOINCREMENT,
     b_id                REFERENCES Books(b_id) NOT NULL,
-    created             string,
+    date                string,
     creditor            REFERENCES Users(username),
     description         string,
     amount              integer
@@ -169,9 +169,8 @@ DROP TABLE IF EXISTS Debts;
 CREATE TABLE Debts(
     e_id                REFERENCES Entries(e_id),
     debtor              REFERENCES Users(username),
-    -- share is currently being used as a string.
-    -- We might want to store share as both a string and a number
-    share               integer,
+    share_string        string,  -- The unevaluated string,
+    share               integer, -- and its result.
     UNIQUE(e_id, debtor) ON CONFLICT REPLACE
 );
 

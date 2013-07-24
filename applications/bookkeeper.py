@@ -12,7 +12,7 @@ import config
 
 bookkeeper = Blueprint('bookkeeper', __name__, template_folder = '../templates/bookkeeper')
 
-@bookkeeper.route("/bookkeeper")
+@bookkeeper.route("/bookkeeper/")
 def overview():
     # TODO: Filter so you only see books referencing you
     books = data.execute("SELECT * FROM Books ORDER BY created DESC")
@@ -97,7 +97,7 @@ def modify_book(b_id):
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
 def book(b_id):
     book = data.execute("SELECT * FROM Books WHERE b_id = ?", b_id)[0]
-    raw_entries = data.execute("SELECT * FROM entries WHERE b_id = ? ORDER BY created ASC", b_id)
+    raw_entries = data.execute("SELECT * FROM Entries WHERE b_id = ? ORDER BY date ASC", b_id)
     entries = []
     for entry in raw_entries:
         d = {}
@@ -150,9 +150,9 @@ def entry(b_id, e_id=None):
             flash("Please enter a description")
             return(html.back())
         b.amount
+        b.date
         if e_id == None:
             b.b_id = b_id
-            b.created = now()
             # TODO: distinguish between creator and creditor
             b.creditor = session['username']
             b >= "Entries"
@@ -165,16 +165,15 @@ def entry(b_id, e_id=None):
         for req in request.form.iterkeys():
             if req.startswith("participant_"):
                 debtor = req[12:] # len("participant_") == 12
-                share = request.form[req]
-                try:
-                    # EXPLANATION: we should store the string as the user specified but ensure it is calculates to a number
-                    expinterpreter.interpret(share)
-                except expinterpreter.ExpinterpreterException as e:
-                    flash("Invalid expression in " + debtor + ": " + share)
-                    return(html.back())
+                share_string = request.form[req]
                 if share != "":
-                    debts.append((debtor, share))
-
+                    try:
+                        # EXPLANATION: we store both the string and its result, if it evaluates to something meaningful
+                        share = expinterpreter.interpret(share)
+                        debts.append((debtor, share_string, share))
+                    except expinterpreter.ExpinterpreterException as e:
+                        flash("Invalid expression in " + debtor + ": " + share)
+                        return(html.back())
 
         # TODO: The following is not harming, but is it necessary?
         # TODO: Think more about this line, is the previous statement true?
@@ -182,7 +181,7 @@ def entry(b_id, e_id=None):
 
         for debtor, share in debts:
             # NOTE: insert automaticly replaces old entries
-            data.execute("INSERT INTO Debts(e_id, debtor, share) VALUES (?, ?, ?)", e_id, debtor, share)
+            data.execute("INSERT INTO Debts(e_id, debtor, share_string, share) VALUES (?, ?, ?, ?)", e_id, debtor, share_string, share)
 
         return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
@@ -192,23 +191,29 @@ def entry(b_id, e_id=None):
         if e_id == None:
             description = ""
             amount = ""
+            date = ""
         else:
             entry = data.execute("SELECT * FROM Entries WHERE e_id = ?", e_id)[0]
             description = entry['description']
             amount = entry['amount']
+            date = entry['date']
         w.textfield("description", "Hvad", value=description)
         w.textfield("amount", u"Beløb", value=amount)
+        # TODO: make WebBuilder understand calendars
+        w.html('<input type="text" id="bookkeeper.date" maxlength="25" size="25" name="date" value="'+date+'">' +
+               html.calendar("bookkeeper.date")
+               + '<span class="note">(Format: yyyy-MM-dd)</span>')
 
         # Extract users
         if e_id == None:
             previous_debtors = []
         else:
-            previous_debtors = data.execute("SELECT username, name, share FROM Debts as D INNER JOIN Users as U ON D.debtor = U.username WHERE e_id = ?", e_id)
+            previous_debtors = data.execute("SELECT username, name, share_string FROM Debts as D INNER JOIN Users as U ON D.debtor = U.username WHERE e_id = ?", e_id)
 
         usernames = [debtor['username'] for debtor in previous_debtors]
         participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
 
-        new_participants = [{'username':p['username'], 'name':p['name'], 'share':''} for p in participants if p['username'] not in usernames]
+        new_participants = [{'username':p['username'], 'name':p['name'], 'share_string':''} for p in participants if p['username'] not in usernames]
 
         all_participants = previous_debtors + new_participants
         all_participants = sorted(all_participants, cmp=lambda x, y: cmp(x['username'],y['username']))
@@ -216,7 +221,7 @@ def entry(b_id, e_id=None):
         for user in all_participants:
             name = 'participant_{0}'.format(user['username'])
             description = '&quot;{0}&quot; {1}'.format(user['username'], user['name'])
-            value = user['share']
+            value = user['share_string']
             w.textfield(name, description, value=value)
 
 
