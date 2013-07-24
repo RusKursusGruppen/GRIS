@@ -37,7 +37,7 @@ $(function() {
 """
     return javascript % (text, key, key, name, default)
 
-def autocomplete_multiple(items, name,  seperator=";", default=""):
+def autocomplete_multiple(items, name, seperator=";", default=""):
     key = _semiunique_key()
     items = (u'"{0}"'.format(i) for i in items)
     text = ",\n    ".join(items)
