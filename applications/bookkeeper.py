@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 import random, datetime, string, time, re
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
@@ -21,6 +22,7 @@ def overview():
 
 @bookkeeper.route("/bookkeeper/new", methods=["GET", "POST"])
 def new_book():
+    # TODO: merge features of book and new_book
     if request.method == "POST":
         if 'cancel' in request.form:
             flash(escape(u"Ændringer annulleret"))
@@ -99,17 +101,49 @@ def modify_book(b_id):
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
 def book(b_id):
     book = data.execute("SELECT * FROM Books WHERE b_id = ?", b_id)[0]
-    raw_entries = data.execute("SELECT * FROM Entries WHERE b_id = ? ORDER BY date ASC", b_id)
+    #raw_entries = data.execute("SELECT * FROM Entries WHERE b_id = ? ORDER BY date ASC", b_id)
+    user = session['username']
+    raw_entries = data.execute('SELECT * FROM Entries LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id);', user)
     entries = []
     for entry in raw_entries:
         d = {}
         d.update(entry)
-        d.update({"share":"3/4", "owes":"40,-"})
+
+        amount = entry['amount']
+        # TODO: check for errors, do this on insertion
+        amount = amount if type(amount) == int else expinterpreter.interpret(amount)
+
+        share_total = entry['share_total']
+        if share_total == None:
+            share_total = 0
+        share = entry['share']
+        if share == None:
+            share = 0
+
+        final_share = "{0}/{1}".format(share, share_total)
+
+        if share_total == 0:
+            owes = 0
+        else:
+            owes = (amount / share_total) * share
+
+        owes = "{0}kr.".format(owes)
+        if share == 0:
+            final_share = ""
+            owes = ""
+        d.update({"final_share":final_share, "owes":owes})
         entries += [d]
 
     local_totals = [{"name":"Ole", "amount":"40"}]
     global_totals = [{"name":"Ole", "amount":"70"}]
     return render_template("bookkeeper/book.html", book=book, entries=entries, local_totals=local_totals, global_totals=global_totals)
+
+    #"select * from Entries as E join (select e_id, sum(share) as share_total from Debts) as T on E.e_id = T.e_id;"
+    #raw_entries = data.execute('SELECT * FROM Entries AS E JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts) AS T INNER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) AS D ON E.e_id = T.e_id and E.e_id= D.e_id ORDER BY date ASC;', user)
+
+
+
+
 
 # @bookkeeper.route("/bookkeeper/book/<b_id>/new_entry", methods=["GET", "POST"])
 # def new_entry(b_id):

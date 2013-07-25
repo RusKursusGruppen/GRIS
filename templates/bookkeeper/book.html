@@ -22,6 +22,7 @@
 <table border=1>
   <tr>
     <td></td>
+    <td>Dato</td>
     <td>Kreditor</td>
     <td>Beløb</td>
     <td>andel</td>
@@ -31,9 +32,10 @@
   {% for entry in entries %}
   <tr>
     <td> <a href="{{url_for('bookkeeper.entry', b_id=book['b_id'], e_id=entry['e_id'])}}">{{entry['description']}}</a> </td>
+    <td> {{entry['date']}} </td>
     <td> {{entry['creditor']}} </td>
     <td> {{entry['amount']}} </td>
-    <td> {{entry['share']}} </td>
+    <td> {{entry['final_share']}} </td>
     <td> {{entry['owes']}} </td>
   </tr>
   {% endfor %}
