@@ -32,8 +32,8 @@ def new_book():
         b.description
         b.creator = session['username']
         b.created = now()
-        b >= "Books"
-        return redirect(url_for("bookkeeper.overview"))
+        b_id = b >= "Books"
+        return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
         w = html.WebBuilder()
         w.form()
@@ -103,7 +103,12 @@ def book(b_id):
     book = data.execute("SELECT * FROM Books WHERE b_id = ?", b_id)[0]
     #raw_entries = data.execute("SELECT * FROM Entries WHERE b_id = ? ORDER BY date ASC", b_id)
     user = session['username']
-    raw_entries = data.execute('SELECT * FROM Entries LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id);', user)
+    # TODO: convert internal representation to øre
+    # TODO: decide on floating vs integer for currency
+    raw_entries = data.execute(                                            'SELECT *, ((amount*1.0)/share_total*share) AS owes FROM (SELECT * FROM Entries where b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id);', b_id, user)
+    # TODO: substract reverse debts
+    local_totals = data.execute( 'SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1.0)/share_total*share) AS owes FROM (SELECT * FROM Entries WHERE b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', b_id, user)
+    global_totals = data.execute('SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1.0)/share_total*share) AS owes FROM                Entries                 LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', user)
     entries = []
     for entry in raw_entries:
         d = {}
@@ -122,10 +127,9 @@ def book(b_id):
 
         final_share = "{0}/{1}".format(share, share_total)
 
-        if share_total == 0:
+        owes = entry['owes']
+        if owes == None:
             owes = 0
-        else:
-            owes = (amount / share_total) * share
 
         owes = "{0}kr.".format(owes)
         if share == 0:
@@ -134,9 +138,8 @@ def book(b_id):
         d.update({"final_share":final_share, "owes":owes})
         entries += [d]
 
-    local_totals = [{"name":"Ole", "amount":"40"}]
-    global_totals = [{"name":"Ole", "amount":"70"}]
-    return render_template("bookkeeper/book.html", book=book, entries=entries, local_totals=local_totals, global_totals=global_totals)
+    breakdown = []
+    return render_template("bookkeeper/book.html", book=book, entries=entries, breakdown=breakdown, local_totals=local_totals, global_totals=global_totals)
 
     #"select * from Entries as E join (select e_id, sum(share) as share_total from Debts) as T on E.e_id = T.e_id;"
     #raw_entries = data.execute('SELECT * FROM Entries AS E JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts) AS T INNER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) AS D ON E.e_id = T.e_id and E.e_id= D.e_id ORDER BY date ASC;', user)
@@ -184,18 +187,17 @@ def entry(b_id, e_id=None):
             return(html.back())
         b.amount
         b.date
+        b.creditor = b.creditor.replace('"', '').replace('&quot;', '')
+        if b.creditor == "":
+            flash("Please enter a creditor")
+            return(html.back())
+        b.creditor = b.creditor.split()[0]
+
         if e_id == None:
             b.b_id = b_id
-            # TODO: distinguish between creator and creditor
-            b.creditor = session['username']
             e_id = b >= "Entries"
             e_id = str(e_id)
         else:
-            b.creditor = b.creditor.replace('"', '').replace('&quot;', '')
-            if b.creditor == "":
-                flash("Please enter creditor")
-                return(html.back())
-            b.creditor = b.creditor.split()[0]
             b >> ("UPDATE Entries $ WHERE b_id = ? and e_id = ?", b_id, e_id)
 
 

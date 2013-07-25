@@ -49,8 +49,8 @@
 <table border=1>
   {% for entry in local_totals %}
   <tr>
-    <td> {{entry['name']}} </td>
-    <td> {{entry['amount']}} </td>
+    <td> {{entry['creditor']}} </td>
+    <td> {{entry['total']}} </td>
   </tr>
   {% endfor %}
 </table>
@@ -62,8 +62,8 @@
 <table border=1>
   {% for entry in global_totals %}
   <tr>
-    <td> {{entry['name']}} </td>
-    <td> {{entry['amount']}} </td>
+    <td> {{entry['creditor']}} </td>
+    <td> {{entry['total']}} </td>
   </tr>
   {% endfor %}
 </table>
