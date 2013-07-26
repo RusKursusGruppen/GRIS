@@ -100,6 +100,11 @@ def modify_book(b_id):
 
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
 def book(b_id):
+    # TODO: The books are technically correct, but we need to fix 2 things.
+    #       1. You shouldn't see what you owe to yourself
+    #       2. When you owe money to someone who also owes to you this should be substracted from each other
+
+
     book = data.execute("SELECT * FROM Books WHERE b_id = ?", b_id)[0]
     #raw_entries = data.execute("SELECT * FROM Entries WHERE b_id = ? ORDER BY date ASC", b_id)
     user = session['username']
