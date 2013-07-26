@@ -42,6 +42,26 @@
 
 </table>
 
+<p>
+  Breakdown
+</p>
+<table border=1>
+  <tr>
+    <td></td>
+    <td>Lagt ud</td>
+    <td>Forbrugt</td>
+    <td>Total</td>
+  </tr>
+
+  {% for row in breakdown %}
+  <tr>
+    <td>{{row['user']}}</td>
+    <td>{{row['credit']}}</td>
+    <td>{{row['debt']}}</td>
+    <td>{{row['total']}}</td>
+  </tr>
+  {% endfor %}
+</table>
 
 <p>
   Du skylder totalt for dette regnskab:

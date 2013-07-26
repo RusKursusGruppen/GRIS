@@ -109,6 +109,8 @@ def book(b_id):
     # TODO: substract reverse debts
     local_totals = data.execute( 'SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1.0)/share_total*share) AS owes FROM (SELECT * FROM Entries WHERE b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', b_id, user)
     global_totals = data.execute('SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1.0)/share_total*share) AS owes FROM                Entries                 LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', user)
+
+    raw_breakdown = data.execute('SELECT *, (IFNULL(credit, 0)-IFNULL(debt,0)) AS total FROM (SELECT * FROM (SELECT creditor AS user FROM Entries WHERE b_id = ?) UNION SELECT debtor AS user FROM Debts LEFT OUTER JOIN Entries USING(e_id) WHERE b_id = ? UNION SELECT participant AS user FROM Book_participants WHERE b_id = ?)    LEFT OUTER JOIN    (SELECT creditor AS user, SUM(amount) AS credit FROM Entries WHERE b_id = ? GROUP BY creditor) USING (user)    LEFT OUTER JOIN    (SELECT debtor AS user, SUM(debt) AS debt FROM (SELECT *, ((amount*1.0)/share_total*share) AS debt FROM Debts LEFT OUTER JOIN Entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = ?) GROUP BY debtor) USING(user)', b_id, b_id, b_id, b_id, b_id)
     entries = []
     for entry in raw_entries:
         d = {}
@@ -139,11 +141,67 @@ def book(b_id):
         entries += [d]
 
     breakdown = []
+    for row in raw_breakdown:
+        res = {}
+        for c in row.keys():
+            if row[c] == None:
+                res[c] = ""
+            else:
+                res[c] = row[c]
+        breakdown.append(res)
+
     return render_template("bookkeeper/book.html", book=book, entries=entries, breakdown=breakdown, local_totals=local_totals, global_totals=global_totals)
 
     #"select * from Entries as E join (select e_id, sum(share) as share_total from Debts) as T on E.e_id = T.e_id;"
     #raw_entries = data.execute('SELECT * FROM Entries AS E JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts) AS T INNER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) AS D ON E.e_id = T.e_id and E.e_id= D.e_id ORDER BY date ASC;', user)
 
+
+
+
+
+# -- debtors and creditors
+# select * from (select creditor as user from entries where b_id = "2") union select debtor as user from debts left outer join entries using(e_id) where b_id = "2";
+
+# -- debtors, creditors and participants
+# select * from (select creditor as user from entries where b_id = "2") union select debtor as user from debts left outer join entries using(e_id) where b_id = "2" union select participant as user from Book_participants where b_id = "2";
+
+
+
+
+
+# -- credits
+# select creditor as user, sum(amount) as credit from entries where b_id = "2" group by creditor;
+
+
+
+
+# --share_totals
+# select e_id, sum(share) as share_total from Debts group by e_id;
+
+# -- Entries with share_totals
+# select * from Entries left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using (e_id) where b_id = "2";
+
+# -- debts with entry information
+# select * from debts left outer join entries using(e_id);
+
+# -- debts with entry + share_totals
+# select * from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "2";
+
+# -- debts with entry + share_totals + owes
+# select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "2";
+
+
+# -- total debt
+# select debtor as user, sum(debt) as debt from (select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "2") group by debtor;
+
+
+
+
+# -- breakdown, no totals
+# select * from (select * from (select creditor as user from entries where b_id = "2") union select debtor as user from debts left outer join entries using(e_id) where b_id = "2" union select participant as user from Book_participants where b_id = "2")    left outer join    (select creditor as user, sum(amount) as credit from entries where b_id = "2" group by creditor) using (user)    left outer join    (select debtor as user, sum(debt) as debt from (select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "2") group by debtor) using(user);
+
+# -- breakdown
+# select *, (ifnull(credit, 0)-ifnull(debt,0)) as total from (select * from (select creditor as user from entries where b_id = "2") union select debtor as user from debts left outer join entries using(e_id) where b_id = "2" union select participant as user from Book_participants where b_id = "2")    left outer join    (select creditor as user, sum(amount) as credit from entries where b_id = "2" group by creditor) using (user)    left outer join    (select debtor as user, sum(debt) as debt from (select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "2") group by debtor) using(user);
 
 
 
