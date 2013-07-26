@@ -281,7 +281,7 @@ class _FormTable(_Webobject):
     def close(self):
         result = """<tr>
 <td colspan="2">
-<button type="submit">Opret</button>
+<button type="submit">Gem</button>
 <button type="submit" name="cancel" value="cancel">Annuller</button>
 </td>
 </tr>
