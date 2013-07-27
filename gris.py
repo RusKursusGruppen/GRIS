@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random
+import random, subprocess
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
@@ -58,6 +58,7 @@ def random_greeting():
         , "<a href=\"http://en.wikipedia.org/wiki/Special:Random\">Learn more:</a>"
         , "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
         , lambda : "Der er {0} russer i databasen".format(data.execute("SELECT ifnull(COUNT(r_id),0) FROM Russer")[0][0])
+        , lambda: "Latest commit message: " + subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).rstrip('\n')
         , "Emacs, den objektivt bedste editor"
         , "O(n²)"
         , "λf.(λx.f (x x)) (λx.f (x x))"
