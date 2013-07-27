@@ -33,11 +33,7 @@ def error(code):
 
 
 def random_greeting():
-    with data.data() as db:
-        cur = db.execute("SELECT COUNT(r_id) FROM Russer")
-        count = cur.fetchone()[0]
-
-    return random.choice(
+    result = random.choice(
         [ "GRIS"
         , "Bacon"
         , "Velkommen"
@@ -46,8 +42,8 @@ def random_greeting():
         , "GTs inside"
         , "Der er <i>n</i> dage til rusturen"
         , "git push -f"
-        , "8"+("="*random.randint(1,17))+"D"
-        , ("_-‾-"*random.randint(1,10))+"=:>"
+        , lambda:"8"+("="*random.randint(1,17))+"D"
+        , lambda:("_-‾-"*random.randint(1,10))+"=:>"
         , ":(){ :|:& };:"
         , "public static void main(String[] args) {"
         , "Søren lavede denne side"
@@ -61,12 +57,16 @@ def random_greeting():
         , "[]"
         , "<a href=\"http://en.wikipedia.org/wiki/Special:Random\">Learn more:</a>"
         , "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
-        , "Der er {0} russer i databasen".format(count)
+          , (lambda : "Der er {0} russer i databasen".format(data.execute("SELECT ifnull(COUNT(r_id),0) FROM Russer")[0][0]))
         , "Emacs, den objektivt bedste editor"
         , "O(n²)"
         , "λf.(λx.f (x x)) (λx.f (x x))"
         , "Kodet med knytnæver!"
         , "3% kode, 79% slam"])
+
+    if callable(result):
+        return result()
+    return result
 
 
 
