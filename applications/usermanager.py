@@ -51,6 +51,7 @@ def update_password(username, raw_password):
 @usermanager.route('/usermanager/logout')
 def logout():
     session.pop('logged_in', None)
+    session.clear()
     flash("Logout succesful")
     return redirect(url_for('usermanager.login'))
 
