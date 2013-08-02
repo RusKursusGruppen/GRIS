@@ -32,11 +32,7 @@ rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/r
 @rusmanager.route('/rusmanager')
 @logged_in
 def overview():
-    # TODO: use "with data.data() as db:"
-    db = data.data()
-    cur = db.execute("select r_id, name from Russer")
-    russer = cur.fetchall()
-    db.close()
+    russer = data.execute("select r_id, name from Russer")
     # russer = [{'name':"A", 'r_id':-1},{'name':"B", 'r_id':-2}]
     return render_template("rusmanager/overview.html", russer=russer)
 
@@ -134,13 +130,10 @@ def new():
             flash(escape(u"Rus IKKE tilføjet"))
             return redirect(url_for('rusmanager.overview'))
 
-        with data.data() as db:
-            cur = db.cursor()
-            name = " ".join([x.capitalize() for x in request.form['name'].split()])
-            cur = cur.execute("INSERT INTO Russer(name, called) VALUES(?,?)", (name,0))
-            rus = cur.fetchone()
-            flash("Rus oprettet")
-            return redirect(url_for('rusmanager.rus', r_id=str(cur.lastrowid)))
+        name = " ".join([x.capitalize() for x in request.form['name'].split()])
+        lastrowid = cur.execute_lastrowid("INSERT INTO Russer(name, called) VALUES(?,?)", name, 0)
+        flash("Rus oprettet")
+        return redirect(url_for('rusmanager.rus', r_id=str(lastrowid)))
     else:
         w = html.WebBuilder()
         w.form()

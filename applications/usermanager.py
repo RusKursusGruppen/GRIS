@@ -35,16 +35,12 @@ def login():
     return render_template("usermanager/login.html", error=error)
 
 def create_user(username, raw_password, name="", admin=0):
-    with data.data() as db:
-        cur = db.cursor()
-        passw = password.encode(raw_password)
-        cur.execute("INSERT INTO Users(username, password, name, admin) VALUES(?,?,?,?)", (username, passw, name, admin))
+    passw = password.encode(raw_password)
+    data.execute("INSERT INTO Users(username, password, name, admin) VALUES(?,?,?,?)", username, passw, name, admin)
 
 def update_password(username, raw_password):
-    with data.data() as db:
-        cur = db.cursor()
-        passwd = password.encode(raw_password)
-        cur.execute("UPDATE Users SET password = ? WHERE username = ?", (passwd, username))
+    passwd = password.encode(raw_password)
+    data.execute("UPDATE Users SET password = ? WHERE username = ?", (passwd, username))
 
 
 @usermanager.route('/usermanager/logout')
