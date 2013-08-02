@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class=logo>
-  <img src="/static/pig-face.png" alt="GRIS" width="120" height="120">
+  <img src="/static/images/pig-face.png" alt="GRIS" width="120" height="120">
 </div>
 <div class=navigation>
   <div class=menu>
@@ -44,5 +44,7 @@
   {% endfor %}
   {% block body %}{% endblock %}
 </div>
+
+<div class=right><i>logged in as: {{session['username']}}</i></div>
 </body>
 </html>
