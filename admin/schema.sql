@@ -161,6 +161,7 @@ CREATE TABLE Entries(
     date                string,
     creditor            REFERENCES Users(username),
     description         string,
+    amount_string       string,
     amount              integer
 );
 
@@ -174,9 +175,19 @@ CREATE TABLE Debts(
     UNIQUE(e_id, debtor) ON CONFLICT REPLACE
 );
 
-DROP TABLE If EXISTS Book_participants;
+DROP TABLE IF EXISTS Book_participants;
 CREATE TABLE Book_participants(
     b_id                integer, -- REFERENCES Books(b_id),
     participant         REFERENCES Users(username),
     UNIQUE(b_id, participant) ON CONFLICT IGNORE
+);
+
+DROP TABLE IF EXISTS Payments;
+CREATE TABLE Payments(
+    b_id                REFERENCES Books(b_id),
+    date                string,
+    creditor            REFERENCES Users(username),
+    debtor              REFERENCES Users(users),
+    amount              integer,
+    confirmed           integer NOT NULL default 0 --0 not confirmed, -1 seen but not confirmed, 1 confirmed
 );
