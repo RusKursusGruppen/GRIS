@@ -18,21 +18,20 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         raw_password = request.form['password']
-        with data.data() as db:
-            v = data.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', username)
-            v = v[0]
-            if empty(v) or not password.check(raw_password, v[str('password')]):
+        user = data.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', username)
+        if empty(user) or not password.check(raw_password, user[0]['password']):
                 flash('Invalid username or password')
-            else:
-                session['logged_in'] = True
-                session['username']  = username
-                session['admin']     = (v['admin'] == 1)
-                session['rkg']       = v['rkg']
-                session['tutor']     = v['tutor']
-                session['mentor']    = v['mentor']
-                update_password(username, raw_password)
-                flash("Login succesful")
-                return redirect(session.pop('login_origin', url_front()))
+        else:
+            user = user[0]
+            session['logged_in'] = True
+            session['username']  = username
+            session['admin']     = (user['admin'] == 1)
+            session['rkg']       = user['rkg']
+            session['tutor']     = user['tutor']
+            session['mentor']    = user['mentor']
+            update_password(username, raw_password)
+            flash("Login succesful")
+            return redirect(session.pop('login_origin', url_front()))
     return render_template("usermanager/login.html", error=error)
 
 def create_user(username, raw_password, name="", admin=0):
