@@ -20,7 +20,7 @@ def login():
         raw_password = request.form['password']
         user = data.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', username)
         if empty(user) or not password.check(raw_password, user[0]['password']):
-                flash('Invalid username or password')
+            flash('Invalid username or password')
         else:
             user = user[0]
             session['logged_in'] = True
