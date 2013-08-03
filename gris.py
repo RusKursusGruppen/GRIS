@@ -73,7 +73,7 @@ def random_greeting():
 
 ### JINJA ###
 
-from lib import jinja
+from lib import filters
 
 app.jinja_env.filters['nl2br'] = filters.nl2br
 app.jinja_env.filters['markdown'] = filters.markdown
