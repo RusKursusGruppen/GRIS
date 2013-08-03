@@ -40,7 +40,7 @@ def create_user(username, raw_password, name="", admin=0):
 
 def update_password(username, raw_password):
     passwd = password.encode(raw_password)
-    data.execute("UPDATE Users SET password = ? WHERE username = ?", (passwd, username))
+    data.execute("UPDATE Users SET password = ? WHERE username = ?", passwd, username)
 
 
 @usermanager.route('/usermanager/logout')
