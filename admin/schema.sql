@@ -106,6 +106,7 @@ CREATE TABLE User_creation_keys(
 --- FRONT PAGE ---
 DROP TABLE IF EXISTS News;
 CREATE TABLE News(
+    n_id                integer PRIMARY KEY AUTOINCREMENT,
     creator             REFERENCES Users(username),
     created             string NOT NULL,
     for_tutors          int NOT NULL default 1,

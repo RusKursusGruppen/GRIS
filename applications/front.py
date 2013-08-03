@@ -47,3 +47,33 @@ def add_news():
 
         form = w.create()
         return render_template('form.html', form=form)
+
+@front.route('/modify_news/<id>', methods=['GET', 'POST'])
+def modify_news(id):
+    news = data.execute("SELECT * FROM News WHERE n_id = ?", id)
+
+    if empty(news) or session['username'] != news[0]['creator']:
+        flash("You are not permitted to edit this newsitem")
+        return redirect(url_front())
+    news = news[0]
+
+    if request.method == 'POST':
+        if 'cancel' in request.form:
+            return redirect(url_front())
+
+        b = data.Bucket(request.form)
+        if b.title == "":
+            flash("Please enter a title")
+            return html.back()
+        b.text
+        b >> ("UPDATE News $ WHERE  n_id = ?", id)
+        return redirect(url_front())
+    else:
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.textfield("title", "Overskrift")
+        w.textarea("text", "Tekst")
+
+        form = w.create(news)
+        return render_template('form.html', form=form)
