@@ -25,3 +25,15 @@ def nl2br(text):
 def markdown(text):
     result = md.markdown(text)
     return Markup(result)
+
+
+def money(amount):
+    amount = str(amount)
+    if amount == "":
+        return ""
+    first = amount[:-2]
+    second = amount[-2:]
+    # if second == '00':
+    #     return "{0},-".format(first)
+    # else:
+    return "{0}.{1},-".format(first, second)

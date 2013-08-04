@@ -77,6 +77,7 @@ from lib import filters
 
 app.jinja_env.filters['nl2br'] = filters.nl2br
 app.jinja_env.filters['markdown'] = filters.markdown
+app.jinja_env.filters['money'] = filters.money
 app.jinja_env.globals.update(url_front=tools.url_front)
 app.jinja_env.globals.update(random_greeting=random_greeting)
 app.jinja_env.globals.update(textfields=textfields)
