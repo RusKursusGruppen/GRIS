@@ -215,7 +215,7 @@ class _Webobject(object):
         return attributes
 
     def _attributes_string(self, attributes=None):
-        if type(attributes) != dict:
+        if not isinstance(attributes, dict):
             dbqv = attributes
             attributes = self._attributes_convert(dbqv)
         string = u' '.join(u'{0}="{1}"'.format(k,v) for k,v in attributes.iteritems())
