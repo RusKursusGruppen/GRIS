@@ -32,7 +32,7 @@ def new_book():
         b.description
         b.creator = session['username']
         b.created = now()
-        b_id = b >= "Books"
+        b_id = (b >= "Books")
         return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
         w = html.WebBuilder()
@@ -110,20 +110,19 @@ def book(b_id):
     user = session['username']
     # TODO: convert internal representation to øre
     # TODO: decide on floating vs integer for currency
-    raw_entries = data.execute(                                            'SELECT *, ((amount*1.0)/share_total*share) AS owes FROM (SELECT * FROM Entries where b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id);', b_id, user)
+    raw_entries = data.execute(                                            'SELECT *, ((amount*1)/share_total*share) AS owes FROM (SELECT * FROM Entries where b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id);', b_id, user)
     # TODO: substract reverse debts
-    local_totals = data.execute( 'SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1.0)/share_total*share) AS owes FROM (SELECT * FROM Entries WHERE b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', b_id, user)
-    global_totals = data.execute('SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1.0)/share_total*share) AS owes FROM                Entries                 LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', user)
+    local_totals = data.execute( 'SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1)/share_total*share) AS owes FROM (SELECT * FROM Entries WHERE b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', b_id, user)
+    global_totals = data.execute('SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1)/share_total*share) AS owes FROM                Entries                 LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', user)
 
-    raw_breakdown = data.execute('SELECT *, (IFNULL(credit, 0)-IFNULL(debt,0)) AS total FROM (SELECT * FROM (SELECT creditor AS user FROM Entries WHERE b_id = ?) UNION SELECT debtor AS user FROM Debts LEFT OUTER JOIN Entries USING(e_id) WHERE b_id = ? UNION SELECT participant AS user FROM Book_participants WHERE b_id = ?)    LEFT OUTER JOIN    (SELECT creditor AS user, SUM(amount) AS credit FROM Entries WHERE b_id = ? GROUP BY creditor) USING (user)    LEFT OUTER JOIN    (SELECT debtor AS user, SUM(debt) AS debt FROM (SELECT *, ((amount*1.0)/share_total*share) AS debt FROM Debts LEFT OUTER JOIN Entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = ?) GROUP BY debtor) USING(user)', b_id, b_id, b_id, b_id, b_id)
+    raw_breakdown = data.execute('SELECT *, (IFNULL(credit, 0)-IFNULL(debt,0)) AS total FROM (SELECT * FROM (SELECT creditor AS user FROM Entries WHERE b_id = ?) UNION SELECT debtor AS user FROM Debts LEFT OUTER JOIN Entries USING(e_id) WHERE b_id = ? UNION SELECT participant AS user FROM Book_participants WHERE b_id = ?)    LEFT OUTER JOIN    (SELECT creditor AS user, SUM(amount) AS credit FROM Entries WHERE b_id = ? GROUP BY creditor) USING (user)    LEFT OUTER JOIN    (SELECT debtor AS user, SUM(debt) AS debt FROM (SELECT *, ((amount*1)/share_total*share) AS debt FROM Debts LEFT OUTER JOIN Entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = ?) GROUP BY debtor) USING(user)', b_id, b_id, b_id, b_id, b_id)
     entries = []
     for entry in raw_entries:
         d = {}
         d.update(entry)
 
-        amount = entry['amount']
-        # TODO: check for errors, do this on insertion
-        amount = amount if type(amount) == int else expinterpreter.interpret(amount)
+        #amount = money(entry['amount'])
+        #d['amount'] = amount
 
         share_total = entry['share_total']
         if share_total == None:
@@ -138,7 +137,7 @@ def book(b_id):
         if owes == None:
             owes = 0
 
-        owes = "{0}kr.".format(owes)
+        #owes = "{0}kr.".format(owes)
         if share == 0:
             final_share = ""
             owes = ""
@@ -248,7 +247,14 @@ def entry(b_id, e_id=None):
         if b.description == "":
             flash("Please enter a description")
             return(html.back())
-        b.amount
+        b.amount_string
+        # TODO: check for errors
+        try:
+            b.amount = expinterpreter.interpret_amount(b.amount_string)
+        except expinterpreter.ExpinterpreterException as e:
+            flash("invalid amount")
+            return html.back()
+
         b.date
         b.creditor = b.creditor.replace('"', '').replace('&quot;', '')
         if b.creditor == "":
@@ -258,7 +264,7 @@ def entry(b_id, e_id=None):
 
         if e_id == None:
             b.b_id = b_id
-            e_id = b >= "Entries"
+            e_id = (b >= "Entries")
             e_id = str(e_id)
         else:
             b >> ("UPDATE Entries $ WHERE b_id = ? and e_id = ?", b_id, e_id)
@@ -277,7 +283,7 @@ def entry(b_id, e_id=None):
                         debts.append((debtor, share_string, share))
                     except expinterpreter.ExpinterpreterException as e:
                         flash("Invalid expression in " + debtor + ": " + share)
-                        return(html.back())
+                        return html.back()
 
         # TODO: The following is not harming, but is it necessary?
         # TODO: Think more about this line, is the previous statement true?
@@ -300,11 +306,11 @@ def entry(b_id, e_id=None):
         else:
             entry = data.execute("SELECT * FROM Entries WHERE e_id = ?", e_id)[0]
             description = entry['description']
-            amount = entry['amount']
+            amount_string = entry['amount_string']
             date = entry['date']
             creditor = entry['creditor']
         w.textfield("description", "Hvad", value=description)
-        w.textfield("amount", u"Beløb", value=amount)
+        w.textfield("amount_string", u"Beløb", value=amount_string)
         # TODO: make WebBuilder understand calendars
         w.html('<input type="text" id="bookkeeper.date" maxlength="25" size="25" name="date" value="'+date+'">' +
                html.calendar("bookkeeper.date")
