@@ -19,7 +19,7 @@
 <p>
   Posteringer:
 </p>
-<table border=1>
+<table border=1 style="float:right">
   <tr>
     <td></td>
     <td>Dato</td>
@@ -34,9 +34,9 @@
     <td> <a href="{{url_for('bookkeeper.entry', b_id=book['b_id'], e_id=entry['e_id'])}}">{{entry['description']}}</a> </td>
     <td> {{entry['date']}} </td>
     <td> {{entry['creditor']}} </td>
-    <td> {{entry['amount']}} </td>
+    <td> {{entry['amount']|money}} </td>
     <td> {{entry['final_share']}} </td>
-    <td> {{entry['owes']}} </td>
+    <td> {{entry['owes']|money}} </td>
   </tr>
   {% endfor %}
 
@@ -56,9 +56,9 @@
   {% for row in breakdown %}
   <tr>
     <td>{{row['user']}}</td>
-    <td>{{row['credit']}}</td>
-    <td>{{row['debt']}}</td>
-    <td>{{row['total']}}</td>
+    <td>{{row['credit']|money}}</td>
+    <td>{{row['debt']|money}}</td>
+    <td>{{row['total']|money}}</td>
   </tr>
   {% endfor %}
 </table>
@@ -70,7 +70,7 @@
   {% for entry in local_totals %}
   <tr>
     <td> {{entry['creditor']}} </td>
-    <td> {{entry['total']}} </td>
+    <td> {{entry['total']|money}} </td>
   </tr>
   {% endfor %}
 </table>
@@ -83,7 +83,7 @@
   {% for entry in global_totals %}
   <tr>
     <td> {{entry['creditor']}} </td>
-    <td> {{entry['total']}} </td>
+    <td> {{entry['total']|money}} </td>
   </tr>
   {% endfor %}
 </table>
