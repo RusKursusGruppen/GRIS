@@ -51,3 +51,6 @@ def rpn(tokens):
 
 def interpret(string):
     return rpn(lexer(string))
+
+def interpret_amount(string):
+    return interpret(string)*100
