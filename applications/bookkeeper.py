@@ -348,14 +348,6 @@ def entry(b_id, e_id=None):
 
 
 
-
-@bookkeeper.route("/bookkeeper/a/")
-@bookkeeper.route("/bookkeeper/b/<id>")
-def a(id=None):
-    return "a"+str(id)
-
-
-
 # bookkeeper - regnskabssystemet
 # record / book - regnskab (S-togstur)
 # entry - indtastning (1 ramme øl, 200,-)
