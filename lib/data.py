@@ -5,6 +5,8 @@ import sys
 import sqlite3
 import itertools
 
+from lib import log
+
 import config
 
 def connect(dbf=None):
@@ -19,17 +21,27 @@ def data():
 
 
 def execute(com, *args):
-    with connect() as db:
-        db.execute("PRAGMA foreign_keys = ON").fetchone()
-        v = db.execute(com, args)
-        return v.fetchall()
+    try:
+        with connect() as db:
+            db.execute("PRAGMA foreign_keys = ON").fetchone()
+            v = db.execute(com, args)
+            log.data(com, args)
+            return v.fetchall()
+    except:
+        log.data(com, args, error=True)
+        raise
 
 def execute_lastrowid(com, *args):
-    with connect() as db:
-        c = db.cursor()
-        c.execute("PRAGMA foreign_keys = ON").fetchone()
-        c.execute(com, args)
-        return c.lastrowid
+    try:
+        with connect() as db:
+            c = db.cursor()
+            c.execute("PRAGMA foreign_keys = ON").fetchone()
+            c.execute(com, args)
+            log.data(com, args)
+            return c.lastrowid
+    except:
+        log.data(com, args, error=True)
+        raise
 
 def script(f):
     with connect() as db:
@@ -121,9 +133,14 @@ class Bucket(object):
         values = [self[c] for c in self]
         values.extend(args)
 
-        with connect() as db:
-            c = db.execute(sql, values)
-            return c.lastrowid
+        try:
+            with connect() as db:
+                c = db.execute(sql, values)
+                log.data(sql, values)
+                return c.lastrowid
+        except:
+            log.data(sql, values, error=True)
+            raise
 
     def __ge__(self, dest):
         """Create entry in database"""
@@ -137,9 +154,13 @@ class Bucket(object):
         sql += ",".join(questions)
         sql += ")"
 
-        with connect() as db:
-            c = db.execute(sql, values)
-            return c.lastrowid
+        try:
+            with connect() as db:
+                c = db.execute(sql, values)
+                log.data(sql, values)
+                return c.lastrowid
+        except:
+            log.data(sql, values, error=True)
 
 if __name__ == "__mainn__":
     if len(sys.argv) < 3:
