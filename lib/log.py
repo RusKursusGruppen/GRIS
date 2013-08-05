@@ -13,6 +13,7 @@ def log(message, level="INFO"):
     time = now()
     string = "{0} | {1} | {2} | {3}\n".format(level, time, user, message)
     string = unicode(string)
+    # EXPLANATION: io.open is atomic
     with io.open(config.LOGFILE, "a") as f:
         f.write(string)
     if config.PRINT_LOG:
