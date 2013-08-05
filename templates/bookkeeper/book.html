@@ -21,12 +21,12 @@
 </p>
 <table border=1 style="float:right">
   <tr>
-    <td></td>
-    <td>Dato</td>
-    <td>Kreditor</td>
-    <td>Beløb</td>
-    <td>andel</td>
-    <td>skylder</td>
+    <th></th>
+    <th>Dato</th>
+    <th>Kreditor</th>
+    <th>Beløb</th>
+    <th>andel</th>
+    <th>skylder</th>
   </tr>
 
   {% for entry in entries %}
@@ -47,10 +47,10 @@
 </p>
 <table border=1>
   <tr>
-    <td></td>
-    <td>Lagt ud</td>
-    <td>Forbrugt</td>
-    <td>Total</td>
+    <th></th>
+    <th>Lagt ud</th>
+    <th>Forbrugt</th>
+    <th>Balance</th>
   </tr>
 
   {% for row in breakdown %}
@@ -58,7 +58,7 @@
     <td>{{row['user']}}</td>
     <td>{{row['credit']|money}}</td>
     <td>{{row['debt']|money}}</td>
-    <td>{{row['total']|money}}</td>
+    <td>{{row['balance']|money}}</td>
   </tr>
   {% endfor %}
 </table>
@@ -81,6 +81,10 @@
 </p>
 <table border=1>
   {% for entry in global_totals %}
+  <tr>
+    <th>Vejleder</th>
+    <th>beløb</th>
+  </tr>
   <tr>
     <td> {{entry['creditor']}} </td>
     <td> {{entry['total']|money}} </td>
