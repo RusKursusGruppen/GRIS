@@ -246,7 +246,7 @@ def entry(b_id, e_id=None):
         b = data.Bucket(request.form)
         if b.description == "":
             flash("Please enter a description")
-            return(html.back())
+            return html.back()
         b.amount_string
         # TODO: check for errors
         try:
@@ -259,7 +259,7 @@ def entry(b_id, e_id=None):
         b.creditor = b.creditor.replace('"', '').replace('&quot;', '')
         if b.creditor == "":
             flash("Please enter a creditor")
-            return(html.back())
+            return html.back()
         b.creditor = b.creditor.split()[0]
 
         if e_id == None:
