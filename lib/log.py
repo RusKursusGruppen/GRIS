@@ -9,7 +9,10 @@ from lib.tools import now
 import config
 
 def log(message, level="INFO"):
-    user = session['username']
+    try:
+        user = session['username']
+    except:
+        user = "NO USER"
     time = now()
     string = "{0} | {1} | {2} | {3}\n".format(level, time, user, message)
     string = unicode(string)
