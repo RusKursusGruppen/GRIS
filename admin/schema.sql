@@ -56,7 +56,9 @@ CREATE TABLE Friends(
 DROP TABLE IF EXISTS Tours;
 CREATE TABLE Tours(
     t_id                integer PRIMARY KEY AUTOINCREMENT,
-    tour_name           string
+    tour_name           string,
+    type                string CHECK(type IN ('p', 't', 'm')),
+    year                integer
 );
 
 DROP TABLE IF EXISTS Dutyteams;
