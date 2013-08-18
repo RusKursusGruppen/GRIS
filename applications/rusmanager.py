@@ -7,33 +7,11 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 from lib import data, password, html
 from lib.tools import logged_in
 
-textfields = [ 'name',
-               'filled_by',
-               'co',
-               'address',
-               'zipcode',
-               'city',
-               'move_time',
-               'new_address',
-               'new_zipcode',
-               'new_city',
-               'phone',
-               'email',
-               'vacation',
-               'priority',
-               'gymnasium',
-               'since_gymnasium',
-               'code_experience',
-               'special_needs',
-               'plays_instrument',
-               'other',]
-
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 @rusmanager.route('/rusmanager')
 @logged_in('tutor', 'mentor')
 def overview():
     russer = data.execute("select r_id, name from Russer")
-    # russer = [{'name':"A", 'r_id':-1},{'name':"B", 'r_id':-2}]
     return render_template("rusmanager/overview.html", russer=russer)
 
 @rusmanager.route('/rusmanager/<r_id>', methods=['GET', 'POST'])
