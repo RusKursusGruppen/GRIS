@@ -97,6 +97,23 @@ CREATE TABLE Users(
     deleted             int -- Field for marking a user as deleted
 );
 
+DROP TABLE IF EXISTS Groups;
+CREATE TABLE Groups(
+       groupname        string PRIMARY KEY NOT NULL
+);
+INSERT INTO Groups(groupname) VALUES("admin");
+INSERT INTO Groups(groupname) VALUES("rkg");
+INSERT INTO Groups(groupname) VALUES("tutor");
+INSERT INTO Groups(groupname) VALUES("mentor");
+
+
+DROP TABLE IF EXISTS User_groups;
+CREATE TABLE User_groups(
+       username         string REFERENCES Users(username),
+       groupname        string REFERENCES Groups(groupname)
+);
+
+
 DROP TABLE IF EXISTS User_creation_keys;
 CREATE TABLE User_creation_keys(
        key              string UNIQUE NOT NULL,
