@@ -2,7 +2,7 @@
 
 import itertools, string
 
-from jinja import Markup
+from jinja2 import Markup
 
 def _semiunique_key():
     if not hasattr(_semiunique_key, "_keys"):
