@@ -18,25 +18,28 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         raw_password = request.form['password']
-        user = data.execute('SELECT password, admin, rkg, tutor, mentor FROM Users WHERE username = ?', username)
+        user = data.execute('SELECT password FROM Users WHERE username = ?', username)
         if empty(user) or not password.check(raw_password, user[0]['password']):
             flash('Invalid username or password')
         else:
             user = user[0]
             session['logged_in'] = True
             session['username']  = username
-            session['admin']     = (user['admin'] == 1)
-            session['rkg']       = user['rkg']
-            session['tutor']     = user['tutor']
-            session['mentor']    = user['mentor']
+
+            groups = data.execute('SELECT groupname FROM User_groups WHERE username = ?', username)
+            groups = [group['groupname'] for group in groups]
+            session['groups'] = groups
+
             update_password(username, raw_password)
             flash("Login succesful")
             return redirect(session.pop('login_origin', url_front()))
     return render_template("usermanager/login.html", error=error)
 
-def create_user(username, raw_password, name="", admin=0):
+def create_user(username, raw_password, name="", groups=[]):
     passw = password.encode(raw_password)
-    data.execute("INSERT INTO Users(username, password, name, admin) VALUES(?,?,?,?)", username, passw, name, admin)
+    data.execute("INSERT INTO Users(username, password, name) VALUES(?,?,?)", username, passw, name)
+    for group in groups:
+        data.execute("INSERT INTO User_groups(username, groupname) VALUES(?,?)", username, group)
 
 def update_password(username, raw_password):
     passwd = password.encode(raw_password)

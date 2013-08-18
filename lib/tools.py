@@ -1,23 +1,51 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 from functools import wraps
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-import datetime
+from lib import html
+import lib.data
 
 ### TOOLS ###
 def empty(lst):
     return lst == None or len(lst) == 0
 
-def logged_in(fn):
-    @wraps(fn)
-    def decorator(*args, **kwargs):
-        if not session.get('logged_in'):
-            session['login_origin'] = request.path
-            abort(401)
+def logged_in(*args):
+    # EXPLANATION: logged_in is called as a decorator
+    if callable(args[0]):
+        fn = args[0]
+        @wraps(fn)
+        def decorated(*args, **kwargs):
+            if not session.get('logged_in'):
+                session['login_origin'] = request.path
+                abort(401)
+            else:
+                return fn(*args, **kwargs)
+        return decorated
+
+    else:
+        # EXPLANATION: decorator factory called with something to iterate
+        if not isinstance(args[0], str):
+            rights = args[0]
         else:
-            return fn(*args, **kwargs)
-    return decorator
+            rights = args
+
+        def decorator(fn):
+            @wraps(fn)
+            def decorated(*args, **kwargs):
+                if not session.get('logged_in'):
+                    session['login_origin'] = request.path
+                    abort(401)
+                else:
+                    groups = lib.data.execute('SELECT groupname FROM User_groups WHERE username = ?', session['username'])
+                    for group in groups:
+                        if group['groupname'] in rights:
+                            return fn(*args, **kwargs)
+                    flash("You do not have sufficient rights to access this page.")
+                    return redirect(url_front())
+            return decorated
+        return decorator
 
 def url_front():
     return url_for('front.frontpage')

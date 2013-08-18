@@ -14,9 +14,6 @@ front = Blueprint('front', __name__, template_folder = '../templates/front')
 @front.route('/')
 @logged_in
 def frontpage():
-    rkg      = session['rkg']
-    vejleder = session['tutor']
-    mentor   = session['mentor']
     news = data.execute("SELECT * FROM News ORDER BY created DESC")# WHERE for_tutors = ? OR for_mentors = ?", tutor, mentor)
     return render_template("front/frontpage.html", news=news)
 
