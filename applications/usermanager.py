@@ -138,6 +138,7 @@ def sanitize_username(username):
     #check that no such user already exists
     illegal_characters = [';" ']
     return not any(illegal in username for illegal in illegal_characters)
+
 @usermanager.route('/usermanager/new/<key>', methods=['GET', 'POST'])
 def new(key):
     time.sleep(random.randint(2,6))
@@ -174,6 +175,7 @@ def new(key):
         return render_template("usermanager/new.html", key=key)
 
 @usermanager.route('/usermanager/invite', methods=['GET', 'POST'])
+@logged_in
 def invite():
     if request.method == "POST":
         if 'cancel' in request.form:

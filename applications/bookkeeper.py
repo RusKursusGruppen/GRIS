@@ -14,6 +14,7 @@ import config
 bookkeeper = Blueprint('bookkeeper', __name__, template_folder = '../templates/bookkeeper')
 
 @bookkeeper.route("/bookkeeper/")
+@logged_in
 def overview():
     # TODO: Filter so you only see books referencing you
     books = data.execute("SELECT * FROM Books ORDER BY created DESC")
@@ -21,6 +22,7 @@ def overview():
     return render_template("bookkeeper/overview.html", books=books)
 
 @bookkeeper.route("/bookkeeper/new", methods=["GET", "POST"])
+@logged_in
 def new_book():
     # TODO: merge features of book and new_book
     if request.method == "POST":
@@ -44,6 +46,7 @@ def new_book():
         return render_template("form.html", form=form)
 
 @bookkeeper.route("/bookkeeper/book/<b_id>/modify", methods=["GET", "POST"])
+@logged_in
 def modify_book(b_id):
     if request.method == "POST":
         if 'cancel' in request.form:
@@ -99,6 +102,7 @@ def modify_book(b_id):
         return render_template("form.html", form=form)
 
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
+@logged_in
 def book(b_id):
     # TODO: The books are technically correct, but we need to fix 2 things.
     #       1. You shouldn't see what you owe to yourself
@@ -237,6 +241,7 @@ def book(b_id):
 
 @bookkeeper.route("/bookkeeper/book/<b_id>/new_entry", methods=["GET", "POST"])
 @bookkeeper.route("/bookkeeper/book/<b_id>/entry/<e_id>", methods=["GET", "POST"])
+@logged_in
 def entry(b_id, e_id=None):
     if request.method == "POST":
         if 'cancel' in request.form:

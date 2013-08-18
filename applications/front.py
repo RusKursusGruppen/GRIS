@@ -46,6 +46,7 @@ def add_news():
         return render_template('form.html', form=form)
 
 @front.route('/modify_news/<id>', methods=['GET', 'POST'])
+@logged_in
 def modify_news(id):
     news = data.execute("SELECT * FROM News WHERE n_id = ?", id)
 

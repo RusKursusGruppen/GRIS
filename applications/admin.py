@@ -15,11 +15,13 @@ import config
 admin = Blueprint('admin', __name__, template_folder = '../templates/admin')
 
 @admin.route('/admin', methods=['GET', 'POST'])
+@logged_in('admin')
 def overview():
     #adminrights
     return render_template("admin/admin.html")
 
 @admin.route('/admin/git_pull', methods=["GET", "POST"])
+@logged_in('admin')
 def git_pull():
     if request.method == "POST":
         response = subprocess.check_output(["git", "pull"])

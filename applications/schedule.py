@@ -11,6 +11,7 @@ import pprint
 
 schedule = Blueprint('schedule', __name__, template_folder = '../templates/schedule')
 @schedule.route('/schedule')
+@logged_in
 def overview():
     with data.data() as db:
         cur = db.execute("SELECT s_id, title, closes FROM Schedule")
@@ -19,6 +20,7 @@ def overview():
         return render_template("schedule/overview.html",events=events)
 
 @schedule.route('/schedule/new', methods=['GET','POST'])
+@logged_in
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:
@@ -47,6 +49,7 @@ def new():
         return render_template("schedule/new.html", deadline_calendar=deadline_calendar, time_calendar=time_calendar)
 
 @schedule.route('/schedule/<sid>', methods=['GET', 'POST'])
+@logged_in
 def event(sid):
     with data.data() as db:
         cur = db.execute("SELECT s_id, title, description, created, closes FROM Schedule WHERE s_id = ?", sid)
