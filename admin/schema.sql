@@ -147,10 +147,12 @@ CREATE TABLE Schedule(
 DROP TABLE IF EXISTS Schedule_cols;
 CREATE TABLE Schedule_cols(
     c_id                integer PRIMARY KEY AUTOINCREMENT,
-    s_id                REFERENCES Schedule(s_id),
-    parent              REFERENCES Schedule_cols(s_id),
+    s_id                integer,
+    parent              integer,
     label               string,
-    type                integer NOT NULL default 0
+    type                integer NOT NULL default 0,
+    FOREIGN KEY(parent) REFERENCES Schedule_cols(s_id),
+    FOREIGN KEY(c_id) REFERENCES Schedule(s_id)
 );
 
 DROP TABLE IF EXISTS Schedule_answers;

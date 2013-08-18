@@ -43,6 +43,17 @@ def execute_lastrowid(com, *args):
         log.data(com, args, error=True)
         raise
 
+def executemany(com, argSeq):
+    try:
+        with connect() as db:
+            db.execute("PRAGMA foreign_keys = ON").fetchone()
+            v = db.executemany(com, argSeq)
+            log.data(com, args)
+            return v.fetchall()
+    except:
+        log.data(com, argSeq, error=True)
+        raise
+
 def script(f):
     with connect() as db:
         with open(f) as f:
