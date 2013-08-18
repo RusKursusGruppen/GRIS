@@ -131,7 +131,7 @@ def new():
             return redirect(url_for('rusmanager.overview'))
 
         name = " ".join([x.capitalize() for x in request.form['name'].split()])
-        lastrowid = cur.execute_lastrowid("INSERT INTO Russer(name, called) VALUES(?,?)", name, 0)
+        lastrowid = data.execute_lastrowid("INSERT INTO Russer(name, called) VALUES(?,?)", name, 0)
         flash("Rus oprettet")
         return redirect(url_for('rusmanager.rus', r_id=str(lastrowid)))
     else:
