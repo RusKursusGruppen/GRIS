@@ -39,7 +39,7 @@ def login():
 def create_user(username, raw_password, name="", groups=[]):
     passw = password.encode(raw_password)
     data.execute("INSERT INTO Users(username, password, name) VALUES(?,?,?)", username, passw, name)
-    user_groups(username groups)
+    user_groups(username, groups)
 
 def update_password(username, raw_password):
     passwd = password.encode(raw_password)
