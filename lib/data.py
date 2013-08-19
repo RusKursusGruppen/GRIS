@@ -71,10 +71,10 @@ class Bucket(object):
             # EXPLANATION:
             # You cant use self.__unsafe__.update(d) here as the request.form
             # for some reason will pack its values in lists
-            for k,v in d.iteritems():
+            for k,v in d.items():
                 self.__unsafe__[k] = v
 
-        for k,v in kwargs.iteritems():
+        for k,v in kwargs.items():
             object.__setattr__(self, k, v)
 
     def __getattribute__(self, item):
@@ -96,6 +96,7 @@ class Bucket(object):
             return object.__getattribute__(self, item)
         except AttributeError as e:
             if config.DEBUG:
+                print("bucket not filled")
                 raise e
             else:
                 if not item.startswith("_"):

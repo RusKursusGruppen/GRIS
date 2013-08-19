@@ -27,7 +27,7 @@ def new_book():
     # TODO: merge features of book and new_book
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape(u"Ændringer annulleret"))
+            flash(escape("Ændringer annulleret"))
             return redirect(url_for('bookkeeper.overview'))
         b = data.Bucket(request.form)
         b.title
@@ -50,7 +50,7 @@ def new_book():
 def modify_book(b_id):
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape(u"Ændringer annulleret"))
+            flash(escape("Ændringer annulleret"))
             return redirect(url_for('bookkeeper.overview'))
 
         # TOPIC: insert descriptors
@@ -218,7 +218,7 @@ def book(b_id):
 # def new_entry(b_id):
 #     if request.method == "POST":
 #         if 'cancel' in request.form:
-#             flash(escape(u"Ændringer annulleret"))
+#             flash(escape("Ændringer annulleret"))
 #             return redirect(url_for('bookkeeper.overview'))
 
 #         b = data.Bucket(request.form)
@@ -235,7 +235,7 @@ def book(b_id):
 #         w.form()
 #         w.formtable()
 #         w.textfield("description", "Hvad")
-#         w.textfield("amount", u"Beløb")
+#         w.textfield("amount", "Beløb")
 #         form = w.create()
 #         return render_template("bookkeeper/new_entry.html", form=form)
 
@@ -245,7 +245,7 @@ def book(b_id):
 def entry(b_id, e_id=None):
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape(u"Ændringer annulleret"))
+            flash(escape("Ændringer annulleret"))
             return redirect(url_for('bookkeeper.book', b_id=b_id))
 
         b = data.Bucket(request.form)
@@ -277,7 +277,7 @@ def entry(b_id, e_id=None):
 
         # EXPLANATION: ensure all 'share's are valid integers before any database modification
         debts = []
-        for req in request.form.iterkeys():
+        for req in request.form.keys():
             if req.startswith("participant_"):
                 debtor = req[12:] # len("participant_") == 12
                 share_string = request.form[req]
@@ -305,7 +305,7 @@ def entry(b_id, e_id=None):
         w.formtable()
         if e_id == None:
             description = ""
-            amount = ""
+            amount_string = ""
             date = ""
             creditor = session['username']
         else:
@@ -315,16 +315,16 @@ def entry(b_id, e_id=None):
             date = entry['date']
             creditor = entry['creditor']
         w.textfield("description", "Hvad", value=description)
-        w.textfield("amount_string", u"Beløb", value=amount_string)
+        w.textfield("amount_string", "Beløb", value=amount_string)
         # TODO: make WebBuilder understand calendars
         w.html('<input type="text" id="bookkeeper.date" maxlength="25" size="25" name="date" value="'+date+'">' +
                html.calendar("bookkeeper.date")
-               + '<span class="note">(Format: yyyy-MM-dd)</span>', description=u"Hvornår")
+               + '<span class="note">(Format: yyyy-MM-dd)</span>', description="Hvornår")
 
         participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
         participant_names = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in participants]
         #participant_names = [user['username'] for user in participants]
-        w.html(html.autocomplete(participant_names, "creditor", default=creditor), description=u"Udlægger", value="abekat")
+        w.html(html.autocomplete(participant_names, "creditor", default=creditor), description="Udlægger", value="abekat")
 
         # Extract users
         if e_id == None:
@@ -338,7 +338,7 @@ def entry(b_id, e_id=None):
         new_participants = [{'username':p['username'], 'name':p['name'], 'share_string':''} for p in participants if p['username'] not in usernames]
 
         all_participants = previous_debtors + new_participants
-        all_participants = sorted(all_participants, cmp=lambda x, y: cmp(x['username'],y['username']))
+        all_participants = sorted(all_participants, key=lambda x: x['username'])
 
         for user in all_participants:
             name = 'participant_{0}'.format(user['username'])

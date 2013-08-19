@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import itertools, string
+from functools import reduce
 
 from jinja2 import Markup
 
 def _semiunique_key():
     if not hasattr(_semiunique_key, "_keys"):
-        combi = itertools.combinations_with_replacement(string.letters, 6)
+        combi = itertools.combinations_with_replacement(string.ascii_letters, 6)
         _semiunique_key._keys = itertools.cycle(combi)
     key = "".join(next(_semiunique_key._keys))
     return key
@@ -218,7 +219,7 @@ class _Webobject(object):
         if not isinstance(attributes, dict):
             dbqv = attributes
             attributes = self._attributes_convert(dbqv)
-        string = u' '.join(u'{0}="{1}"'.format(k,v) for k,v in attributes.iteritems())
+        string = u' '.join(u'{0}="{1}"'.format(k,v) for k,v in attributes.items())
         return string
 
 class _Textfield(_Webobject):
@@ -275,7 +276,7 @@ class _FormTable(_Webobject):
     def __init__(self):
         self.modifier = True
     def modify(self, w, html):
-        return u"<tr>\n<td>{0}</td>\n<td>{1}</td>\n</tr>".format(w.description, html)
+        return "<tr>\n<td>{0}</td>\n<td>{1}</td>\n</tr>".format(w.description, html)
     def compile(self):
         return '<table class="formTable">'
     def close(self):
@@ -308,8 +309,8 @@ class _Waaah(_Webobject):
 # w.textfield("phone", "Telefonnummer")
 # w.textfield("email", "Email")
 # w.textfield("birthday", "Fødselsdag")
-# w.checkbox("driverslicence", u"Har du kørekort?")
-# w.textfield("diku_age", u"Hvornår startede du på DIKU?")
+# w.checkbox("driverslicence", "Har du kørekort?")
+# w.textfield("diku_age", "Hvornår startede du på DIKU?")
 # w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
 # w.textarea("about_me", "Lidt om mig")
 # #w.submit()

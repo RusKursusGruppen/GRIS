@@ -19,7 +19,7 @@ def overview():
 def rus(r_id):
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape(u"Ændringer anulleret"))
+            flash(escape("Ændringer anulleret"))
             return redirect(url_for('rusmanager.overview'))
 
         b = data.Bucket(request.form)
@@ -45,7 +45,7 @@ def rus(r_id):
         b.plays_instrument
         b.other
         b.tshirt
-        b.paid
+        b.paid = 1 if "paid" in request.form else 0
         b.uniday = 1 if "uniday" in request.form else 0
         b.campus = 1 if "campus" in request.form else 0
         b.tour = 1 if "tour" in request.form else 0
@@ -81,7 +81,7 @@ def rus(r_id):
         wb.textfield("vacation", "Ferie")
         wb.textfield("priority", "DIKU prioritet")
         wb.textfield("gymnasium", "Gymnasium")
-        wb.textfield("since_gymnasium", u"Lavet efterfølgende")
+        wb.textfield("since_gymnasium", "Lavet efterfølgende")
         wb.textfield("code_experience", "Kode erfaring")
         wb.textfield("special_needs", "Specielle behov")
         wb.textfield("plays_instrument", "Spiller instrument")
@@ -90,11 +90,11 @@ def rus(r_id):
         wb.checkbox("uniday", "Deltager unidag")
         wb.checkbox("campus", "Deltager campus")
         wb.checkbox("tour", "Deltager rustur")
-        wb.textfield("rustour", u"Skal på turen")
+        wb.textfield("rustour", "Skal på turen")
         wb.textfield("dutyteam", "Tjansehold")
-        wb.textfield("birthday", u"Fødselsdag")
+        wb.textfield("birthday", "Fødselsdag")
 
-        wb.textfield("tshirt", u"Tshirt størrelse")
+        wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")
         form = wb.create(rus)
 
@@ -105,7 +105,7 @@ def rus(r_id):
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape(u"Rus IKKE tilføjet"))
+            flash(escape("Rus IKKE tilføjet"))
             return redirect(url_for('rusmanager.overview'))
 
         name = " ".join([x.capitalize() for x in request.form['name'].split()])

@@ -18,6 +18,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         raw_password = request.form['password']
+        print(type(raw_password))
         user = data.execute('SELECT password FROM Users WHERE username = ?', username)
         if empty(user) or not password.check(raw_password, user[0]['password']):
             flash('Invalid username or password')
@@ -66,7 +67,7 @@ def overview():
 def settings():
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape(u"Ændringer annulleret"))
+            flash(escape("Ændringer annulleret"))
             return redirect(url_for('usermanager.overview'))
 
         username = session["username"]
@@ -100,9 +101,9 @@ def settings():
         w.textfield("city", "By")
         w.textfield("phone", "Telefonnummer")
         w.textfield("email", "Email")
-        w.textfield("birthday", u"Fødselsdag")
-        w.checkbox("driverslicence", u"Har du kørekort?")
-        w.textfield("diku_age", u"Hvornår startede du på DIKU?")
+        w.textfield("birthday", "Fødselsdag")
+        w.checkbox("driverslicence", "Har du kørekort?")
+        w.textfield("diku_age", "Hvornår startede du på DIKU?")
         w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
         w.textarea("about_me", "Lidt om mig")
 
@@ -124,7 +125,7 @@ def generate_key():
     min = config.USER_CREATION_KEY_MIN_LENGTH
     max = config.USER_CREATION_KEY_MAX_LENGTH
     length = random.randrange(min, max)
-    alphabet = string.letters + string.digits
+    alphabet = string.ascii_letters + string.digits
     while True:
         key = ''.join(random.choice(alphabet) for x in range(length))
         result = data.execute("select key from User_creation_keys where key = ?", key)
@@ -132,7 +133,7 @@ def generate_key():
             return key
 
 def sanitize_username(username):
-    legal_characters = string.letters + "æøåÆØÅ-_0123456789"
+    legal_characters = string.ascii_letters + "æøåÆØÅ-_0123456789"
     return all(c in legal_characters for c in username)
 
     #check that no such user already exists
@@ -200,7 +201,7 @@ def invite():
         form = w.create()
         return render_template("form.html", form=form)
 
-invite_mail = u"""
+invite_mail = """
 Hej du er blevet inviteret til GRIS.
 GRIS er RKGs intranet, hvis du skal være med i RKG skal du have en bruger her.
 For at oprette en bruger skal du følge det følgende link.

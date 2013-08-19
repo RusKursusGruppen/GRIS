@@ -40,7 +40,7 @@ def new():
             "INSERT INTO Schedule_cols(s_id, label, type, parent) VALUES (?,?,?, NULL)",
              choices)
 
-        flash(u"Oprettelse gennemført")
+        flash("Oprettelse gennemført")
         return redirect(url_for('schedule.overview'))
     else:
         deadline_calendar = html.calendar('schedule.deadline', 'yyyyMMdd', 'arrow', True, 24, False, 'future')
