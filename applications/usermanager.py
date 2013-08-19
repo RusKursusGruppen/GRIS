@@ -39,13 +39,16 @@ def login():
 def create_user(username, raw_password, name="", groups=[]):
     passw = password.encode(raw_password)
     data.execute("INSERT INTO Users(username, password, name) VALUES(?,?,?)", username, passw, name)
-    for group in groups:
-        data.execute("INSERT INTO User_groups(username, groupname) VALUES(?,?)", username, group)
+    user_groups(username groups)
 
 def update_password(username, raw_password):
     passwd = password.encode(raw_password)
     data.execute("UPDATE Users SET password = ? WHERE username = ?", passwd, username)
 
+def user_groups(username, groups):
+    data.execute("DELETE FROM User_groups WHERE username = ?", username)
+    for group in groups:
+        data.execute("INSERT INTO User_groups(username, groupname) VALUES(?,?)", username, group)
 
 @usermanager.route('/usermanager/logout')
 def logout():
