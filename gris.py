@@ -62,6 +62,12 @@ def random_greeting():
         , "O(n²)"
         , "λf.(λx.f (x x)) (λx.f (x x))"
         , "Kodet med knytnæver!"
+        , "Søren har udviklet RKG-OS i skyen der kan ALT!"
+        , "Søren snakker om kommunister og skinke!"
+        , "Lund er nizzle i haven. NB og Munksgaard er nice og pooler"
+        , "Nu gør RKG som vi plejer og kører en ligegyldig kommentar op til en laaaaang debat hvor alle skal sige det samme som de andre men blot med et lille twist (not)!"
+        , "lalalalalala..."
+        , "Vi har mange programmer til ølregnskab... alle er i BETA"
         , "3% kode, 79% slam"])
 
     if callable(result):
