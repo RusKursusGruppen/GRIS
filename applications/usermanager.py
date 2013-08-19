@@ -182,7 +182,7 @@ def invite():
             return redirect(url_front())
         key = generate_key()
         data.execute("INSERT INTO User_creation_keys(key, created) VALUES (?, ?)", key, now())
-        print key
+        print(key)
 
         email_address = request.form['email']
         text = invite_mail.format(key)

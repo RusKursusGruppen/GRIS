@@ -90,7 +90,7 @@ def modify_book(b_id):
         participants = ['&quot;{0}&quot; {1}; '.format(p['username'], p['name']) for p in participants]
         participants.sort()
         participants = "".join(participants)
-        print participants
+        print(participants)
 
         w = html.WebBuilder()
         w.form()

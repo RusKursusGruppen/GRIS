@@ -144,7 +144,7 @@ class WebBuilder(object):
                 if kv == None:
                     dbqv = None
                 else :
-                   # print w.dbq
+                   # print(w.dbq)
                     dbqv = kv[w.dbq]
                 temp = w.compile(dbqv)
             else:
@@ -315,7 +315,7 @@ class _Waaah(_Webobject):
 # #w.submit()
 # # w.concel()
 
-# print w.create({"name":"mig",
+# print(w.create({"name":"mig",
 #                 "address":"vej",
 #                 "zipcode":"1234",
 #                 "city":"bybybyby",
@@ -325,4 +325,4 @@ class _Waaah(_Webobject):
 #                 "driverslicence":1,
 #                 "diku_age":"x",
 #                 "earlier_tours":"a b c",
-#                 "about_me":"Jeg er sej"})
+#                 "about_me":"Jeg er sej"}))
