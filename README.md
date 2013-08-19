@@ -32,6 +32,17 @@ python2-itsdangerous (a dependency of flask that might not be satisfied automati
 python2-markdown
 
 
+How to install:
+install python3 through your package manager
+install pip (python-pip) through your package manager
+sudo pip install virtualenv
+
+To get bcrypt to work on arch linux you need to do some fiddling:
+sudo cp /usr/lib/ffi.h /usr/local/include
+sudo cp /usr/lib/libffi.so /usr/local/lib
+sudo cp /usr/lib/libffi-3.0.13/include/ffitarget.h /usr/local/include
+
+
 # Application structure
 Folder                      Description
 applications/               sub-application files for each module

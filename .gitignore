@@ -37,3 +37,6 @@ nosetests.xml
 # Flask config and database
 config.py
 *.db
+
+# virtualenv
+env
