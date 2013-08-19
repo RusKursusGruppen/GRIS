@@ -5,7 +5,7 @@ import random, datetime
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, html
-from lib.tools import logged_in
+from lib.tools import logged_in, now
 
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 @rusmanager.route('/rusmanager')
@@ -49,7 +49,7 @@ def rus(r_id):
         b.uniday = 1 if "uniday" in request.form else 0
         b.campus = 1 if "campus" in request.form else 0
         b.tour = 1 if "tour" in request.form else 0
-        b.rustour
+        print (b.rustour)
         b.dutyteam
         b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
@@ -63,11 +63,18 @@ def rus(r_id):
         else:
             rus = rus[0]
 
+        year = now()[:4]
+        tours = data.execute("SELECT * FROM Tours WHERE year = ?", year)
+        tours = [(tour['t_id'], tour['tour_name']) for tour in tours]
+
         wb = html.WebBuilder()
         wb.form()
         wb.formtable()
         wb.checkbox("called", "Opringet")
         wb.textfield("name", "Navn")
+        wb.textfield("birthday", "Fødselsdag")
+        wb.textfield("phone", "Tlf")
+        wb.textfield("email", "email")
         wb.textfield("co", "co")
         wb.textfield("address", "Adresse")
         wb.textfield("zipcode", "Postnummer")
@@ -76,8 +83,6 @@ def rus(r_id):
         wb.textfield("new_address", "Ny adresse")
         wb.textfield("new_zipcode", "Nyt postnummer")
         wb.textfield("new_city", "Ny by")
-        wb.textfield("phone", "Tlf")
-        wb.textfield("email", "email")
         wb.textfield("vacation", "Ferie")
         wb.textfield("priority", "DIKU prioritet")
         wb.textfield("gymnasium", "Gymnasium")
@@ -85,14 +90,13 @@ def rus(r_id):
         wb.textfield("code_experience", "Kode erfaring")
         wb.textfield("special_needs", "Specielle behov")
         wb.textfield("plays_instrument", "Spiller instrument")
-        wb.textfield("other", "Andet")
+        wb.textarea("other", "Andet")
         #wb.textfield("Friends", "Kender")
         wb.checkbox("uniday", "Deltager unidag")
         wb.checkbox("campus", "Deltager campus")
         wb.checkbox("tour", "Deltager rustur")
-        wb.textfield("rustour", "Skal på turen")
+        wb.select("rustour", "Skal på:", tours)
         wb.textfield("dutyteam", "Tjansehold")
-        wb.textfield("birthday", "Fødselsdag")
 
         wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")

@@ -184,6 +184,9 @@ class WebBuilder(object):
     def checkbox(self, dbq="", description="", **kwargs):
         self._newobj(_Checkbox(dbq, description, kwargs))
 
+    def select(self, dbq="", description="", items={}, **kwargs):
+        self._newobj(_Select(dbq, description, items, kwargs))
+
     def html(self, code, description="", **kwargs):
         self._newobj(_Html(code, description, kwargs))
 
@@ -219,7 +222,7 @@ class _Webobject(object):
         if not isinstance(attributes, dict):
             dbqv = attributes
             attributes = self._attributes_convert(dbqv)
-        string = u' '.join(u'{0}="{1}"'.format(k,v) for k,v in attributes.items())
+        string = ' '.join('{0}="{1}"'.format(k,v) for k,v in attributes.items())
         return string
 
 class _Textfield(_Webobject):
@@ -255,6 +258,24 @@ class _Checkbox(_Webobject):
         result += self._attributes_string(attributes)
         result += ">"
         return result
+
+class _Select(_Webobject):
+    def __init__(self, dbq, description, items, kwargs):
+        self.dbq = dbq
+        self.description = description
+        self.items = items
+        self.modifier = False
+
+    def compile(self, dbqv):
+        d = []
+        d.append('<select name="{0}">'.format(self.dbq))
+        for k,v in self.items:
+            if str(k) == str(dbqv):
+                d.append('<option selected="selected" value="{0}">{1}</option>'.format(k, v))
+            else:
+                d.append('<option value="{0}">{1}</option>'.format(k, v))
+        d.append("</select>")
+        return '\n'.join(d)
 
 class _Html(_Webobject):
     def __init__(self, code, description, attributes):

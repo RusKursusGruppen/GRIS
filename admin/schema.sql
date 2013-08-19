@@ -37,9 +37,9 @@ CREATE TABLE Russer(
     tshirt              string,
     paid                integer NOT NULL default 0,
 
-    uniday              integer,
-    campus              integer,
-    tour                integer,
+    uniday              integer NOT NULL default 0,
+    campus              integer NOT NULL default 0,
+    tour                integer NOT NULL default 0,
 
     rustour             REFERENCES Tours(t_id),
     dutyteam            REFERENCES Dutyteams(tj_id)
