@@ -11,7 +11,6 @@ from lib.tools import logged_in, now
 from applications.schedule import schedule
 from applications.rusmanager import rusmanager
 from applications.usermanager import usermanager
-from applications.rusmanager import textfields
 from applications.front import front
 from applications.admin import admin
 from applications.bookkeeper import bookkeeper
@@ -80,7 +79,6 @@ app.jinja_env.filters['markdown'] = filters.markdown
 app.jinja_env.filters['money'] = filters.money
 app.jinja_env.globals.update(url_front=tools.url_front)
 app.jinja_env.globals.update(random_greeting=random_greeting)
-app.jinja_env.globals.update(textfields=textfields)
 
 if __name__ == '__main__':
     app.run()
