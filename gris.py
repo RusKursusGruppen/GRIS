@@ -26,6 +26,7 @@ app.register_blueprint(bookkeeper)
 
 ### ERROR HANDLER ###
 @app.errorhandler(401)
+@app.errorhandler(500)
 def error(code):
     flash("Error {0}".format(code))
     return redirect(url_for('usermanager.login'))
