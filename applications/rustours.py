@@ -31,7 +31,12 @@ def new():
 
         b = data.Bucket(request.form)
         b.type
-        b.year = int(now()[:4])
+        b.tour_name
+        if b.year.isdecimal():
+            b.year = int(b.year)
+        else:
+            flash("Please enter a valid year")
+            return html.back()
         b >= "Tours"
         return redirect(url_for('rustours.overview'))
 
@@ -39,6 +44,8 @@ def new():
         w = html.WebBuilder()
         w.form()
         w.formtable()
+        w.textfield("tour_name", "Navn")
+        w.textfield("year", "År")
         w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
         form = w.create()
         return render_template("form.html", form=form)
