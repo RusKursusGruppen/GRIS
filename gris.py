@@ -14,6 +14,7 @@ from applications.usermanager import usermanager
 from applications.front import front
 from applications.admin import admin
 from applications.bookkeeper import bookkeeper
+from applications.rustours import rustours
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -23,6 +24,7 @@ app.register_blueprint(rusmanager)
 app.register_blueprint(usermanager)
 app.register_blueprint(admin)
 app.register_blueprint(bookkeeper)
+app.register_blueprint(rustours)
 
 ### ERROR HANDLER ###
 @app.errorhandler(401)

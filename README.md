@@ -60,3 +60,9 @@ from lib.tools import ...
 import config
 
 from application. ... import ...
+
+
+
+#Deployment:
+in /usr/lib/python3.3/pkgutil.py
+in find_loader on line 501 and 502

@@ -61,6 +61,12 @@ CREATE TABLE Tours(
     year                integer
 );
 
+DROP TABLE IF EXISTS Tours_tutors;
+CREATE TABLE Tours_tutors(
+   t_id                 REFERENCES Tours(t_id),
+   username             REFERENCES Users(username)
+);
+
 DROP TABLE IF EXISTS Dutyteams;
 CREATE TABLE Dutyteams(
     tj_id               integer PRIMARY KEY AUTOINCREMENT,

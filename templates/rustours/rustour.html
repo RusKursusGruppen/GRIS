@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block submenu %}
+    <a href="{{url_for('rustours.new')}}">Opret rustur</a>
+{% endblock %}
+
+{% block body %}
+    <h2>{{tour['tour_name']}}</h1>
+
+{% endblock %}
