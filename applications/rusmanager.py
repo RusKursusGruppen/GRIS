@@ -8,6 +8,7 @@ from lib import data, password, html
 from lib.tools import logged_in, now
 
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
+
 @rusmanager.route('/rusmanager')
 @logged_in('tutor', 'mentor')
 def overview():
@@ -49,7 +50,7 @@ def rus(r_id):
         b.uniday = 1 if "uniday" in request.form else 0
         b.campus = 1 if "campus" in request.form else 0
         b.tour = 1 if "tour" in request.form else 0
-        print (b.rustour)
+        b.rustour
         b.dutyteam
         b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
