@@ -45,7 +45,6 @@ CREATE TABLE Russer(
     dutyteam            REFERENCES Dutyteams(tj_id)
 );
 
-
 -- It must hold that uid1 < uid2
 DROP TABLE IF EXISTS Friends;
 CREATE TABLE Friends(
@@ -53,6 +52,16 @@ CREATE TABLE Friends(
     r_id2               REFERENCES Russer(r_id)
 );
 
+DROP TABLE IF EXISTS Friends_of_us;
+CREATE TABLE Friends_of_us(
+    r_id                REFERENCES Russer(r_id),
+    username            REFERENCES Users(username)
+);
+
+
+
+
+--- TOUR INFORMATION ---
 DROP TABLE IF EXISTS Tours;
 CREATE TABLE Tours(
     t_id                integer PRIMARY KEY AUTOINCREMENT,
@@ -82,10 +91,6 @@ DROP TABLE IF EXISTS Users;
 CREATE TABLE Users(
     username            string PRIMARY KEY NOT NULL,
     password            string NOT NULL,
-    admin               int NOT NULL default 0,
-    rkg                 int NOT NULL default 0,
-    tutor               int NOT NULL default 0,
-    mentor              int NOT NULL default 0,
 
     name                string DEFAULT "RUS",
     driverslicence      int NOT NULL default 0,
@@ -99,8 +104,6 @@ CREATE TABLE Users(
     diku_age            string,
     earlier_tours       string, --sepererat med semicolaer (pepsi)
     about_me            string
-
-    rustour             REFERENCES Tours(t_id),
 
     deleted             int -- Field for marking a user as deleted
 );
@@ -128,16 +131,22 @@ CREATE TABLE User_creation_keys(
        created          string NOT NULL
 );
 
+
+
 --- FRONT PAGE ---
 DROP TABLE IF EXISTS News;
 CREATE TABLE News(
     n_id                integer PRIMARY KEY AUTOINCREMENT,
     creator             REFERENCES Users(username),
     created             string NOT NULL,
-    for_tutors          int NOT NULL default 1,
-    for_mentors         int NOT NULL default 0,
     title               string,
     text                string
+);
+
+DROP TABLE IF EXISTS News_access;
+CREATE TABLE News_access(
+    n_id                REFERENCES News(n_id),
+    groupname           REFERENCES Groups(groupname)
 );
 
 --- SCHEDULE ---
