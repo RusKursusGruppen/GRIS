@@ -95,7 +95,8 @@ def settings():
         b.about_me# = request.form["about_me"]
         b >> ("UPDATE Users $ WHERE username = ?", username)
 
-        return redirect(url_for('usermanager.overview'))
+        return redirect(url_for('usermanager.user', username=username))
+
     else:
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
         user = user[0]
