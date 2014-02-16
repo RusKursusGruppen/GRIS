@@ -23,7 +23,7 @@ def nl2br(text):
     return Markup(result)
 
 def markdown(text):
-    result = md.markdown(text)
+    result = md.markdown(escape(text))
     return Markup(result)
 
 
