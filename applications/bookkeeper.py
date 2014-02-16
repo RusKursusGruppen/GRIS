@@ -51,7 +51,7 @@ def modify_book(b_id):
     if request.method == "POST":
         if 'cancel' in request.form:
             flash(escape("Ændringer annulleret"))
-            return redirect(url_for('bookkeeper.overview'))
+            return redirect(url_for("bookkeeper.book", b_id=b_id))
 
         # TOPIC: insert descriptors
         b = data.Bucket(request.form)
