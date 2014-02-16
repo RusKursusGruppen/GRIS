@@ -174,7 +174,7 @@ class Bucket(object):
         except:
             log.data(sql, values, error=True)
 
-if __name__ == "__mainn__":
+if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Usage: python data.py DATABASE SCRIPT")
     else:
