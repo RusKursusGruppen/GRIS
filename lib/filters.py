@@ -23,7 +23,7 @@ def nl2br(text):
     return Markup(result)
 
 def markdown(text):
-    result = md.markdown(escape(text))
+    result = md.markdown(escape(text), extensions=["fenced_code", "footnotes", "tables", "smart_strong", "nl2br", "sane_lists", "toc"])
     return Markup(result)
 
 
