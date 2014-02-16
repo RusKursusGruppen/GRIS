@@ -80,11 +80,11 @@
   === TOTALE skyld: ===
 </p>
 <table border=1>
-  {% for entry in global_totals %}
   <tr>
     <th>Vejleder</th>
     <th>beløb</th>
   </tr>
+  {% for entry in global_totals %}
   <tr>
     <td> {{entry['creditor']}} </td>
     <td> {{entry['total']|money}} </td>
