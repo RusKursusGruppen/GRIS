@@ -71,6 +71,7 @@ def random_greeting():
         , "Nu gør RKG som vi plejer og kører en ligegyldig kommentar op til en laaaaang debat hvor alle skal sige det samme som de andre men blot med et lille twist (not)!"
         , "lalalalalala..."
         , "Vi har mange programmer til ølregnskab... alle er i BETA"
+        , "rkg@dikumail.dk"
         , "3% kode, 79% slam"])
 
     if callable(result):
