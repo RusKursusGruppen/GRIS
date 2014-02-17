@@ -14,6 +14,7 @@ from applications.admin import admin
 from applications.bookkeeper import bookkeeper
 from applications.rustours import rustours
 
+### APPLICATION ###
 app = Flask(__name__)
 app.config.from_object("config")
 app.register_blueprint(front)
