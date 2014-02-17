@@ -61,6 +61,8 @@ def random_greeting():
         , "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
         , lambda : "Der er {0} russer i databasen".format(data.execute("SELECT ifnull(COUNT(r_id),0) FROM Russer")[0][0])
         , lambda: "<i>Latest commit message:</i> " + subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode('utf-8').rstrip('\n')
+        , lambda: "<i>Latest committer:</i> " + subprocess.check_output(['git', 'log', '-1', '--pretty=%an']).decode('utf-8').rstrip('\n')
+        , lambda: "<i>Latest commit date:</i> " + subprocess.check_output(['git', 'log', '-1', '--pretty=%ad']).decode('utf-8').rstrip('\n')
         , "Emacs, den objektivt bedste editor"
         , "O(n²)"
         , "λf.(λx.f (x x)) (λx.f (x x))"
