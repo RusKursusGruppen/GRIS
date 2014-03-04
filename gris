@@ -1,1 +1,2 @@
-env/bin/python gris.py
+source env/bin/activate
+python gris.py
