@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 sqlite3 data.db < admin/schema.sql
 python -c "from applications import usermanager;
