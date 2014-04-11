@@ -23,7 +23,7 @@ mentor   = mentor
 rustur   = tour
 hytte    = hut
 
-Dependencies:
+Dependencies (dont install these manually):
 Python2
 python-flask 9.2
 python-bcrypt
