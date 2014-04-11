@@ -34,7 +34,7 @@ python2-markdown
 
 How to install:
 install python3 through your package manager
-install pip (python-pip) through your package manager
+install pip (python-pip or python3-pip) through your package manager
 sudo pip install virtualenv
 
 To get bcrypt to work on arch linux you need to do some fiddling:
