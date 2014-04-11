@@ -60,6 +60,11 @@ def modify_news(id):
             return redirect(url_front())
 
         b = data.Bucket(request.form)
+
+        if 'delete' in request.form:
+
+                    b >> ("DELETE FROM News WHERE  n_id = ?", id)
+
         if b.title == "":
             flash("Please enter a title")
             return html.back()
@@ -72,6 +77,7 @@ def modify_news(id):
         w.formtable()
         w.textfield("title", "Overskrift")
         w.textarea("text", "Tekst")
+        w.html('<button type="submit" name="delete" value="delete">Slet nyhed</button>', "")
 
         form = w.create(news)
         return render_template('form.html', form=form)
