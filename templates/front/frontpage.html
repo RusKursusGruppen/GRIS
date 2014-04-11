@@ -8,8 +8,9 @@
 {% for item in news %}
 <div class=news_title>{{item['title']}}
 {% if session['username'] == item['creator'] or session.session_admin %}
-<a href="{{url_for('front.modify_news', id=item['n_id'])}}">rediger</a></div>
+<a href="{{url_for('front.modify_news', id=item['n_id'])}}">rediger</a>
 {% endif %}
+</div>
 <div class=news_bar>
   {{item['created'][:-10]}}
   <div class=right>{{item['creator']}}</div>
