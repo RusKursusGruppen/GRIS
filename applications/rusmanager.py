@@ -71,7 +71,6 @@ def rus(r_id):
         birthday = rus["birthday"]
         if birthday == None:
             birthday = ""
-        print(birthday)
 
         wb = html.WebBuilder()
         wb.form()
