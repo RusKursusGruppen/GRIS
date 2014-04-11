@@ -1,14 +1,20 @@
-
 # Branching
-When you fiks something on GRIS first create an issue on github
-(eg issue #42), then assign yourself.
+When you fix something on GRIS, then create an issue on github
+(iss42, where 42 is the number of the issue). Then assign yourself to the issue.
 
-You can make a branch and work on it with
+Then make a branch to work on the issue.
+Use the following commands:
 ```
 git checkout -b iss42
+git push -u origin iss42
 ```
-
-do your work
-
-
+Do some work.
+When your work is done, then commit and push your work.
+Then merge your branch with the master and delete the branch.
+Use the following commands:
+```
+git checkout master
+git merge iss42
+git branch -d iss42
+git push origin --delete iss42
 ...
