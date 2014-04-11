@@ -67,6 +67,7 @@ def rus(r_id):
         year = now()[:4]
         tours = data.execute("SELECT * FROM Tours WHERE year = ?", year)
         tours = [(tour['t_id'], tour['tour_name']) for tour in tours]
+        tours = [(None, "None")] + tours
 
         wb = html.WebBuilder()
         wb.form()
