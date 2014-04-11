@@ -1,4 +1,7 @@
+#!/bin/bash
 # -*- coding: utf-8 -*-
+
+source env/bin/activate
 
 sqlite3 data.db < admin/schema.sql
 python -c "from applications import usermanager;
