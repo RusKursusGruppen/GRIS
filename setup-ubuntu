@@ -16,3 +16,6 @@ python get-pip.py
 echo
 echo "Installing requirements through pip"
 env/bin/pip install -r requirements.txt
+
+
+echo "Be sure to use python3 and python3-dev"
