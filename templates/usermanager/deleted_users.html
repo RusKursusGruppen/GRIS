@@ -11,7 +11,7 @@
   {% for user in users %}
   <li><a href="{{url_for('usermanager.user', username=user['username'])}}">{{user['name']}}</a></li>
   {% else %}
-  Der er ingen slettede brugere i databasen\
+  Der er ingen slettede brugere i databasen
   {% endfor %}
 </ul>
 {% endblock %}
