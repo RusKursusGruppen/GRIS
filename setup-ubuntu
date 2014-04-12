@@ -14,3 +14,5 @@ curl -O https://raw.github.com/pypa/pip/master/contrib/get-pip.py
 echo
 python get-pip.py
 echo
+echo "Installing requirements through pip"
+env/bin/pip install -r requirements.txt
