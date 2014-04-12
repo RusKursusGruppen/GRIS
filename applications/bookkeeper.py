@@ -118,8 +118,8 @@ def book(b_id):
 
 
     # TODO: substract reverse debts
-    local_totals = data.execute(local_totals_sql, b_id, user)
-    global_totals = data.execute(global_totals_sql, user)
+    local_totals = data.execute(local_totals_sql, b_id, user, user)
+    global_totals = data.execute(global_totals_sql, user, user)
 
     raw_breakdown = data.execute(raw_breakdown_sql, b_id, b_id, b_id, b_id, b_id)
     entries = []
@@ -225,7 +225,7 @@ FROM
         USING(e_id))
 
    GROUP BY creditor)
-WHERE total is not Null
+WHERE total is not Null AND creditor != ?
 """
 
 
@@ -256,7 +256,7 @@ FROM
          WHERE debtor = ?)
         USING(e_id))
    GROUP BY creditor)
-WHERE total is not Null
+WHERE total is not Null AND creditor != ?
 """
 
 
