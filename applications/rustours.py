@@ -20,7 +20,9 @@ def overview():
 @rustours.route('/rustours/tour/<t_id>')
 def rustour(t_id):
     tour = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)[0]
-    return render_template("rustours/rustour.html", tour=tour)
+    russer = data.execute("SELECT * FROM Russer WHERE rustour = ?", t_id)
+    tutors = data.execute("SELECT * FROM tours_tutors WHERE t_id = ?", t_id)
+    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors)
 
 @rustours.route('/rustours/new', methods=['GET', 'POST'])
 def new():
