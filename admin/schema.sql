@@ -103,9 +103,9 @@ CREATE TABLE Users(
 
     diku_age            string,
     earlier_tours       string, --sepererat med semicolaer (pepsi)
-    about_me            string
+    about_me            string,
 
-    deleted             int -- Field for marking a user as deleted
+    deleted             int DEFAULT 0 -- Field for marking a user as deleted
 );
 
 DROP TABLE IF EXISTS Groups;
