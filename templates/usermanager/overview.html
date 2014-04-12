@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block submenu %}
+  <a href="{{url_for('usermanager.deleted_users')}}">Slettede brugere</a>
   <a href="{{url_for('usermanager.settings')}}">Indtast detaljer</a>
   <a href="{{url_for('usermanager.invite')}}">Inviter ny bruger</a>
 {% endblock %}

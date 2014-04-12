@@ -66,8 +66,14 @@ def logout():
 @usermanager.route('/usermanager')
 @logged_in
 def overview():
-    users = data.execute("select username, name from Users order by name")
+    users = data.execute("select username, name from Users where deleted = 0 order by name")
     return render_template("usermanager/overview.html", users=users)
+
+@usermanager.route('/usermanager/deleted_users')
+@logged_in
+def deleted_users():
+    users = data.execute("select username, name from Users where deleted = 1 order by name")
+    return render_template("usermanager/deleted_users.html", users=users)
 
 
 
