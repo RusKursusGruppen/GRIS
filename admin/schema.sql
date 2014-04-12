@@ -37,9 +37,9 @@ CREATE TABLE Russer(
     tshirt              string,
     paid                integer NOT NULL default 0,
 
-    uniday              integer NOT NULL default 0,
-    campus              integer NOT NULL default 0,
-    tour                integer NOT NULL default 0,
+    attending_uniday    integer NOT NULL default 0,
+    attending_campus    integer NOT NULL default 0,
+    attending_rustour   integer NOT NULL default 0,
 
     rustour             REFERENCES Tours(t_id),
     dutyteam            REFERENCES Dutyteams(tj_id)
@@ -199,8 +199,8 @@ CREATE TABLE Entries(
     date                string,
     creditor            REFERENCES Users(username),
     description         string,
-    amount_string       string,
-    amount              integer
+    amount_string       string, -- The unevaluated string,
+    amount              integer -- and its result.
 );
 
 
@@ -215,7 +215,7 @@ CREATE TABLE Debts(
 
 DROP TABLE IF EXISTS Book_participants;
 CREATE TABLE Book_participants(
-    b_id                integer, -- REFERENCES Books(b_id),
+    b_id                integer REFERENCES Books(b_id),
     participant         REFERENCES Users(username),
     UNIQUE(b_id, participant) ON CONFLICT IGNORE
 );

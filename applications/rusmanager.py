@@ -47,9 +47,9 @@ def rus(r_id):
         b.other
         b.tshirt
         b.paid = 1 if "paid" in request.form else 0
-        b.uniday = 1 if "uniday" in request.form else 0
-        b.campus = 1 if "campus" in request.form else 0
-        b.tour = 1 if "tour" in request.form else 0
+        b.attending_uniday = 1 if "attending_uniday" in request.form else 0
+        b.attending_campus = 1 if "attending_campus" in request.form else 0
+        b.attending_rustour = 1 if "attending_rustour" in request.form else 0
         b.rustour
         b.dutyteam
         b.birthday
@@ -101,9 +101,9 @@ def rus(r_id):
         wb.textfield("plays_instrument", "Spiller instrument")
         wb.textarea("other", "Andet")
         #wb.textfield("Friends", "Kender")
-        wb.checkbox("uniday", "Deltager unidag")
-        wb.checkbox("campus", "Deltager campus")
-        wb.checkbox("tour", "Deltager rustur")
+        wb.checkbox("attending_uniday", "Deltager unidag")
+        wb.checkbox("attending_campus", "Deltager campus")
+        wb.checkbox("attending_rustour", "Deltager rustur")
         wb.select("rustour", "Skal på:", tours)
         wb.textfield("dutyteam", "Tjansehold")
 
