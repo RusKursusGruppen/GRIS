@@ -66,7 +66,7 @@ def logout():
 @usermanager.route('/usermanager')
 @logged_in
 def overview():
-    users = data.execute("select username, name from Users")
+    users = data.execute("select username, name from Users order by name")
     return render_template("usermanager/overview.html", users=users)
 
 
