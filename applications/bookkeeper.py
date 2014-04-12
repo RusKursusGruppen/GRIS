@@ -101,6 +101,8 @@ def modify_book(b_id):
         form = w.create(book)
         return render_template("form.html", form=form)
 
+
+
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
 @logged_in
 def book(b_id):
@@ -110,11 +112,12 @@ def book(b_id):
 
 
     book = data.execute("SELECT * FROM Books WHERE b_id = ?", b_id)[0]
-    #raw_entries = data.execute("SELECT * FROM Entries WHERE b_id = ? ORDER BY date ASC", b_id)
     user = session['username']
     # TODO: convert internal representation to øre
     # TODO: decide on floating vs integer for currency
-    raw_entries = data.execute(                                            'SELECT *, ((amount*1)/share_total*share) AS owes FROM (SELECT * FROM Entries where b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id);', b_id, user)
+    raw_entries = data.execute(raw_entries_sql, b_id, user)
+
+
     # TODO: substract reverse debts
     local_totals = data.execute( 'SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1)/share_total*share) AS owes FROM (SELECT * FROM Entries WHERE b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', b_id, user)
     global_totals = data.execute('SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1)/share_total*share) AS owes FROM                Entries                 LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', user)
@@ -145,6 +148,7 @@ def book(b_id):
         if share == 0:
             final_share = ""
             owes = ""
+
         d.update({"final_share":final_share, "owes":owes})
         entries += [d]
 
@@ -160,11 +164,101 @@ def book(b_id):
 
     return render_template("bookkeeper/book.html", book=book, entries=entries, breakdown=breakdown, local_totals=local_totals, global_totals=global_totals)
 
-    #"select * from Entries as E join (select e_id, sum(share) as share_total from Debts) as T on E.e_id = T.e_id;"
-    #raw_entries = data.execute('SELECT * FROM Entries AS E JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts) AS T INNER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) AS D ON E.e_id = T.e_id and E.e_id= D.e_id ORDER BY date ASC;', user)
+
+# Select all entries in a book,
+# add sum of shares per entry,
+# add your shares
+# calculate how much you owe
+#
+# b_id, debtor
+
+raw_entries_sql = """
+SELECT *,          /* Calculate how much you owe */
+  ((amount*1)/share_total*share) AS owes
+FROM               /* Select all entries in a book */
+  (SELECT *
+   FROM Entries
+   where b_id = ?)
+LEFT OUTER JOIN    /* add sum of shares per entry */
+  (SELECT e_id,
+          SUM(share) AS share_total
+   FROM Debts
+   GROUP BY e_id)
+   USING (e_id)
+LEFT OUTER JOIN    /* add your shares */
+  (SELECT e_id,
+          share
+   FROM Debts
+   WHERE debtor = ?)
+  USING(e_id);
+"""
 
 
+# calculate the sum of owings from the raw_entries
+# and remove null entries
+#
+# b_id, debtor
+local_totals_sql = """
+SELECT *
+FROM
+  (SELECT creditor,
+          SUM(owes) AS total
+   FROM
 
+     /* raw_entries_sql: */
+     (SELECT *,
+      ((amount*1)/share_total*share) AS owes
+      FROM
+        (SELECT *
+         FROM Entries
+         WHERE b_id = ?)
+      LEFT OUTER JOIN
+        (SELECT e_id,
+                SUM(share) AS share_total
+         FROM Debts
+         GROUP BY e_id)
+        USING (e_id)
+      LEFT OUTER JOIN
+        (SELECT e_id,
+                share
+         FROM Debts
+         WHERE debtor = ?)
+        USING(e_id))
+
+   GROUP BY creditor)
+WHERE total is not Null
+"""
+
+
+# calculate there of owings from all entries
+# remove null entries
+#
+# debtor
+global_totals_sql = """
+SELECT *
+FROM
+  (SELECT creditor,
+          SUM(owes) AS total
+   FROM
+     (SELECT *,
+             ((amount*1)/share_total*share) AS owes
+      FROM
+        Entries
+      LEFT OUTER JOIN
+        (SELECT e_id,
+                SUM(share) AS share_total
+         FROM Debts
+         GROUP BY e_id)
+        USING (e_id)
+      LEFT OUTER JOIN
+        (SELECT e_id,
+                share
+         FROM Debts
+         WHERE debtor = ?)
+        USING(e_id))
+   GROUP BY creditor)
+WHERE total is not Null
+"""
 
 
 # -- debtors and creditors
