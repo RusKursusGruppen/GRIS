@@ -17,3 +17,4 @@ git checkout master
 git merge iss42
 git branch -d iss42
 git push origin --delete iss42
+git push

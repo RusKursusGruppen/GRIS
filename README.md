@@ -23,7 +23,7 @@ mentor   = mentor
 rustur   = tour
 hytte    = hut
 
-Dependencies:
+Dependencies (dont install these manually):
 Python2
 python-flask 9.2
 python-bcrypt
@@ -34,7 +34,7 @@ python2-markdown
 
 How to install:
 install python3 through your package manager
-install pip (python-pip) through your package manager
+install pip (python-pip or python3-pip) through your package manager
 sudo pip install virtualenv
 
 To get bcrypt to work on arch linux you need to do some fiddling:

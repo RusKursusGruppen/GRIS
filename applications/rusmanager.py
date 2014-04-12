@@ -67,13 +67,21 @@ def rus(r_id):
         year = now()[:4]
         tours = data.execute("SELECT * FROM Tours WHERE year = ?", year)
         tours = [(tour['t_id'], tour['tour_name']) for tour in tours]
+        tours = [(None, "None")] + tours
+
+        birthday = rus["birthday"]
+        if birthday == None:
+            birthday = ""
 
         wb = html.WebBuilder()
         wb.form()
         wb.formtable()
         wb.checkbox("called", "Opringet")
         wb.textfield("name", "Navn")
-        wb.textfield("birthday", "Fødselsdag")
+#        wb.textfield("birthday", "Fødselsdag")
+        wb.html('<input type="text" id="rusmanager.birthday" maxlength="25" size="25" name="birthday" value="'+birthday+'">' +
+               html.calendar("rusmanager.birthday")
+               + '<span class="note">(Format: yyyy-MM-dd)</span>', description="Fødselsdag")
         wb.textfield("phone", "Tlf")
         wb.textfield("email", "email")
         wb.textfield("co", "co")

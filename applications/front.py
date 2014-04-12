@@ -62,8 +62,7 @@ def modify_news(id):
         b = data.Bucket(request.form)
 
         if 'delete' in request.form:
-
-                    b >> ("DELETE FROM News WHERE  n_id = ?", id)
+            b >> ("DELETE FROM News WHERE  n_id = ?", id)
 
         if b.title == "":
             flash("Please enter a title")
