@@ -102,7 +102,6 @@ def modify_book(b_id):
         return render_template("form.html", form=form)
 
 
-
 @bookkeeper.route("/bookkeeper/book/<b_id>", methods=["GET", "POST"])
 @logged_in
 def book(b_id):
@@ -119,10 +118,10 @@ def book(b_id):
 
 
     # TODO: substract reverse debts
-    local_totals = data.execute( 'SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1)/share_total*share) AS owes FROM (SELECT * FROM Entries WHERE b_id = ?) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', b_id, user)
-    global_totals = data.execute('SELECT * FROM (SELECT creditor, SUM(owes) AS total FROM (SELECT *, ((amount*1)/share_total*share) AS owes FROM                Entries                 LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) LEFT OUTER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) USING(e_id)) GROUP BY creditor) WHERE total is not Null', user)
+    local_totals = data.execute(local_totals_sql, b_id, user)
+    global_totals = data.execute(global_totals_sql, user)
 
-    raw_breakdown = data.execute('SELECT *, (IFNULL(credit, 0)-IFNULL(debt,0)) AS balance FROM (SELECT * FROM (SELECT creditor AS user FROM Entries WHERE b_id = ?) UNION SELECT debtor AS user FROM Debts LEFT OUTER JOIN Entries USING(e_id) WHERE b_id = ? UNION SELECT participant AS user FROM Book_participants WHERE b_id = ?)    LEFT OUTER JOIN    (SELECT creditor AS user, SUM(amount) AS credit FROM Entries WHERE b_id = ? GROUP BY creditor) USING (user)    LEFT OUTER JOIN    (SELECT debtor AS user, SUM(debt) AS debt FROM (SELECT *, ((amount*1)/share_total*share) AS debt FROM Debts LEFT OUTER JOIN Entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = ?) GROUP BY debtor) USING(user)', b_id, b_id, b_id, b_id, b_id)
+    raw_breakdown = data.execute(raw_breakdown_sql, b_id, b_id, b_id, b_id, b_id)
     entries = []
     for entry in raw_entries:
         d = {}
@@ -258,6 +257,53 @@ FROM
         USING(e_id))
    GROUP BY creditor)
 WHERE total is not Null
+"""
+
+
+raw_breakdown_sql = """
+SELECT *,
+       (IFNULL(credit, 0)-IFNULL(debt,0)) AS balance
+FROM
+  (SELECT *
+   FROM
+     (SELECT creditor AS user
+      FROM Entries
+      WHERE b_id = ?)
+   UNION
+     SELECT debtor AS user
+     FROM Debts
+   LEFT OUTER JOIN Entries
+     USING(e_id)
+   WHERE b_id = ?
+   UNION
+     SELECT participant AS user
+     FROM Book_participants
+     WHERE b_id = ?)
+LEFT OUTER JOIN
+  (SELECT creditor AS user,
+          SUM(amount) AS credit
+   FROM Entries
+   WHERE b_id = ?
+   GROUP BY creditor)
+  USING (user)
+LEFT OUTER JOIN
+  (SELECT debtor AS user,
+          SUM(debt) AS debt
+   FROM
+     (SELECT *,
+             ((amount*1)/share_total*share) AS debt
+      FROM Debts
+      LEFT OUTER JOIN
+      Entries USING(e_id)
+      LEFT OUTER JOIN
+        (SELECT e_id,
+                SUM(share) AS share_total
+         FROM Debts
+         GROUP BY e_id)
+        USING(e_id)
+      WHERE b_id = ?)
+   GROUP BY debtor)
+  USING(user)
 """
 
 
