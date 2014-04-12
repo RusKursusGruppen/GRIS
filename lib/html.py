@@ -344,7 +344,7 @@ class _Waaah(_Webobject):
 #                 "phone":"12345678",
 #                 "email":"abc@def.ghi",
 #                 "birthday":"1.2.3",
-#                 "driverslicence":1,
+#                 "driverslicence":1,,
 #                 "diku_age":"x",
 #                 "earlier_tours":"a b c",
 #                 "about_me":"Jeg er sej"}))
