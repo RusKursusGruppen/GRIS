@@ -3,6 +3,8 @@
 
 source env/bin/activate
 
+rm -f data.db
+
 sqlite3 data.db < admin/schema.sql
 python -c "from applications import usermanager;
 usermanager.create_user('rkg','abe','RKG',['admin', 'rkg', 'tutor', 'mentor'])
