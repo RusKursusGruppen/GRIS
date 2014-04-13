@@ -16,6 +16,7 @@ python get-pip.py
 echo
 echo "Installing requirements through pip"
 env/bin/pip install -r requirements.txt
-
-
+echo
+cp config-example.py config.py
 echo "Be sure to use python3 and python3.3-dev"
+echo
