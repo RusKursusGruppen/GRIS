@@ -43,6 +43,8 @@ def delete_user():
         b.deleted = 1
         b >> ("UPDATE Users SET $ WHERE username = ?", request.form["user"])
 
+        data.execute("DELETE FROM User_groups WHERE username = ?", request.form["user"])
+
         flash("Bruger slettet")
 
         return redirect(url_for('admin.delete_user'))
