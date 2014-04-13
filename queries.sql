@@ -1,43 +1,43 @@
--- debtors and creditors
-select * from (select creditor as user from entries where b_id = "1") union select debtor as user from debts left outer join entries using(e_id) where b_id = "1";
+-- debtors and creditors in a book
+SELECT * FROM (SELECT creditor AS user FROM entries WHERE b_id = "1") UNION SELECT debtor AS user FROM debts LEFT OUTER JOIN entries USING(e_id) WHERE b_id = "1";
 
 -- debtors, creditors and participants in a book
-select * from (select creditor as user from entries where b_id = "1") union select debtor as user from debts left outer join entries using(e_id) where b_id = "1" union select participant as user from Book_participants where b_id = "1";
+SELECT * FROM (SELECT creditor AS user FROM entries WHERE b_id = "1") UNION SELECT debtor AS user FROM debts LEFT OUTER JOIN entries USING(e_id) WHERE b_id = "1" UNION SELECT participant AS user FROM Book_participants WHERE b_id = "1";
 
 
 
 
 
--- credits
-select creditor as user, sum(amount) as credit from entries where b_id = "1" group by creditor;
+-- creditors and credits in a book
+SELECT creditor AS user, SUM(amount) AS credit FROM entries WHERE b_id = "1" GROUP BY creditor;
 
 
 
 
---share_totals
-select e_id, sum(share) as share_total from Debts group by e_id;
+-- share_totals: total amount of shares per entry
+SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id;
 
--- Entries with share_totals
-select * from Entries left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using (e_id) where b_id = "1";
+-- Entries with share_totals per book
+SELECT * FROM Entries LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING (e_id) WHERE b_id = "1";
 
 -- debts with entry information
-select * from debts left outer join entries using(e_id);
+SELECT * FROM debts LEFT OUTER JOIN entries USING(e_id);
 
 -- debts with entry + share_totals
-select * from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "1";
+SELECT * FROM debts LEFT OUTER JOIN entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = "1";
 
 -- debts with entry + share_totals + owes
-select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "1";
+SELECT *, ((amount*1.0)/share_total*share) AS debt FROM debts LEFT OUTER JOIN entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = "1";
 
 
 -- total debt
-select debtor as user, sum(debt) as debt from (select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "1") group by debtor;
+SELECT debtor AS user, SUM(debt) AS debt FROM (SELECT *, ((amount*1.0)/share_total*share) AS debt FROM debts LEFT OUTER JOIN entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = "1") GROUP BY debtor;
 
 
 
 
 -- breakdown, no totals
-select * from (select * from (select creditor as user from entries where b_id = "1") union select debtor as user from debts left outer join entries using(e_id) where b_id = "1" union select participant as user from Book_participants where b_id = "1")    left outer join    (select creditor as user, sum(amount) as credit from entries where b_id = "1" group by creditor) using (user)    left outer join    (select debtor as user, sum(debt) as debt from (select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "1") group by debtor) using(user);
+SELECT * FROM (SELECT * FROM (SELECT creditor AS user FROM entries WHERE b_id = "1") UNION SELECT debtor AS user FROM debts LEFT OUTER JOIN entries USING(e_id) WHERE b_id = "1" UNION SELECT participant AS user FROM Book_participants WHERE b_id = "1")    LEFT OUTER JOIN    (SELECT creditor AS user, SUM(amount) AS credit FROM entries WHERE b_id = "1" GROUP BY creditor) USING (user)    LEFT OUTER JOIN    (SELECT debtor AS user, SUM(debt) AS debt FROM (SELECT *, ((amount*1.0)/share_total*share) AS debt FROM debts LEFT OUTER JOIN entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = "1") GROUP BY debtor) USING(user);
 
--- breakdown
-select *, (ifnull(credit, 0)-ifnull(debt,0)) as total from (select * from (select creditor as user from entries where b_id = "1") union select debtor as user from debts left outer join entries using(e_id) where b_id = "1" union select participant as user from Book_participants where b_id = "1")    left outer join    (select creditor as user, sum(amount) as credit from entries where b_id = "1" group by creditor) using (user)    left outer join    (select debtor as user, sum(debt) as debt from (select *, ((amount*1.0)/share_total*share) as debt from debts left outer join entries using(e_id) left outer join (select e_id, sum(share) as share_total from Debts group by e_id) using(e_id) where b_id = "1") group by debtor) using(user);
+-- breakdown returning float (* 1.0 instead of * 1)
+SELECT *, (IFNULL(credit, 0)-IFNULL(debt,0)) AS balance FROM (SELECT * FROM (SELECT creditor AS user FROM entries WHERE b_id = "1") UNION SELECT debtor AS user FROM debts LEFT OUTER JOIN entries USING(e_id) WHERE b_id = "1" UNION SELECT participant AS user FROM Book_participants WHERE b_id = "1")    LEFT OUTER JOIN    (SELECT creditor AS user, SUM(amount) AS credit FROM entries WHERE b_id = "1" GROUP BY creditor) USING (user)    LEFT OUTER JOIN    (SELECT debtor AS user, SUM(debt) AS debt FROM (SELECT *, ((amount*1.0)/share_total*share) AS debt FROM debts LEFT OUTER JOIN entries USING(e_id) LEFT OUTER JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts GROUP BY e_id) USING(e_id) WHERE b_id = "1") GROUP BY debtor) USING(user);
