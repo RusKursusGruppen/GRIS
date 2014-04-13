@@ -19,11 +19,12 @@ def login():
         username = request.form['username']
         raw_password = request.form['password']
         print(type(raw_password))
-        user = data.execute('SELECT password FROM Users WHERE username = ?', username)
+        user = data.execute('SELECT password, deleted FROM Users WHERE username = ?', username)
         if empty(user) or not password.check(raw_password, user[0]['password']):
             flash('Invalid username or password')
+        elif user[0]["deleted"] == 1:
+            flash('Sorry, your user has been deleted')
         else:
-            user = user[0]
             session['logged_in'] = True
             session['username']  = username
 
