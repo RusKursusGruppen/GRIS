@@ -32,6 +32,10 @@ def error(code):
     flash("Error {0}".format(code))
     return redirect(url_for('usermanager.login'))
 
+@app.errorhandler(404)
+def error404(code):
+	return render_template('error/404.html')
+
 
 ### JINJA ###
 
