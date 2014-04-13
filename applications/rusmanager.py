@@ -73,6 +73,10 @@ def rus(r_id):
         if birthday == None:
             birthday = ""
 
+        dutyteams = data.execute("SELECT * FROM Dutyteams WHERE t_id = ?", rus["rustour"])
+        dutyteams = [(dutyteam['tj_id'], dutyteam['name']) for dutyteam in dutyteams]
+        dutyteams = [(None, "None")] + dutyteams
+
         wb = html.WebBuilder()
         wb.form()
         wb.formtable()
@@ -105,8 +109,8 @@ def rus(r_id):
         wb.checkbox("attending_campus", "Deltager campus")
         wb.checkbox("attending_rustour", "Deltager rustur")
         wb.select("rustour", "Skal på:", tours)
-        wb.textfield("dutyteam", "Tjansehold")
-
+#        wb.textfield("dutyteam", "Tjansehold")
+        wb.select("dutyteam", "Tjansehold:", dutyteams)
         wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")
         form = wb.create(rus)
