@@ -1,5 +1,8 @@
 #!/bin/bash
 
-rm -f data.db
+dir=$(dirname $(readlink -f $0))
+rootdir=$dir/..
 
-sqlite3 data.db < admin/schema.sql
+rm -f $rootdir/data.db
+
+sqlite3 $rootdir/data.db < $dir/schema.sql
