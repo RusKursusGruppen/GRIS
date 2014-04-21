@@ -29,7 +29,7 @@ Get the GRIS repo:
 git clone git@github.com:RusKursusGruppen/GRIS.git
 ```
 
-Run the setup script (Ubuntu users should use ./setup-ubuntu)
+Run the setup script
 ```
 ./setup
 ```
@@ -39,7 +39,7 @@ Create a config file
 cp config-example.py config.py
 ```
 
-create a database, while standing in the GRIS dir:
+Create a database, while standing in the GRIS dir:
 ```
 ./admin/test_db.sh
 ```
@@ -56,6 +56,11 @@ localhost:5000
 
 ## Ubuntu:
 Beaware that python defaults to python2 in ubuntu!
+
+When the setup script detects that you are running on an ubuntu system or you
+call it with as follows, pip will get downloaded manually by the script.
+```./setup ubuntu```
+
 
 On ubuntu you might also have to install:  
 python3.3-dev  

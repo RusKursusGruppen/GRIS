@@ -1,5 +1,21 @@
 #!/bin/bash
 
+function get_pip {
+    wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py -O - | python
+    curl -O https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+    python get-pip.py
+}
+
+
+ubuntu=$(grep -i "ubuntu" /etc/*-release)
+
+rm -rf env
 pyvenv-3.4 env
 source env/bin/activate
+
+if [[ $ubuntu || $1 = "ubuntu" || $1 = "pip"]]
+then
+    get_pip
+fi
+
 env/bin/pip install -r requirements.txt
