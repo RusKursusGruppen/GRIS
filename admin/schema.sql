@@ -227,5 +227,5 @@ CREATE TABLE Payments(
     creditor            REFERENCES Users(username),
     debtor              REFERENCES Users(users),
     amount              integer,
-    confirmed           integer NOT NULL default 0 --0 not confirmed, -1 seen but not confirmed, 1 confirmed
+    confirmed           integer NOT NULL default 0 --0 not confirmed, -1 rejected, 1 confirmed
 );
