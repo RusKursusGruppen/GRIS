@@ -225,7 +225,7 @@ CREATE TABLE Russer(
 --     b_id                REFERENCES Books(b_id),
 --     date                string,
 --     creditor            REFERENCES Users(username),
---     debtor              REFERENCES Users(users),
+--     debtor              REFERENCES Users(username),
 --     amount              integer,
 --     confirmed           integer NOT NULL default 0 --0 not confirmed, -1 rejected, 1 confirmed
 -- );
