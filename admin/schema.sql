@@ -41,21 +41,21 @@ CREATE TABLE Russer(
     attending_campus    integer NOT NULL default 0,
     attending_rustour   integer NOT NULL default 0,
 
-    rustour             REFERENCES Tours(t_id),
-    dutyteam            REFERENCES Dutyteams(tj_id)
+    rustour             serial REFERENCES Tours(t_id),
+    dutyteam            serial REFERENCES Dutyteams(tj_id)
 );
 
 -- -- It must hold that uid1 < uid2
 -- DROP TABLE IF EXISTS Friends;
 -- CREATE TABLE Friends(
---     r_id1               REFERENCES Russer(r_id),
---     r_id2               REFERENCES Russer(r_id)
+--     r_id1               serial REFERENCES Russer(r_id),
+--     r_id2               serial REFERENCES Russer(r_id)
 -- );
 
 -- DROP TABLE IF EXISTS Friends_of_us;
 -- CREATE TABLE Friends_of_us(
---     r_id                REFERENCES Russer(r_id),
---     username            REFERENCES Users(username)
+--     r_id                serial REFERENCES Russer(r_id),
+--     username            string REFERENCES Users(username)
 -- );
 
 
@@ -72,14 +72,14 @@ CREATE TABLE Russer(
 
 -- DROP TABLE IF EXISTS Tours_tutors;
 -- CREATE TABLE Tours_tutors(
---    t_id                 REFERENCES Tours(t_id),
---    username             REFERENCES Users(username)
+--    t_id                 serial REFERENCES Tours(t_id),
+--    username             string REFERENCES Users(username)
 -- );
 
 -- DROP TABLE IF EXISTS Dutyteams;
 -- CREATE TABLE Dutyteams(
 --     tj_id               serial PRIMARY KEY,
---     t_id                REFERENCES Tours(t_id),
+--     t_id                serial REFERENCES Tours(t_id),
 --     name                string
 
 -- );
@@ -138,7 +138,7 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS News;
 -- CREATE TABLE News(
 --     n_id                serial PRIMARY KEY,
---     creator             REFERENCES Users(username),
+--     creator             string REFERENCES Users(username),
 --     created             string NOT NULL,
 --     title               string,
 --     text                string
@@ -146,8 +146,8 @@ CREATE TABLE Russer(
 
 -- DROP TABLE IF EXISTS News_access;
 -- CREATE TABLE News_access(
---     n_id                REFERENCES News(n_id),
---     groupname           REFERENCES Groups(groupname)
+--     n_id                serial REFERENCES News(n_id),
+--     groupname           string REFERENCES Groups(groupname)
 -- );
 
 -- --- SCHEDULE ---
@@ -175,8 +175,8 @@ CREATE TABLE Russer(
 
 -- DROP TABLE IF EXISTS Schedule_answers;
 -- CREATE TABLE Schedule_answers(
---     user                REFERENCES Users(username),
---     c_id                REFERENCES Schedule_cols(c_id),
+--     user                string REFERENCES Users(username),
+--     c_id                serial REFERENCES Schedule_cols(c_id),
 --     answer              int
 -- );
 
@@ -186,7 +186,7 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS Books;
 -- CREATE TABLE Books(
 --     b_id                serial PRIMARY KEY,
---     creator             REFERENCES Users(username),
+--     creator             string REFERENCES Users(username),
 --     created             string,
 --     title               string,
 --     description         string
@@ -195,9 +195,9 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS Entries;
 -- CREATE TABLE Entries(
 --     e_id                serial PRIMARY KEY,
---     b_id                REFERENCES Books(b_id) NOT NULL,
+--     b_id                serial REFERENCES Books(b_id) NOT NULL,
 --     date                string,
---     creditor            REFERENCES Users(username),
+--     creditor            string REFERENCES Users(username),
 --     description         string,
 --     amount_string       string, -- The unevaluated string,
 --     amount              integer -- and its result.
@@ -206,8 +206,8 @@ CREATE TABLE Russer(
 
 -- DROP TABLE IF EXISTS Debts;
 -- CREATE TABLE Debts(
---     e_id                REFERENCES Entries(e_id),
---     debtor              REFERENCES Users(username),
+--     e_id                serial REFERENCES Entries(e_id),
+--     debtor              string REFERENCES Users(username),
 --     share_string        string,  -- The unevaluated string,
 --     share               integer, -- and its result.
 --     UNIQUE(e_id, debtor) ON CONFLICT REPLACE
@@ -215,17 +215,17 @@ CREATE TABLE Russer(
 
 -- DROP TABLE IF EXISTS Book_participants;
 -- CREATE TABLE Book_participants(
---     b_id                integer REFERENCES Books(b_id),
---     participant         REFERENCES Users(username),
+--     b_id                serial REFERENCES Books(b_id),
+--     participant         string REFERENCES Users(username),
 --     UNIQUE(b_id, participant) ON CONFLICT IGNORE
 -- );
 
 -- DROP TABLE IF EXISTS Payments;
 -- CREATE TABLE Payments(
---     b_id                REFERENCES Books(b_id),
+--     b_id                serial REFERENCES Books(b_id),
 --     date                string,
---     creditor            REFERENCES Users(username),
---     debtor              REFERENCES Users(username),
+--     creditor            string REFERENCES Users(username),
+--     debtor              string REFERENCES Users(users),
 --     amount              integer,
 --     confirmed           integer NOT NULL default 0 --0 not confirmed, -1 rejected, 1 confirmed
 -- );
