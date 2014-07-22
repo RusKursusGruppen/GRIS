@@ -5,7 +5,7 @@ BEGIN;
 --- USERS ---
 DROP TABLE IF EXISTS Users;
 CREATE TABLE Users(
-    username            text PRIMARY KEY NOT NULL,
+    username            text PRIMARY KEY,
     password            text NOT NULL,
 
     name                text DEFAULT 'RUS',
@@ -26,7 +26,7 @@ CREATE TABLE Users(
 
 DROP TABLE IF EXISTS Groups;
 CREATE TABLE Groups(
-       groupname        text PRIMARY KEY NOT NULL
+       groupname        text PRIMARY KEY
 );
 INSERT INTO Groups(groupname) VALUES('all');
 INSERT INTO Groups(groupname) VALUES('admin');
@@ -44,7 +44,7 @@ CREATE TABLE User_groups(
 
 DROP TABLE IF EXISTS User_creation_keys;
 CREATE TABLE User_creation_keys(
-       key              text UNIQUE NOT NULL,
+       key              text PRIMARY KEY,
        created          text NOT NULL
 );
 
