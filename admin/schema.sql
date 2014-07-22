@@ -1,6 +1,79 @@
 -- Run this to reset/create the database.
 -- PRAGMA foreign_keys = ON;
 
+--- USERS ---
+DROP TABLE IF EXISTS Users;
+CREATE TABLE Users(
+    username            text PRIMARY KEY NOT NULL,
+    password            text NOT NULL,
+
+    name                text DEFAULT 'RUS',
+    driverslicence      int NOT NULL default 0,
+    address             text,
+    zipcode             text,
+    city                text,
+    phone               text,
+    email               text,
+    birthday            text,
+
+    diku_age            text,
+    earlier_tours       text, --sepererat med semicolaer (pepsi)
+    about_me            text,
+
+    deleted             int DEFAULT 0 -- Field for marking a user as deleted
+);
+
+DROP TABLE IF EXISTS Groups;
+CREATE TABLE Groups(
+       groupname        text PRIMARY KEY NOT NULL
+);
+INSERT INTO Groups(groupname) VALUES('all');
+INSERT INTO Groups(groupname) VALUES('admin');
+INSERT INTO Groups(groupname) VALUES('rkg');
+INSERT INTO Groups(groupname) VALUES('tutor');
+INSERT INTO Groups(groupname) VALUES('mentor');
+
+
+DROP TABLE IF EXISTS User_groups;
+CREATE TABLE User_groups(
+       username         text REFERENCES Users(username),
+       groupname        text REFERENCES Groups(groupname)
+);
+
+
+DROP TABLE IF EXISTS User_creation_keys;
+CREATE TABLE User_creation_keys(
+       key              text UNIQUE NOT NULL,
+       created          text NOT NULL
+);
+
+
+
+--- TOUR INFORMATION ---
+DROP TABLE IF EXISTS Tours;
+CREATE TABLE Tours(
+    t_id                serial PRIMARY KEY,
+    tour_name           text,
+    type                text CHECK(type IN ('p', 't', 'm')),
+    year                integer
+);
+
+DROP TABLE IF EXISTS Tours_tutors;
+CREATE TABLE Tours_tutors(
+   t_id                 serial REFERENCES Tours(t_id),
+   username             text REFERENCES Users(username)
+);
+
+DROP TABLE IF EXISTS Dutyteams;
+CREATE TABLE Dutyteams(
+    tj_id               serial PRIMARY KEY,
+    t_id                serial REFERENCES Tours(t_id),
+    name                text
+
+);
+
+
+
 --- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer;
 CREATE TABLE Russer(
@@ -59,79 +132,6 @@ CREATE TABLE Friends_of_us(
     username            text REFERENCES Users(username)
 );
 
-
-
-
---- TOUR INFORMATION ---
-DROP TABLE IF EXISTS Tours;
-CREATE TABLE Tours(
-    t_id                serial PRIMARY KEY,
-    tour_name           text,
-    type                text CHECK(type IN ('p', 't', 'm')),
-    year                integer
-);
-
-DROP TABLE IF EXISTS Tours_tutors;
-CREATE TABLE Tours_tutors(
-   t_id                 serial REFERENCES Tours(t_id),
-   username             text REFERENCES Users(username)
-);
-
-DROP TABLE IF EXISTS Dutyteams;
-CREATE TABLE Dutyteams(
-    tj_id               serial PRIMARY KEY,
-    t_id                serial REFERENCES Tours(t_id),
-    name                text
-
-);
-
-
-
---- USERS ---
-DROP TABLE IF EXISTS Users;
-CREATE TABLE Users(
-    username            text PRIMARY KEY NOT NULL,
-    password            text NOT NULL,
-
-    name                text DEFAULT 'RUS',
-    driverslicence      int NOT NULL default 0,
-    address             text,
-    zipcode             text,
-    city                text,
-    phone               text,
-    email               text,
-    birthday            text,
-
-    diku_age            text,
-    earlier_tours       text, --sepererat med semicolaer (pepsi)
-    about_me            text,
-
-    deleted             int DEFAULT 0 -- Field for marking a user as deleted
-);
-
-DROP TABLE IF EXISTS Groups;
-CREATE TABLE Groups(
-       groupname        text PRIMARY KEY NOT NULL
-);
-INSERT INTO Groups(groupname) VALUES('all');
-INSERT INTO Groups(groupname) VALUES('admin');
-INSERT INTO Groups(groupname) VALUES('rkg');
-INSERT INTO Groups(groupname) VALUES('tutor');
-INSERT INTO Groups(groupname) VALUES('mentor');
-
-
-DROP TABLE IF EXISTS User_groups;
-CREATE TABLE User_groups(
-       username         text REFERENCES Users(username),
-       groupname        text REFERENCES Groups(groupname)
-);
-
-
-DROP TABLE IF EXISTS User_creation_keys;
-CREATE TABLE User_creation_keys(
-       key              text UNIQUE NOT NULL,
-       created          text NOT NULL
-);
 
 
 
