@@ -1,3 +1,4 @@
+BEGIN;
 -- Run this to reset/create the database.
 -- PRAGMA foreign_keys = ON;
 
@@ -230,3 +231,5 @@ CREATE TABLE Payments(
     amount              integer,
     confirmed           integer NOT NULL default 0 --0 not confirmed, -1 rejected, 1 confirmed
 );
+
+COMMIT;
