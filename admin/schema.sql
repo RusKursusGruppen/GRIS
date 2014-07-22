@@ -93,7 +93,7 @@ CREATE TABLE Users(
     username            text PRIMARY KEY NOT NULL,
     password            text NOT NULL,
 
-    name                text DEFAULT "RUS",
+    name                text DEFAULT 'RUS',
     driverslicence      int NOT NULL default 0,
     address             text,
     zipcode             text,
@@ -113,11 +113,11 @@ DROP TABLE IF EXISTS Groups;
 CREATE TABLE Groups(
        groupname        text PRIMARY KEY NOT NULL
 );
-INSERT INTO Groups(groupname) VALUES("all");
-INSERT INTO Groups(groupname) VALUES("admin");
-INSERT INTO Groups(groupname) VALUES("rkg");
-INSERT INTO Groups(groupname) VALUES("tutor");
-INSERT INTO Groups(groupname) VALUES("mentor");
+INSERT INTO Groups(groupname) VALUES('all');
+INSERT INTO Groups(groupname) VALUES('admin');
+INSERT INTO Groups(groupname) VALUES('rkg');
+INSERT INTO Groups(groupname) VALUES('tutor');
+INSERT INTO Groups(groupname) VALUES('mentor');
 
 
 DROP TABLE IF EXISTS User_groups;
