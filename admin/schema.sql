@@ -6,35 +6,35 @@ DROP TABLE IF EXISTS Russer;
 CREATE TABLE Russer(
     r_id                serial PRIMARY KEY,
 
-    name                string NOT NULL,
-    filled_by           string,
+    name                text NOT NULL,
+    filled_by           text,
     called              integer NOT NULL,
-    co                  string,
-    address             string,
-    zipcode             string,
-    city                string,
+    co                  text,
+    address             text,
+    zipcode             text,
+    city                text,
 
-    move_time           string,
-    new_address         string,
-    new_zipcode         string,
-    new_city            string,
+    move_time           text,
+    new_address         text,
+    new_zipcode         text,
+    new_city            text,
 
-    phone               string,
-    email               string,
+    phone               text,
+    email               text,
 
-    birthday            string,
+    birthday            text,
 
-    vacation            string,
-    priority            string,
+    vacation            text,
+    priority            text,
 
-    gymnasium           string,
-    since_gymnasium     string,
+    gymnasium           text,
+    since_gymnasium     text,
 
-    code_experience     string,
-    special_needs       string,
-    plays_instrument    string,
-    other               string,
-    tshirt              string,
+    code_experience     text,
+    special_needs       text,
+    plays_instrument    text,
+    other               text,
+    tshirt              text,
     paid                integer NOT NULL default 0,
 
     attending_uniday    integer NOT NULL default 0,
@@ -55,7 +55,7 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS Friends_of_us;
 -- CREATE TABLE Friends_of_us(
 --     r_id                serial REFERENCES Russer(r_id),
---     username            string REFERENCES Users(username)
+--     username            text REFERENCES Users(username)
 -- );
 
 
@@ -65,22 +65,22 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS Tours;
 -- CREATE TABLE Tours(
 --     t_id                serial PRIMARY KEY,
---     tour_name           string,
---     type                string CHECK(type IN ('p', 't', 'm')),
+--     tour_name           text,
+--     type                text CHECK(type IN ('p', 't', 'm')),
 --     year                integer
 -- );
 
 -- DROP TABLE IF EXISTS Tours_tutors;
 -- CREATE TABLE Tours_tutors(
 --    t_id                 serial REFERENCES Tours(t_id),
---    username             string REFERENCES Users(username)
+--    username             text REFERENCES Users(username)
 -- );
 
 -- DROP TABLE IF EXISTS Dutyteams;
 -- CREATE TABLE Dutyteams(
 --     tj_id               serial PRIMARY KEY,
 --     t_id                serial REFERENCES Tours(t_id),
---     name                string
+--     name                text
 
 -- );
 
@@ -89,28 +89,28 @@ CREATE TABLE Russer(
 -- --- USERS ---
 -- DROP TABLE IF EXISTS Users;
 -- CREATE TABLE Users(
---     username            string PRIMARY KEY NOT NULL,
---     password            string NOT NULL,
+--     username            text PRIMARY KEY NOT NULL,
+--     password            text NOT NULL,
 
---     name                string DEFAULT "RUS",
+--     name                text DEFAULT "RUS",
 --     driverslicence      int NOT NULL default 0,
---     address             string,
---     zipcode             string,
---     city                string,
---     phone               string,
---     email               string,
---     birthday            string,
+--     address             text,
+--     zipcode             text,
+--     city                text,
+--     phone               text,
+--     email               text,
+--     birthday            text,
 
---     diku_age            string,
---     earlier_tours       string, --sepererat med semicolaer (pepsi)
---     about_me            string,
+--     diku_age            text,
+--     earlier_tours       text, --sepererat med semicolaer (pepsi)
+--     about_me            text,
 
 --     deleted             int DEFAULT 0 -- Field for marking a user as deleted
 -- );
 
 -- DROP TABLE IF EXISTS Groups;
 -- CREATE TABLE Groups(
---        groupname        string PRIMARY KEY NOT NULL
+--        groupname        text PRIMARY KEY NOT NULL
 -- );
 -- INSERT INTO Groups(groupname) VALUES("all");
 -- INSERT INTO Groups(groupname) VALUES("admin");
@@ -121,15 +121,15 @@ CREATE TABLE Russer(
 
 -- DROP TABLE IF EXISTS User_groups;
 -- CREATE TABLE User_groups(
---        username         string REFERENCES Users(username),
---        groupname        string REFERENCES Groups(groupname)
+--        username         text REFERENCES Users(username),
+--        groupname        text REFERENCES Groups(groupname)
 -- );
 
 
 -- DROP TABLE IF EXISTS User_creation_keys;
 -- CREATE TABLE User_creation_keys(
---        key              string UNIQUE NOT NULL,
---        created          string NOT NULL
+--        key              text UNIQUE NOT NULL,
+--        created          text NOT NULL
 -- );
 
 
@@ -138,16 +138,16 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS News;
 -- CREATE TABLE News(
 --     n_id                serial PRIMARY KEY,
---     creator             string REFERENCES Users(username),
---     created             string NOT NULL,
---     title               string,
---     text                string
+--     creator             text REFERENCES Users(username),
+--     created             text NOT NULL,
+--     title               text,
+--     text                text
 -- );
 
 -- DROP TABLE IF EXISTS News_access;
 -- CREATE TABLE News_access(
 --     n_id                serial REFERENCES News(n_id),
---     groupname           string REFERENCES Groups(groupname)
+--     groupname           text REFERENCES Groups(groupname)
 -- );
 
 -- --- SCHEDULE ---
@@ -155,11 +155,11 @@ CREATE TABLE Russer(
 -- CREATE TABLE Schedule(
 --     s_id                serial PRIMARY KEY,
 
---     title               string,
---     description         string,
+--     title               text,
+--     description         text,
 
---     created             string,
---     closes              string
+--     created             text,
+--     closes              text
 -- );
 
 -- DROP TABLE IF EXISTS Schedule_cols;
@@ -167,7 +167,7 @@ CREATE TABLE Russer(
 --     c_id                serial PRIMARY KEY,
 --     s_id                integer,
 --     parent              integer,
---     label               string,
+--     label               text,
 --     type                integer NOT NULL default 0,
 --     FOREIGN KEY(parent) REFERENCES Schedule_cols(s_id),
 --     FOREIGN KEY(c_id) REFERENCES Schedule(s_id)
@@ -175,7 +175,7 @@ CREATE TABLE Russer(
 
 -- DROP TABLE IF EXISTS Schedule_answers;
 -- CREATE TABLE Schedule_answers(
---     user                string REFERENCES Users(username),
+--     user                text REFERENCES Users(username),
 --     c_id                serial REFERENCES Schedule_cols(c_id),
 --     answer              int
 -- );
@@ -186,20 +186,20 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS Books;
 -- CREATE TABLE Books(
 --     b_id                serial PRIMARY KEY,
---     creator             string REFERENCES Users(username),
---     created             string,
---     title               string,
---     description         string
+--     creator             text REFERENCES Users(username),
+--     created             text,
+--     title               text,
+--     description         text
 -- );
 
 -- DROP TABLE IF EXISTS Entries;
 -- CREATE TABLE Entries(
 --     e_id                serial PRIMARY KEY,
 --     b_id                serial REFERENCES Books(b_id) NOT NULL,
---     date                string,
---     creditor            string REFERENCES Users(username),
---     description         string,
---     amount_string       string, -- The unevaluated string,
+--     date                text,
+--     creditor            text REFERENCES Users(username),
+--     description         text,
+--     amount_text       text, -- The unevaluated text,
 --     amount              integer -- and its result.
 -- );
 
@@ -207,8 +207,8 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS Debts;
 -- CREATE TABLE Debts(
 --     e_id                serial REFERENCES Entries(e_id),
---     debtor              string REFERENCES Users(username),
---     share_string        string,  -- The unevaluated string,
+--     debtor              text REFERENCES Users(username),
+--     share_text        text,  -- The unevaluated text,
 --     share               integer, -- and its result.
 --     UNIQUE(e_id, debtor) ON CONFLICT REPLACE
 -- );
@@ -216,16 +216,16 @@ CREATE TABLE Russer(
 -- DROP TABLE IF EXISTS Book_participants;
 -- CREATE TABLE Book_participants(
 --     b_id                serial REFERENCES Books(b_id),
---     participant         string REFERENCES Users(username),
+--     participant         text REFERENCES Users(username),
 --     UNIQUE(b_id, participant) ON CONFLICT IGNORE
 -- );
 
 -- DROP TABLE IF EXISTS Payments;
 -- CREATE TABLE Payments(
 --     b_id                serial REFERENCES Books(b_id),
---     date                string,
---     creditor            string REFERENCES Users(username),
---     debtor              string REFERENCES Users(users),
+--     date                text,
+--     creditor            text REFERENCES Users(username),
+--     debtor              text REFERENCES Users(users),
 --     amount              integer,
 --     confirmed           integer NOT NULL default 0 --0 not confirmed, -1 rejected, 1 confirmed
 -- );
