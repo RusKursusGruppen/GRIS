@@ -45,11 +45,11 @@ CREATE TABLE Russer(
     dutyteam            serial REFERENCES Dutyteams(tj_id)
 );
 
--- It must hold that uid1 < uid2
 DROP TABLE IF EXISTS Friends;
 CREATE TABLE Friends(
     r_id1               serial REFERENCES Russer(r_id),
-    r_id2               serial REFERENCES Russer(r_id)
+    r_id2               serial REFERENCES Russer(r_id),
+    CHECK (r_id1 < r_id2) -- we assume friendship is a symmetric relation, and can thus keep an order in the friendships.
 );
 
 DROP TABLE IF EXISTS Friends_of_us;
