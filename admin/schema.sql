@@ -38,7 +38,8 @@ INSERT INTO Groups(groupname) VALUES('mentor');
 DROP TABLE IF EXISTS User_groups;
 CREATE TABLE User_groups(
        username         text REFERENCES Users(username),
-       groupname        text REFERENCES Groups(groupname)
+       groupname        text REFERENCES Groups(groupname),
+       PRIMARY KEY (username, groupname)
 );
 
 
@@ -62,15 +63,15 @@ CREATE TABLE Tours(
 DROP TABLE IF EXISTS Tours_tutors;
 CREATE TABLE Tours_tutors(
    t_id                 serial REFERENCES Tours(t_id),
-   username             text REFERENCES Users(username)
+   username             text REFERENCES Users(username),
+   PRIMARY KEY (t_id, username)
 );
 
 DROP TABLE IF EXISTS Dutyteams;
 CREATE TABLE Dutyteams(
     tj_id               serial PRIMARY KEY,
-    t_id                serial REFERENCES Tours(t_id),
+    t_id                serial REFERENCES Tours(t_id) NOT NULL,
     name                text
-
 );
 
 
@@ -130,7 +131,8 @@ CREATE TABLE Friends(
 DROP TABLE IF EXISTS Friends_of_us;
 CREATE TABLE Friends_of_us(
     r_id                serial REFERENCES Russer(r_id),
-    username            text REFERENCES Users(username)
+    username            text REFERENCES Users(username),
+    PRIMARY KEY(r_id, username)
 );
 
 
@@ -149,7 +151,8 @@ CREATE TABLE News(
 DROP TABLE IF EXISTS News_access;
 CREATE TABLE News_access(
     n_id                serial REFERENCES News(n_id),
-    groupname           text REFERENCES Groups(groupname)
+    groupname           text REFERENCES Groups(groupname),
+    PRIMARY KEY (n_id, groupname)
 );
 
 --- SCHEDULE ---
@@ -212,14 +215,14 @@ CREATE TABLE Debts(
     debtor              text REFERENCES Users(username),
     share_text        text,  -- The unevaluated text,
     share               integer, -- and its result.
-    UNIQUE(e_id, debtor) ON CONFLICT REPLACE
+    PRIMARY KEY (e_id, debtor) ON CONFLICT REPLACE
 );
 
 DROP TABLE IF EXISTS Book_participants;
 CREATE TABLE Book_participants(
     b_id                serial REFERENCES Books(b_id),
     participant         text REFERENCES Users(username),
-    UNIQUE(b_id, participant) ON CONFLICT IGNORE
+    PRIMARY KEY (b_id, participant) ON CONFLICT IGNORE
 );
 
 DROP TABLE IF EXISTS Payments;
@@ -229,7 +232,8 @@ CREATE TABLE Payments(
     creditor            text REFERENCES Users(username),
     debtor              text REFERENCES Users(users),
     amount              integer,
-    confirmed           integer NOT NULL default 0 --0 not confirmed, -1 rejected, 1 confirmed
+    confirmed           integer NOT NULL default 0, --0 not confirmed, -1 rejected, 1 confirmed
+    PRIMARY KEY (b_id, creditor, debtor)
 );
 
 COMMIT;
