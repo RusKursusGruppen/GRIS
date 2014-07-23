@@ -230,7 +230,7 @@ CREATE TABLE Payments(
     b_id                serial REFERENCES Books(b_id),
     date                text,
     creditor            text REFERENCES Users(username),
-    debtor              text REFERENCES Users(users),
+    debtor              text REFERENCES Users(username),
     amount              integer,
     confirmed           integer NOT NULL default 0, --0 not confirmed, -1 rejected, 1 confirmed
     PRIMARY KEY (b_id, creditor, debtor)
