@@ -155,35 +155,35 @@ CREATE TABLE News_access(
     PRIMARY KEY (n_id, groupname)
 );
 
---- SCHEDULE ---
-DROP TABLE IF EXISTS Schedule;
-CREATE TABLE Schedule(
-    s_id                serial PRIMARY KEY,
+-- --- SCHEDULE ---
+-- DROP TABLE IF EXISTS Schedule;
+-- CREATE TABLE Schedule(
+--     s_id                serial PRIMARY KEY,
 
-    title               text,
-    description         text,
+--     title               text,
+--     description         text,
 
-    created             text,
-    closes              text
-);
+--     created             text,
+--     closes              text
+-- );
 
-DROP TABLE IF EXISTS Schedule_cols;
-CREATE TABLE Schedule_cols(
-    c_id                serial PRIMARY KEY,
-    s_id                integer,
-    parent              integer,
-    label               text,
-    type                integer NOT NULL default 0,
-    FOREIGN KEY(parent) REFERENCES Schedule_cols(s_id),
-    FOREIGN KEY(c_id) REFERENCES Schedule(s_id)
-);
+-- DROP TABLE IF EXISTS Schedule_cols;
+-- CREATE TABLE Schedule_cols(
+--     c_id                serial PRIMARY KEY,
+--     s_id                integer,
+--     parent              integer,
+--     label               text,
+--     type                integer NOT NULL default 0,
+--     FOREIGN KEY(parent) REFERENCES Schedule_cols(s_id),
+--     FOREIGN KEY(c_id) REFERENCES Schedule(s_id)
+-- );
 
-DROP TABLE IF EXISTS Schedule_answers;
-CREATE TABLE Schedule_answers(
-    user                text REFERENCES Users(username),
-    c_id                serial REFERENCES Schedule_cols(c_id),
-    answer              int
-);
+-- DROP TABLE IF EXISTS Schedule_answers;
+-- CREATE TABLE Schedule_answers(
+--     user                text REFERENCES Users(username),
+--     c_id                serial REFERENCES Schedule_cols(c_id),
+--     answer              int
+-- );
 
 
 
