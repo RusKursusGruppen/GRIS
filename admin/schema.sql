@@ -215,14 +215,14 @@ CREATE TABLE Debts(
     debtor              text REFERENCES Users(username),
     share_text        text,  -- The unevaluated text,
     share               integer, -- and its result.
-    PRIMARY KEY (e_id, debtor) ON CONFLICT REPLACE
+    PRIMARY KEY (e_id, debtor)
 );
 
 DROP TABLE IF EXISTS Book_participants;
 CREATE TABLE Book_participants(
     b_id                serial REFERENCES Books(b_id),
     participant         text REFERENCES Users(username),
-    PRIMARY KEY (b_id, participant) ON CONFLICT IGNORE
+    PRIMARY KEY (b_id, participant)
 );
 
 DROP TABLE IF EXISTS Payments;
