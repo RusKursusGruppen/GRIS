@@ -48,7 +48,5 @@ def new():
 @schedule.route('/schedule/<sid>', methods=['GET', 'POST'])
 @logged_in
 def event(sid):
-    with data.data() as db:
-        cur = db.execute("SELECT s_id, title, description, created, closes FROM Schedule WHERE s_id = ?", sid)
-        event = cur.fetchone()
+    event = data.execute("SELECT s_id, title, description, created, closes FROM Schedule WHERE s_id = ?", sid)
     return render_template("schedule/event.html", event=event)
