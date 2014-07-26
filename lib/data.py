@@ -35,9 +35,9 @@ def executemany(com, argSeq):
                 cursor.executemany(com, argSeq)
                 log.data(com, argSeq)
                 return v.fetchall()
-            except:
-                log.data(com, argSeq, error=True)
-                raise
+    except:
+        log.data(com, argSeq, error=True)
+        raise
 
 def script(filename):
     with open(filename) as f:
