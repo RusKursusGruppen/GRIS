@@ -42,7 +42,8 @@ CREATE TABLE Russer(
     attending_rustour   integer NOT NULL default 0,
 
     rustour             REFERENCES Tours(t_id),
-    dutyteam            REFERENCES Dutyteams(tj_id)
+    dutyteam            REFERENCES Dutyteams(tj_id),
+    mentor              REFERENCES Mentorteams(m_id)
 );
 
 -- It must hold that uid1 < uid2
@@ -84,6 +85,12 @@ CREATE TABLE Dutyteams(
 
 );
 
+DROP TABLE IF EXISTS Mentorteams;
+CREATE TABLE Mentorteams(
+    m_id                integer PRIMARY KEY AUTOINCREMENT,
+    mentor_names        string,
+    year                integer
+);
 
 
 --- USERS ---
