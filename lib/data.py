@@ -142,14 +142,10 @@ class Bucket(object):
         sql += ") VALUES ("
         sql += ",".join(questions)
         sql += ")"
+        sql += " returning *"
 
-        try:
-            with connect() as db:
-                c = db.execute(sql, values)
-                log.data(sql, values)
-                return c.lastrowid
-        except:
-            log.data(sql, values, error=True)
+        return execute(sql, values)
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
