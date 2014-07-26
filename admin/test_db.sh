@@ -8,7 +8,7 @@ cd $rootdir
 
 admin/reset_db.sh
 
-source /env/bin/activate
+source ./env/bin/activate
 
 python -c "from applications import usermanager;
 usermanager.create_user('rkg','abe','RKG',['admin', 'rkg', 'tutor', 'mentor'])
