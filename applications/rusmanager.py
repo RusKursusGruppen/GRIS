@@ -128,7 +128,7 @@ def new():
         name = " ".join([x.capitalize() for x in request.form['name'].split()])
         r_id = data.execute("INSERT INTO Russer(name, called) VALUES(?,?) RETURNING r_id", name, 0)[0][0]
         flash("Rus oprettet")
-        return redirect(url_for('rusmanager.rus', r_id=str(lastrowid)))
+        return redirect(url_for('rusmanager.rus', r_id=str(r_id)))
     else:
         w = html.WebBuilder()
         w.form()
