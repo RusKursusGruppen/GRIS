@@ -2,62 +2,46 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import sqlite3
+import psycopg2
 import itertools
 
 from lib import log
 
 import config
 
-def connect(dbf=None):
-    dbf = dbf if dbf else config.DATABASE
-    db = sqlite3.connect(dbf)
-    db.row_factory = sqlite3.Row
-    return db
-
-
-def data():
-    return connect()
-
-
 def execute(com, *args):
     try:
-        with connect() as db:
-            db.execute("PRAGMA foreign_keys = ON").fetchone()
-            v = db.execute(com, args)
-            log.data(com, args)
-            return v.fetchall()
-    except:
-        log.data(com, args, error=True)
-        raise
-
-def execute_lastrowid(com, *args):
-    try:
-        with connect() as db:
-            c = db.cursor()
-            c.execute("PRAGMA foreign_keys = ON").fetchone()
-            c.execute(com, args)
-            log.data(com, args)
-            return c.lastrowid
+        with psycopg2.connect(host=config.DATABASE_HOST,
+                              port=config.DATABASE_PORT,
+                              user=config.DATABASE_USER,
+                              password=config.DATABASE_PASSWORD,
+                              database=config.DATABASE_NAME) as connection:
+            with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+                cursor.execute(com, args)
+                log.data(com, args)
+                return v.fetchall()
     except:
         log.data(com, args, error=True)
         raise
 
 def executemany(com, argSeq):
     try:
-        with connect() as db:
-            db.execute("PRAGMA foreign_keys = ON").fetchone()
-            v = db.executemany(com, argSeq)
-            log.data(com, args)
-            return v.fetchall()
-    except:
-        log.data(com, argSeq, error=True)
-        raise
+        with psycopg2.connect(host=config.DATABASE_HOST,
+                              port=config.DATABASE_PORT,
+                              user=config.DATABASE_USER,
+                              password=config.DATABASE_PASSWORD,
+                              database=config.DATABASE_NAME) as connection:
+            with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+                cursor.executemany(com, argSeq)
+                log.data(com, argSeq)
+                return v.fetchall()
+            except:
+                log.data(com, argSeq, error=True)
+                raise
 
-def script(f):
-    with connect() as db:
-        with open(f) as f:
-            db.cursor().executescript(f.read())
+def script(filename):
+    with open(filename) as f:
+        execute(f.read())
 
 def store(bucket, sql, *args):
     bucket >> [sql]+list(args)
