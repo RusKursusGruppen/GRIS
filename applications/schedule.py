@@ -13,11 +13,8 @@ schedule = Blueprint('schedule', __name__, template_folder = '../templates/sched
 @schedule.route('/schedule')
 @logged_in
 def overview():
-    with data.data() as db:
-        cur = db.execute("SELECT s_id, title, closes FROM Schedule")
-        events = cur.fetchall()
-        cur.close()
-        return render_template("schedule/overview.html",events=events)
+    events = data.execute("SELECT s_id, title, closes FROM Schedule")
+    return render_template("schedule/overview.html",events=events)
 
 @schedule.route('/schedule/new', methods=['GET','POST'])
 @logged_in
