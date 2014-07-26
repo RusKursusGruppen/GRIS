@@ -33,9 +33,9 @@ def new():
 
         choices = [(s_id, x, 0) for x in request.form.getlist('choices') if x]
         flash(str(choices))
-        cur2 = data.executemany(
+        data.executemany(
             "INSERT INTO Schedule_cols(s_id, label, type, parent) VALUES (?,?,?, NULL)",
-             choices)
+            choices)
 
         flash("Oprettelse gennemført")
         return redirect(url_for('schedule.overview'))
