@@ -129,14 +129,7 @@ class Bucket(object):
         values = [self[c] for c in self]
         values.extend(args)
 
-        try:
-            with connect() as db:
-                c = db.execute(sql, values)
-                log.data(sql, values)
-                return c.lastrowid
-        except:
-            log.data(sql, values, error=True)
-            raise
+        return execute(sql, values)
 
     def __ge__(self, dest):
         """Create entry in database"""
