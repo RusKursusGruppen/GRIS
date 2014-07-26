@@ -24,12 +24,12 @@ def new():
             flash("Oprettelse annulleret")
             return redirect(url_for('schedule.overview'))
 
-        s_id = data.execute_lastrowid(
-            "INSERT INTO Schedule(title, description, created, closes) VALUES(?,?,?,?)",
+        s_id = data.execute(
+            "INSERT INTO Schedule(title, description, created, closes) VALUES(?,?,?,?) RETURNING s_id",
              request.form['title'],
              request.form['description'],
              str(datetime.datetime.now()),
-             request.form['deadline'])
+             request.form['deadline'])[0][0]
 
         choices = [(s_id, x, 0) for x in request.form.getlist('choices') if x]
         flash(str(choices))
