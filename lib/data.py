@@ -142,7 +142,7 @@ class Bucket(object):
         values = [self[c] for c in self]
         values.extend(args)
 
-        return execute(sql, values)
+        return execute(sql, *values)
 
     def __ge__(self, dest):
         """Create entry in database"""
@@ -157,7 +157,7 @@ class Bucket(object):
         sql += ")"
         sql += " returning *"
 
-        return execute(sql, values)
+        return execute(sql, *values)
 
 
 if __name__ == "__main__":
