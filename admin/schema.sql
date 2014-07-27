@@ -3,7 +3,7 @@ BEGIN;
 -- PRAGMA foreign_keys = ON;
 
 --- USERS ---
-DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Users CASCADE;
 CREATE TABLE Users(
     username            text PRIMARY KEY,
     password            text NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE Users(
     deleted             int DEFAULT 0 -- Field for marking a user as deleted
 );
 
-DROP TABLE IF EXISTS Groups;
+DROP TABLE IF EXISTS Groups CASCADE;
 CREATE TABLE Groups(
        groupname        text PRIMARY KEY
 );
@@ -35,7 +35,7 @@ INSERT INTO Groups(groupname) VALUES('tutor');
 INSERT INTO Groups(groupname) VALUES('mentor');
 
 
-DROP TABLE IF EXISTS User_groups;
+DROP TABLE IF EXISTS User_groups CASCADE;
 CREATE TABLE User_groups(
        username         text REFERENCES Users(username),
        groupname        text REFERENCES Groups(groupname),
@@ -43,7 +43,7 @@ CREATE TABLE User_groups(
 );
 
 
-DROP TABLE IF EXISTS User_creation_keys;
+DROP TABLE IF EXISTS User_creation_keys CASCADE;
 CREATE TABLE User_creation_keys(
        key              text PRIMARY KEY,
        created          text NOT NULL
@@ -52,7 +52,7 @@ CREATE TABLE User_creation_keys(
 
 
 --- TOUR INFORMATION ---
-DROP TABLE IF EXISTS Tours;
+DROP TABLE IF EXISTS Tours CASCADE;
 CREATE TABLE Tours(
     t_id                serial PRIMARY KEY,
     tour_name           text,
@@ -60,14 +60,14 @@ CREATE TABLE Tours(
     year                integer
 );
 
-DROP TABLE IF EXISTS Tours_tutors;
+DROP TABLE IF EXISTS Tours_tutors CASCADE;
 CREATE TABLE Tours_tutors(
    t_id                 serial REFERENCES Tours(t_id),
    username             text REFERENCES Users(username),
    PRIMARY KEY (t_id, username)
 );
 
-DROP TABLE IF EXISTS Dutyteams;
+DROP TABLE IF EXISTS Dutyteams CASCADE;
 CREATE TABLE Dutyteams(
     tj_id               serial PRIMARY KEY,
     t_id                serial REFERENCES Tours(t_id) NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE Dutyteams(
 
 
 --- RUSDATABASE ---
-DROP TABLE IF EXISTS Russer;
+DROP TABLE IF EXISTS Russer CASCADE;
 CREATE TABLE Russer(
     r_id                serial PRIMARY KEY,
 
@@ -120,7 +120,7 @@ CREATE TABLE Russer(
     dutyteam            serial REFERENCES Dutyteams(tj_id)
 );
 
-DROP TABLE IF EXISTS Friends;
+DROP TABLE IF EXISTS Friends CASCADE;
 CREATE TABLE Friends(
     r_id1               serial REFERENCES Russer(r_id),
     r_id2               serial REFERENCES Russer(r_id),
@@ -128,7 +128,7 @@ CREATE TABLE Friends(
     PRIMARY KEY (r_id1, r_id2)
 );
 
-DROP TABLE IF EXISTS Friends_of_us;
+DROP TABLE IF EXISTS Friends_of_us CASCADE;
 CREATE TABLE Friends_of_us(
     r_id                serial REFERENCES Russer(r_id),
     username            text REFERENCES Users(username),
@@ -139,7 +139,7 @@ CREATE TABLE Friends_of_us(
 
 
 --- FRONT PAGE ---
-DROP TABLE IF EXISTS News;
+DROP TABLE IF EXISTS News CASCADE;
 CREATE TABLE News(
     n_id                serial PRIMARY KEY,
     creator             text REFERENCES Users(username),
@@ -148,7 +148,7 @@ CREATE TABLE News(
     text                text
 );
 
-DROP TABLE IF EXISTS News_access;
+DROP TABLE IF EXISTS News_access CASCADE;
 CREATE TABLE News_access(
     n_id                serial REFERENCES News(n_id),
     groupname           text REFERENCES Groups(groupname),
@@ -156,7 +156,7 @@ CREATE TABLE News_access(
 );
 
 -- --- SCHEDULE ---
--- DROP TABLE IF EXISTS Schedule;
+-- DROP TABLE IF EXISTS Schedule CASCADE;
 -- CREATE TABLE Schedule(
 --     s_id                serial PRIMARY KEY,
 
@@ -167,7 +167,7 @@ CREATE TABLE News_access(
 --     closes              text
 -- );
 
--- DROP TABLE IF EXISTS Schedule_cols;
+-- DROP TABLE IF EXISTS Schedule_cols CASCADE;
 -- CREATE TABLE Schedule_cols(
 --     c_id                serial PRIMARY KEY,
 --     s_id                integer,
@@ -178,7 +178,7 @@ CREATE TABLE News_access(
 --     FOREIGN KEY(c_id) REFERENCES Schedule(s_id)
 -- );
 
--- DROP TABLE IF EXISTS Schedule_answers;
+-- DROP TABLE IF EXISTS Schedule_answers CASCADE;
 -- CREATE TABLE Schedule_answers(
 --     user                text REFERENCES Users(username),
 --     c_id                serial REFERENCES Schedule_cols(c_id),
@@ -188,7 +188,7 @@ CREATE TABLE News_access(
 
 
 --- BOOKKEEPER ---
-DROP TABLE IF EXISTS Books;
+DROP TABLE IF EXISTS Books CASCADE;
 CREATE TABLE Books(
     b_id                serial PRIMARY KEY,
     creator             text REFERENCES Users(username),
@@ -197,7 +197,7 @@ CREATE TABLE Books(
     description         text
 );
 
-DROP TABLE IF EXISTS Entries;
+DROP TABLE IF EXISTS Entries CASCADE;
 CREATE TABLE Entries(
     e_id                serial PRIMARY KEY,
     b_id                serial REFERENCES Books(b_id) NOT NULL,
@@ -209,7 +209,7 @@ CREATE TABLE Entries(
 );
 
 
-DROP TABLE IF EXISTS Debts;
+DROP TABLE IF EXISTS Debts CASCADE;
 CREATE TABLE Debts(
     e_id                serial REFERENCES Entries(e_id),
     debtor              text REFERENCES Users(username),
@@ -218,14 +218,14 @@ CREATE TABLE Debts(
     PRIMARY KEY (e_id, debtor)
 );
 
-DROP TABLE IF EXISTS Book_participants;
+DROP TABLE IF EXISTS Book_participants CASCADE;
 CREATE TABLE Book_participants(
     b_id                serial REFERENCES Books(b_id),
     participant         text REFERENCES Users(username),
     PRIMARY KEY (b_id, participant)
 );
 
-DROP TABLE IF EXISTS Payments;
+DROP TABLE IF EXISTS Payments CASCADE;
 CREATE TABLE Payments(
     b_id                serial REFERENCES Books(b_id),
     date                text,
