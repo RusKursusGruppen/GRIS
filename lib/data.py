@@ -23,7 +23,7 @@ def execute(com, *args):
                 try:
                     return cursor.fetchall()
                 except psycopg2.ProgrammingError as e:
-                    if str(y) == "no results to fetch":
+                    if str(e) == "no results to fetch":
                         return None
                     raise
     except:
@@ -43,7 +43,7 @@ def executemany(com, argSeq):
                 try:
                     return cursor.fetchall()
                 except psycopg2.ProgrammingError as e:
-                    if str(y) == "no results to fetch":
+                    if str(e) == "no results to fetch":
                         return None
                     raise
     except:
