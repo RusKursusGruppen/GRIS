@@ -38,7 +38,7 @@ def delete_user():
         if 'cancel' in request.form:
             flash(escape("Ændringer anulleret"))
             return redirect(url_for('admin.overview'))
-        
+
         b = data.Bucket(request.form)
         b.deleted = 1
         b >> ("UPDATE Users SET $ WHERE username = ?", request.form["user"])
@@ -48,11 +48,11 @@ def delete_user():
         flash("Bruger slettet")
 
         return redirect(url_for('admin.delete_user'))
-    
+
     else:
-        users = data.execute("SELECT * FROM Users WHERE deleted == 0")
+        users = data.execute("SELECT * FROM Users WHERE deleted = 0")
         users = [(user['username'], "{0}: {1}".format(user['username'], user['name'])) for user in users]
-    
+
         w = html.WebBuilder()
         w.form()
         w.formtable()
@@ -60,6 +60,3 @@ def delete_user():
         form = w.create()
 
         return render_template("admin/delete_user.html", form=form)
-    
-
-    

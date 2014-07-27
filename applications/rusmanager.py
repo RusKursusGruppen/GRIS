@@ -58,7 +58,7 @@ def rus(r_id):
         flash("Rus opdateret")
         return redirect(url_for('rusmanager.overview'))
     else:
-        rus = data.execute("SELECT * FROM Russer WHERE r_id == ?", r_id)
+        rus = data.execute("SELECT * FROM Russer WHERE r_id = ?", r_id)
         if len(rus) == 0:
             return "Den rus findes ikke din spasser!"
         else:
