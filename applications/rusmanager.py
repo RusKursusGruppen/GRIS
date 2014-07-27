@@ -5,7 +5,7 @@ import random, datetime
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, html
-from lib.tools import logged_in, now
+from lib.tools import logged_in, now, nonify
 
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 
@@ -50,8 +50,8 @@ def rus(r_id):
         b.attending_uniday = 1 if "attending_uniday" in request.form else 0
         b.attending_campus = 1 if "attending_campus" in request.form else 0
         b.attending_rustour = 1 if "attending_rustour" in request.form else 0
-        b.rustour
-        b.dutyteam
+        b.rustour = nonify(b.rustour)
+        b.dutyteam = nonify(b.dutyteam)
         b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
 
