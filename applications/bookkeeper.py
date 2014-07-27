@@ -34,7 +34,7 @@ def new_book():
         b.description
         b.creator = session['username']
         b.created = now()
-        b_id = (b >= "Books")
+        b_id = (b >= "Books")["b_id"]
         return redirect(url_for("bookkeeper.book", b_id=b_id))
     else:
         w = html.WebBuilder()
@@ -269,7 +269,7 @@ def entry(b_id, e_id=None):
 
         if e_id == None:
             b.b_id = b_id
-            e_id = (b >= "Entries")
+            e_id = (b >= "Entries")["e_id"]
             e_id = str(e_id)
         else:
             b >> ("UPDATE Entries $ WHERE b_id = ? and e_id = ?", b_id, e_id)
