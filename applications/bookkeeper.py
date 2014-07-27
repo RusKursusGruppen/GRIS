@@ -270,7 +270,6 @@ def entry(b_id, e_id=None):
         if e_id == None:
             b.b_id = b_id
             e_id = (b >= "Entries")["e_id"]
-            e_id = str(e_id)
         else:
             b >> ("UPDATE Entries $ WHERE b_id = ? and e_id = ?", b_id, e_id)
 
