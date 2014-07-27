@@ -20,7 +20,12 @@ def execute(com, *args):
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
                 cursor.execute(com, args)
                 log.data(com, args)
-                return cursor.fetchall()
+                try:
+                    return cursor.fetchall()
+                except psycopg2.ProgrammingError as e:
+                    if str(y) == "no results to fetch":
+                        return None
+                    raise
     except:
         log.data(com, args, error=True)
         raise
@@ -35,7 +40,12 @@ def executemany(com, argSeq):
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
                 cursor.executemany(com, argSeq)
                 log.data(com, argSeq)
-                return cursor.fetchall()
+                try:
+                    return cursor.fetchall()
+                except psycopg2.ProgrammingError as e:
+                    if str(y) == "no results to fetch":
+                        return None
+                    raise
     except:
         log.data(com, argSeq, error=True)
         raise
