@@ -52,6 +52,7 @@ def rus(r_id):
         b.attending_rustour = 1 if "attending_rustour" in request.form else 0
         b.rustour = nonify(b.rustour)
         b.dutyteam = nonify(b.dutyteam)
+        b.mentor = nonify(b.mentor)
         b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
 
@@ -76,6 +77,10 @@ def rus(r_id):
         dutyteams = data.execute("SELECT * FROM Dutyteams WHERE t_id = ?", rus["rustour"])
         dutyteams = [(dutyteam['tj_id'], dutyteam['name']) for dutyteam in dutyteams]
         dutyteams = [(None, "None")] + dutyteams
+
+        mentors = data.execute("SELECT * FROM Mentorteams WHERE year = ?", year)
+        mentors = [(mentor['m_id'], mentor['mentor_names']) for mentor in mentors]
+        mentors = [(None, "None")] + mentors
 
         wb = html.WebBuilder()
         wb.form()
@@ -111,6 +116,7 @@ def rus(r_id):
         wb.select("rustour", "Skal på:", tours)
 #        wb.textfield("dutyteam", "Tjansehold")
         wb.select("dutyteam", "Tjansehold:", dutyteams)
+        wb.select("mentor", "Mentorhold:", mentors)
         wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")
         form = wb.create(rus)

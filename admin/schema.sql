@@ -74,6 +74,12 @@ CREATE TABLE Dutyteams(
     name                text
 );
 
+DROP TABLE IF EXISTS Mentorteams CASCADE;
+CREATE TABLE Mentorteams(
+    m_id                serial PRIMARY KEY,
+    mentor_names        string,
+    year                integer
+);
 
 
 --- RUSDATABASE ---
@@ -117,7 +123,9 @@ CREATE TABLE Russer(
     attending_rustour   integer NOT NULL default 0,
 
     rustour             integer REFERENCES Tours(t_id),
-    dutyteam            integer REFERENCES Dutyteams(tj_id)
+    dutyteam            integer REFERENCES Dutyteams(tj_id),
+
+    mentor              integer REFERENCES Mentorteams(m_id)
 );
 
 DROP TABLE IF EXISTS Friends CASCADE;
