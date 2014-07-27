@@ -3,6 +3,10 @@
 dir=$(dirname $(readlink -f $0))
 rootdir=$dir/..
 
-rm -f $rootdir/data.db
+cd $rootdir
+source env/bin/activate
 
-sqlite3 $rootdir/data.db < $dir/schema.sql
+# Clear everything:
+python -c "from lib import data;data.execute('DROP SCHEMA public CASCADE; CREATE SCHEMA public')"
+# Create databases:
+python -c "from lib import data;result = (data.script('admin/schema.sql'));print('No errors.' if result is None else result)"
