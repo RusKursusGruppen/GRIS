@@ -28,7 +28,7 @@ def random_greeting():
         , "[]"
         , "<a href=\"http://en.wikipedia.org/wiki/Special:Random\">Learn more:</a>"
         , "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>."
-        , lambda: "Der er {0} russer i databasen".format(data.execute("SELECT ifnull(COUNT(r_id),0) FROM Russer")[0][0])
+        , lambda: "Der er {0} russer i databasen".format(data.execute("SELECT COALESCE(COUNT(r_id),0) FROM Russer")[0][0])
         , lambda: "<i>Latest commit message:</i> " + subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode('utf-8').rstrip('\n')
         , lambda: "<i>Latest committer:</i> " + subprocess.check_output(['git', 'log', '-1', '--pretty=%an']).decode('utf-8').rstrip('\n')
         , lambda: "<i>Latest commit date:</i> " + subprocess.check_output(['git', 'log', '-1', '--pretty=%ad']).decode('utf-8').rstrip('\n')
