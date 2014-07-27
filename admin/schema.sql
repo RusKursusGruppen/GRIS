@@ -62,7 +62,7 @@ CREATE TABLE Tours(
 
 DROP TABLE IF EXISTS Tours_tutors CASCADE;
 CREATE TABLE Tours_tutors(
-   t_id                 serial REFERENCES Tours(t_id),
+   t_id                 integer REFERENCES Tours(t_id),
    username             text REFERENCES Users(username),
    PRIMARY KEY (t_id, username)
 );
@@ -70,7 +70,7 @@ CREATE TABLE Tours_tutors(
 DROP TABLE IF EXISTS Dutyteams CASCADE;
 CREATE TABLE Dutyteams(
     tj_id               serial PRIMARY KEY,
-    t_id                serial REFERENCES Tours(t_id) NOT NULL,
+    t_id                integer REFERENCES Tours(t_id) NOT NULL,
     name                text
 );
 
@@ -116,21 +116,21 @@ CREATE TABLE Russer(
     attending_campus    integer NOT NULL default 0,
     attending_rustour   integer NOT NULL default 0,
 
-    rustour             serial REFERENCES Tours(t_id),
-    dutyteam            serial REFERENCES Dutyteams(tj_id)
+    rustour             integer REFERENCES Tours(t_id),
+    dutyteam            integer REFERENCES Dutyteams(tj_id)
 );
 
 DROP TABLE IF EXISTS Friends CASCADE;
 CREATE TABLE Friends(
-    r_id1               serial REFERENCES Russer(r_id),
-    r_id2               serial REFERENCES Russer(r_id),
+    r_id1               integer REFERENCES Russer(r_id),
+    r_id2               integer REFERENCES Russer(r_id),
     CHECK (r_id1 < r_id2), -- we assume friendship is a symmetric relation, and can thus keep an order in the friendships.
     PRIMARY KEY (r_id1, r_id2)
 );
 
 DROP TABLE IF EXISTS Friends_of_us CASCADE;
 CREATE TABLE Friends_of_us(
-    r_id                serial REFERENCES Russer(r_id),
+    r_id                integer REFERENCES Russer(r_id),
     username            text REFERENCES Users(username),
     PRIMARY KEY(r_id, username)
 );
@@ -150,7 +150,7 @@ CREATE TABLE News(
 
 DROP TABLE IF EXISTS News_access CASCADE;
 CREATE TABLE News_access(
-    n_id                serial REFERENCES News(n_id),
+    n_id                integer REFERENCES News(n_id),
     groupname           text REFERENCES Groups(groupname),
     PRIMARY KEY (n_id, groupname)
 );
@@ -181,7 +181,7 @@ CREATE TABLE News_access(
 -- DROP TABLE IF EXISTS Schedule_answers CASCADE;
 -- CREATE TABLE Schedule_answers(
 --     user                text REFERENCES Users(username),
---     c_id                serial REFERENCES Schedule_cols(c_id),
+--     c_id                integer REFERENCES Schedule_cols(c_id),
 --     answer              int
 -- );
 
@@ -200,7 +200,7 @@ CREATE TABLE Books(
 DROP TABLE IF EXISTS Entries CASCADE;
 CREATE TABLE Entries(
     e_id                serial PRIMARY KEY,
-    b_id                serial REFERENCES Books(b_id) NOT NULL,
+    b_id                integer REFERENCES Books(b_id) NOT NULL,
     date                text,
     creditor            text REFERENCES Users(username),
     description         text,
@@ -211,7 +211,7 @@ CREATE TABLE Entries(
 
 DROP TABLE IF EXISTS Debts CASCADE;
 CREATE TABLE Debts(
-    e_id                serial REFERENCES Entries(e_id),
+    e_id                integer REFERENCES Entries(e_id),
     debtor              text REFERENCES Users(username),
     share_text        text,  -- The unevaluated text,
     share               integer, -- and its result.
@@ -220,14 +220,14 @@ CREATE TABLE Debts(
 
 DROP TABLE IF EXISTS Book_participants CASCADE;
 CREATE TABLE Book_participants(
-    b_id                serial REFERENCES Books(b_id),
+    b_id                integer REFERENCES Books(b_id),
     participant         text REFERENCES Users(username),
     PRIMARY KEY (b_id, participant)
 );
 
 DROP TABLE IF EXISTS Payments CASCADE;
 CREATE TABLE Payments(
-    b_id                serial REFERENCES Books(b_id),
+    b_id                integer REFERENCES Books(b_id),
     date                text,
     creditor            text REFERENCES Users(username),
     debtor              text REFERENCES Users(username),
