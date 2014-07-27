@@ -56,3 +56,8 @@ def now():
 def string_to_time(str):
     format = "%Y-%m-%d %H:%M:%S.%f"
     return datetime.datetime.strptime(str, format)
+
+def nonify(value):
+    if value == "None":
+        return None
+    return value
