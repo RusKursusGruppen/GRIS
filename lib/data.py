@@ -12,10 +12,10 @@ import config
 def execute(com, *args):
     try:
         with psycopg2.connect(host=config.DATABASE_HOST,
-                              port=config.DATABASE_PORT,
+                              database=config.DATABASE_NAME,
                               user=config.DATABASE_USER,
-                              password=config.DATABASE_PASSWORD,
-                              database=config.DATABASE_NAME) as connection:
+                              port=config.DATABASE_PORT,
+                              password=config.DATABASE_PASSWORD) as connection:
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
                 cursor.execute(com, args)
                 log.data(com, args)
@@ -27,10 +27,10 @@ def execute(com, *args):
 def executemany(com, argSeq):
     try:
         with psycopg2.connect(host=config.DATABASE_HOST,
-                              port=config.DATABASE_PORT,
+                              database=config.DATABASE_NAME,
                               user=config.DATABASE_USER,
-                              password=config.DATABASE_PASSWORD,
-                              database=config.DATABASE_NAME) as connection:
+                              port=config.DATABASE_PORT,
+                              password=config.DATABASE_PASSWORD) as connection:
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
                 cursor.executemany(com, argSeq)
                 log.data(com, argSeq)
