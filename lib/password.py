@@ -8,4 +8,4 @@ def encode(raw_password):
     return bcrypt.hashpw(raw_password.encode('utf-8'), salt)
 
 def check(raw_password, enc_password):
-    return bcrypt.hashpw(raw_password.encode('utf-8'), enc_password) == enc_password
+    return bcrypt.hashpw(raw_password.encode('utf-8'), enc_password.encode('utf-8')) == enc_password.encode('utf-8')
