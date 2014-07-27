@@ -20,7 +20,7 @@ def execute(com, *args):
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
                 cursor.execute(com, args)
                 log.data(com, args)
-                return v.fetchall()
+                return cursor.fetchall()
     except:
         log.data(com, args, error=True)
         raise
@@ -35,7 +35,7 @@ def executemany(com, argSeq):
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
                 cursor.executemany(com, argSeq)
                 log.data(com, argSeq)
-                return v.fetchall()
+                return cursor.fetchall()
     except:
         log.data(com, argSeq, error=True)
         raise
