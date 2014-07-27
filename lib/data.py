@@ -11,6 +11,7 @@ from lib import log
 import config
 
 def execute(com, *args):
+    com = com.replace("?", "%s")
     try:
         with psycopg2.connect(host=config.DATABASE_HOST,
                               database=config.DATABASE_NAME,
@@ -31,6 +32,7 @@ def execute(com, *args):
         raise
 
 def executemany(com, argSeq):
+    com = com.replace("?", "%s")
     try:
         with psycopg2.connect(host=config.DATABASE_HOST,
                               database=config.DATABASE_NAME,
