@@ -26,7 +26,7 @@ def data(sql, args, error=False):
     if sql[:6].lower() == 'select':
         return
 
-    args = ','.join(str(a) for a in args)
+    args = ','.join(repr(a) for a in args)
     string = '"{0}" ({1})'.format(sql, args)
     if error:
         log(string, level="DATABASE ERROR!!!")
