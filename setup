@@ -7,6 +7,11 @@ function get_pip {
     python get-pip.py
 }
 
+
+
+dir=$(dirname $(readlink -f $0))
+cd $dir
+
 ubuntu=$(grep -i "ubuntu" /etc/*-release)
 
 echo "Creating environment"
@@ -21,5 +26,13 @@ fi
 
 echo "Installing requirements"
 env/bin/pip install -r requirements.txt
+
+if [ -f config.py ]
+then
+    echo "Config already exists"
+else
+    cp config-example.py config.py
+    echo "Created config.py, please modify"
+fi
 
 echo "done"
