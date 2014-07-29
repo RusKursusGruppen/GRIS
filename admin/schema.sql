@@ -77,7 +77,7 @@ CREATE TABLE Dutyteams(
 DROP TABLE IF EXISTS Mentorteams CASCADE;
 CREATE TABLE Mentorteams(
     m_id                serial PRIMARY KEY,
-    mentor_names        string,
+    mentor_names        text,
     year                integer
 );
 
