@@ -20,7 +20,6 @@ hytte    = hut
 
 # How to install:
 install python3 through your package manager  
-install sqlite3 through your package manager  
 install pip (python-pip or python3-pip) through your package manager  
 sudo pip install virtualenv (might be necessary)  
 
@@ -34,16 +33,14 @@ Run the setup script
 ./setup
 ```
 
-Create a config file
-```
-cp config-example.py config.py
-```
+Create a postgres database, or use an existing.
 
-Create a database, while standing in the GRIS dir:
-```
-./admin/test_db.sh
-```
+A config file has been created in config.py
+You should modify it to your needs.
 
+
+
+### Running
 Start the build in webserver:
 ```
 ./gris
