@@ -2,6 +2,9 @@
 
 import datetime
 from functools import wraps
+import psycopg2
+import psycopg2.extras
+
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import html
@@ -61,3 +64,14 @@ def nonify(value):
     if value == "None":
         return None
     return value
+
+def unnonify(value):
+    def _unnonify(dictrow):
+        dictrow = dictrow.copy()
+        for k, v in dictrow.items():
+            dictrow[k] = v if v != None else ""
+        return dictrow
+
+    if isinstance(value, psycopg2.extras.DictRow):
+        return _unnonify(value)
+    return [_unnonify(v) for v in value]

@@ -5,7 +5,7 @@ import random, datetime, string, time
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front, now
+from lib.tools import logged_in, empty, url_front, now, unnonify
 
 import config
 
@@ -107,7 +107,7 @@ def settings():
     else:
         user = data.execute("SELECT * FROM Users WHERE username = ?", session["username"])
         user = user[0]
-        user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
+        user = unnonify(user)
 
         birthday = user["birthday"]
         if birthday == None:
@@ -140,7 +140,8 @@ def settings():
 def user(username):
     user = data.execute("SELECT * FROM Users WHERE username = ?", username)
     user = user[0]
-    user = {k:v if v != None else "" for k,v in zip(user.keys(), user)}
+    user = unnonify(user)
+
     return render_template("usermanager/user.html", user=user)
 
 
