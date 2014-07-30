@@ -171,7 +171,7 @@ def new(key):
     #time.sleep(3)
 
     # EXPLANATION: weed out old creation keys
-    overtime = str(datetime.datetime.now() - datetime.timedelta(days=30))
+    overtime = now() - datetime.timedelta(days=30)
     data.execute("DELETE FROM User_creation_keys WHERE created <= ?", overtime)
 
     # EXPLANATION: Check if key exists/is valid

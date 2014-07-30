@@ -5,7 +5,7 @@ import random, datetime
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, html
-from lib.tools import logged_in, now, nonify
+from lib.tools import logged_in, now, rkgyear, nonify
 
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 
@@ -65,7 +65,7 @@ def rus(r_id):
         else:
             rus = rus[0]
 
-        year = now()[:4]
+        year = rkgyear()
         tours = data.execute("SELECT * FROM Tours WHERE year = ?", year)
         tours = [(tour['t_id'], tour['tour_name']) for tour in tours]
         tours = [(None, "None")] + tours
