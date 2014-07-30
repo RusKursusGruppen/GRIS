@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import dateutil
+import dateutil.relativedelta
+
 from functools import wraps
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
@@ -51,7 +54,13 @@ def url_front():
     return url_for('front.frontpage')
 
 def now():
-    return str(datetime.datetime.now())
+    return datetime.datetime.now()
+
+def rkgyear(date = None):
+    if date == None:
+        date = now()
+    date = date + dateutil.relativedelta.relativedelta(months = +6)
+    return date.year
 
 def string_to_time(str):
     format = "%Y-%m-%d %H:%M:%S.%f"
