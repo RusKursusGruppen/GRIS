@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import dateutil
+import dateutil.relativedelta
+
 from functools import wraps
 import psycopg2
 import psycopg2.extras
@@ -54,7 +57,13 @@ def url_front():
     return url_for('front.frontpage')
 
 def now():
-    return str(datetime.datetime.now())
+    return datetime.datetime.now()
+
+def rkgyear(date = None):
+    if date == None:
+        date = now()
+    date = date + dateutil.relativedelta.relativedelta(months = +6)
+    return date.year
 
 def string_to_time(str):
     format = "%Y-%m-%d %H:%M:%S.%f"
