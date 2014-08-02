@@ -59,7 +59,7 @@ def now():
 def rkgyear(date = None):
     if date == None:
         date = now()
-    date = date + dateutil.relativedelta.relativedelta(months = +6)
+    date = date - dateutil.relativedelta.relativedelta(months = +6)
     return date.year
 
 def string_to_time(str):
