@@ -9,29 +9,29 @@
 {% block body %}
 <h3>Brugerdetaljer</h3>
 <p>
-Brugernavn: {{user["username"]}}</br>
+Brugernavn: {{user["username"]}}<br/>
 Fulde navn: {{user["name"]}}
 </p>
 
 <p>
-Adresse: {{user["address"]}}</br>
-Postnummer: {{user["zipcode"]}}</br>
+Adresse: {{user["address"]}}<br/>
+Postnummer: {{user["zipcode"]}}<br/>
 By: {{user["city"]}}
 </p>
 
 <p>
-Telefon: {{user["phone"]}}</br>
+Telefon: {{user["phone"]}}<br/>
 Email: {{user["email"]}}
 </p>
 
 ---------------------------------
 <p>
-Fødselsdag: {{user["birthday"]}}</br>
+Fødselsdag: {{user["birthday"]}}<br/>
 Kørekort: {% if user["driverslicence"] == 1 %}Ja{% else %}Nej{% endif %}
 </p>
 
 <p>
-Startede på DIKU: {{user["diku_age"]}}</br>
+Startede på DIKU: {{user["diku_age"]}}<br/>
 Tidligere rusture: {{user["earlier_tours"]}}
 </p>
 
