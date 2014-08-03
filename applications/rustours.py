@@ -89,7 +89,7 @@ def settings(t_id):
         tours = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)
         if len(tours) != 1:
             flash(escape("Den tur findes ikke"))
-            return redirect(url_for("rustour.overview"))
+            return redirect(url_for("rustours.overview"))
         tour = tours[0]
 
         all_tutors = data.execute("SELECT * FROM Users WHERE username IN (Select username from User_groups where groupname = 'tutor')")
