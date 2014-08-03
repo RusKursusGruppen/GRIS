@@ -5,7 +5,7 @@ import random, datetime, string, time, itertools, re
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front, now
+from lib.tools import logged_in, empty, url_front, now, rkgyear
 
 import config
 
@@ -47,8 +47,8 @@ def new():
         w = html.WebBuilder()
         w.form()
         w.formtable()
-        w.textfield("tour_name", "Navn")
-        w.textfield("year", "År")
+        w.textfield("tour_name", "Navn", value="Unavngiven rustur")
+        w.textfield("year", "År", value=rkgyear())
         w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
         form = w.create()
         return render_template("form.html", form=form)
