@@ -157,7 +157,10 @@ class Bucket(object):
         sql += ")"
         sql += " returning *"
 
-        return execute(sql, *values)
+        result = execute(sql, *values)
+        if len(result) == 1:
+            return result[0]
+        return result
 
 
 if __name__ == "__main__":
