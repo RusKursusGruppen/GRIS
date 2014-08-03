@@ -56,6 +56,8 @@ def new():
 @rustours.route('/rustours/tour/<t_id>/settings', methods=['GET', 'POST'])
 def settings(t_id):
     if request.method == "POST":
+        if 'cancel' in request.form:
+            return redirect(url_front())
 
         b = data.Bucket(request.form)
         b.type
