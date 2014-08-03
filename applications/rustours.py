@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import random, datetime, string, time, itertools
+import random, datetime, string, time, itertools, re
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
@@ -33,7 +33,8 @@ def new():
 
         b = data.Bucket(request.form)
         b.type
-        b.tour_name
+        if b.tour_name == "":
+            b.tour_name = "Unavngiven rustur"
         if b.year.isdecimal():
             b.year = int(b.year)
         else:
@@ -50,4 +51,60 @@ def new():
         w.textfield("year", "År")
         w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
         form = w.create()
+        return render_template("form.html", form=form)
+
+@rustours.route('/rustours/tour/<t_id>/settings', methods=['GET', 'POST'])
+def settings(t_id):
+    if request.method == "POST":
+
+        b = data.Bucket(request.form)
+        b.type
+        if b.tour_name == "":
+            b.tour_name = "Unavngiven rustur"
+        if b.year.isdecimal():
+            b.year = int(b.year)
+        else:
+            flash("Please enter a valid year")
+            return html.back()
+        b >> ("UPDATE Tours $ WHERE t_id = ?", t_id)
+
+        tutors = request.form['tutors']
+        tutors = tutors.replace('"', '')
+        tutors = tutors.replace('&quot;', '')
+        tutors = [name.split()[0] for name in re.split(';\s', tutors) if name != ""]
+
+        old = data.execute("SELECT username FROM Tours_tutors WHERE t_id = ?", t_id)
+        old = [tutor['username'] for tutor in old]
+
+        for tutor in set(old) - set(tutors):
+            data.execute("DELETE FROM Tours_tutors WHERE t_id = ? and username = ?", t_id, tutor)
+        for tutor in sorted(set(tutors) - set(old)):
+            data.execute("INSERT INTO Tours_tutors(t_id, username) VALUES (?, ?)", t_id, tutor)
+
+        return redirect(url_for('rustours.rustour', t_id=t_id))
+
+    else:
+        tours = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)
+        if len(tours) != 1:
+            flash(escape("Den tur findes ikke"))
+            return redirect(url_for("rustour.overview"))
+        tour = tours[0]
+
+        all_tutors = data.execute("SELECT * FROM Users WHERE username IN (Select username from User_groups where groupname = 'tutor')")
+        all_tutors = ['\\"{0}\\" {1}'.format(tutor['username'], tutor['name']) for tutor in all_tutors]
+        all_tutors.sort()
+
+        actual_tutors = data.execute("SELECT * FROM Tours_tutors INNER JOIN Users USING(username) WHERE t_id = ?", t_id)
+        actual_tutors = ['&quot;{0}&quot; {1}; '.format(tutor['username'], tutor['name']) for tutor in actual_tutors]
+        actual_tutors.sort()
+        actual_tutors ="".join(actual_tutors)
+
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.textfield("tour_name", "Navn")
+        w.textfield("year", "År")
+        w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
+        w.html(html.autocomplete_multiple(all_tutors, "tutors", default=actual_tutors), description="Vejledere", value="abekat")
+        form = w.create(tour)
         return render_template("form.html", form=form)
