@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block submenu %}
+    <a href="{{url_for('mentorteams.new')}}">Opret hold</a>
+{% endblock %}
+
+{% block body %}
+
+{% for year in teams %}
+    <h2>{{year[0]}}</h1>
+    {% for team in year[1] %}
+        <p>
+          <a href="{{url_for('mentorteams.mentorteam', m_id=team['m_id'])}}">
+            "{{team['mentor_names'] if team['mentor_names'] is not none else "Unavngivet mentorhold"}}"
+          </a>
+        </p>
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}

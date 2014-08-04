@@ -13,6 +13,7 @@ from applications.front import front
 from applications.admin import admin
 from applications.bookkeeper import bookkeeper
 from applications.rustours import rustours
+from applications.mentorteams import mentorteams
 
 ### APPLICATION ###
 app = Flask(__name__)
@@ -24,6 +25,7 @@ app.register_blueprint(usermanager)
 app.register_blueprint(admin)
 app.register_blueprint(bookkeeper)
 app.register_blueprint(rustours)
+app.register_blueprint(mentorteams)
 
 ### ERROR HANDLER ###
 @app.errorhandler(401)

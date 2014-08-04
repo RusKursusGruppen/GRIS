@@ -81,6 +81,12 @@ CREATE TABLE Mentorteams(
     year                integer
 );
 
+DROP TABLE IF EXISTS Mentors CASCADE;
+CREATE TABLE Mentors(
+    m_id                integer REFERENCES Mentorteams(m_id),
+    username            text REFERENCES Users(username),
+    PRIMARY KEY (m_id, username)
+);
 
 --- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer CASCADE;
