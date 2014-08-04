@@ -15,7 +15,6 @@ mentorteams = Blueprint('mentorteams', __name__, template_folder = '../templates
 def overview():
     teams = data.execute("SELECT * FROM Mentorteams ORDER BY year DESC")
     teams = itertools.groupby(teams, key=lambda team: team['year'])
-    print(teams)
     return render_template("mentorteams/overview.html", teams=teams)
 
 @mentorteams.route('/mentorteams/team/<m_id>')
@@ -29,7 +28,7 @@ def mentorteam(m_id):
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape("Rus IKKE tilføjet"))
+            flash(escape("Mentorhold ikke oprettet"))
             return redirect(url_for('mentorteams.overview'))
 
         b = data.Bucket(request.form)
@@ -55,6 +54,8 @@ def new():
 @mentorteams.route('/mentorteams/team/<m_id>/settings', methods=['GET', 'POST'])
 def settings(m_id):
     if request.method == "POST":
+        if 'cancel' in request.form:
+            return redirect(url_front())
 
         b = data.Bucket(request.form)
         if b.mentor_names == "":
