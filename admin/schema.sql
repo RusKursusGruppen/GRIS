@@ -74,6 +74,8 @@ CREATE TABLE Dutyteams(
     name                text
 );
 
+
+--- MENTOR TEAMS ---
 DROP TABLE IF EXISTS Mentorteams CASCADE;
 CREATE TABLE Mentorteams(
     m_id                serial PRIMARY KEY,
@@ -87,6 +89,7 @@ CREATE TABLE Mentors(
     username            text REFERENCES Users(username),
     PRIMARY KEY (m_id, username)
 );
+
 
 --- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer CASCADE;
