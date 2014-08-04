@@ -109,4 +109,33 @@ def settings(t_id):
         w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
         w.html(html.autocomplete_multiple(all_tutors, "tutors", default=actual_tutors), description="Vejledere", value="abekat")
         form = w.create(tour)
-        return render_template("form.html", form=form)
+        return render_template("settings.html", form=form, t_id=t_id)
+
+@rustours.route('/rustours/tour/<t_id>/delete', methods=['GET', 'POST'])
+def delete(t_id):
+    if request.method == "POST":
+        if 'delete' in request.form:
+            try:
+                data.execute("DELETE FROM Tours WHERE t_id = ?", t_id)
+            except:
+                flash("Could not delete tour, there are people/items associated with it")
+                return redirect(url_for('rustours.rustour', t_id=t_id))
+            return redirect(url_for('rustours.overview'))
+        else:
+            flash(escape("Nothing deleted"))
+            return redirect(url_for('rustours.rustour', t_id=t_id))
+
+    else:
+        tours = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)
+        if len(tours) != 1:
+            flash(escape("Den tur findes ikke"))
+            return redirect(url_for("rustours.overview"))
+        tour = tours[0]
+
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.html("Vil du slette rusturen?")
+        w.html('<button type="submit" name="delete" value="delete">Slet rustur</button>', "Slet rustur?")
+        form = w.create()
+        return render_template('form.html', form=form)
