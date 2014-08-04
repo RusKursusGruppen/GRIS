@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block submenu %}
+    <a href="{{url_for('mentorteams.delete', m_id=m_id)}}">Slet mentorhold</a>
+{% endblock %}
+
+{% block body %}
+{{form|safe}}
+{% endblock %}
