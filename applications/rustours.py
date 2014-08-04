@@ -28,7 +28,7 @@ def rustour(t_id):
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape("Rus IKKE tilføjet"))
+            flash(escape("Rustur ikke oprettet"))
             return redirect(url_for('rustours.overview'))
 
         b = data.Bucket(request.form)
