@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block submenu %}
+    <a href="{{url_for('rustours.delete', t_id=t_id)}}">Slet rustur</a>
+{% endblock %}
+
+{% block body %}
+{{form|safe}}
+{% endblock %}
