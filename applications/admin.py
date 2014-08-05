@@ -67,3 +67,38 @@ def groups_overview():
     groups = data.execute('SELECT * FROM User_groups ORDER BY groupname, username')
     groups = itertools.groupby(groups, key=get('groupname'))
     return render_template("group_overview.html", groups=groups)
+
+@admin.route('/admin/groups/<groupname>', methods=["GET", "POST"])
+@logged_in('admin')
+def group(groupname):
+    if request.method == "POST":
+        users = data.execute('SELECT username FROM Users WHERE deleted = 0')
+
+
+        for user in users:
+            username = user['username']
+            try:
+                if username in request.form:
+                    data.execute("INSERT INTO User_groups(groupname, username) values(?, ?)", groupname, username)
+                else:
+                    data.execute("DELETE FROM User_groups WHERE groupname = ? AND username = ?", groupname, username)
+            except:
+                pass
+        return redirect(url_for('admin.groups_overview'))
+    else:
+        users = data.execute('SELECT username, name FROM Users WHERE deleted = 0')
+        # group = data.execute('SELECT username, name FROM User_groups INNER JOIN Users USING (username) ORDER BY username')
+        group = data.execute('SELECT username FROM User_groups WHERE groupname = ?', groupname)
+        group = set(user['username'] for user in group)
+
+
+        usernames = (user['username'] for user in users)
+        kv = {user:(user in group) for user in usernames}
+
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        for user in users:
+            w.checkbox(user['username'], '"{0}" {1}'.format(user['username'], user['name']))
+        form = w.create(kv)
+        return render_template("form.html", form=form)

@@ -3,10 +3,11 @@
 {% block body %}
 
 {% for group in groups %}
-    <h2>{{group[0]}}</h2>
+    <h2><a href="{{url_for('admin.group', groupname=group[0])}}">{{group[0]}}</a></h2>
     <p>
       {% for user in group[1] %}
           {{user['username']}}
+      <br/>
       {% endfor %}
     </p>
 {% endfor %}
