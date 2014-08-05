@@ -84,3 +84,7 @@ def unnonify(value):
     if isinstance(value, psycopg2.extras.DictRow):
         return _unnonify(value)
     return [_unnonify(v) for v in value]
+
+def get(key):
+    "Returns getter function"
+    return lambda x: x[key]

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import datetime, string, time, subprocess
+import datetime, string, time, subprocess, itertools
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front
+from lib.tools import logged_in, empty, url_front, get
 
 import config
 
@@ -60,3 +60,10 @@ def delete_user():
         form = w.create()
 
         return render_template("admin/delete_user.html", form=form)
+
+@admin.route('/admin/groups/overview')
+@logged_in('admin')
+def groups_overview():
+    groups = data.execute('SELECT * FROM User_groups ORDER BY groupname, username')
+    groups = itertools.groupby(groups, key=get('groupname'))
+    return render_template("group_overview.html", groups=groups)
