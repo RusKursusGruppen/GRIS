@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import datetime, string, time, subprocess, itertools
+import psycopg2
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
 from lib.tools import logged_in, empty, url_front, get
+
+from applications import usermanager
 
 import config
 
@@ -79,15 +82,14 @@ def group(groupname):
             username = user['username']
             try:
                 if username in request.form:
-                    data.execute("INSERT INTO User_groups(groupname, username) values(?, ?)", groupname, username)
+                    usermanager.group_add_user(groupname, username)
                 else:
-                    data.execute("DELETE FROM User_groups WHERE groupname = ? AND username = ?", groupname, username)
-            except:
+                    usermanager.group_remove_user(groupname, username)
+            except psycopg2.IntegrityError as e:
                 pass
         return redirect(url_for('admin.groups_overview'))
     else:
         users = data.execute('SELECT username, name FROM Users WHERE deleted = 0')
-        # group = data.execute('SELECT username, name FROM User_groups INNER JOIN Users USING (username) ORDER BY username')
         group = data.execute('SELECT username FROM User_groups WHERE groupname = ?', groupname)
         group = set(user['username'] for user in group)
 
