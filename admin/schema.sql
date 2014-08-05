@@ -31,7 +31,6 @@ CREATE TABLE Groups(
 INSERT INTO Groups(groupname) VALUES('all');
 INSERT INTO Groups(groupname) VALUES('admin');
 INSERT INTO Groups(groupname) VALUES('rkg');
-INSERT INTO Groups(groupname) VALUES('tutor');
 INSERT INTO Groups(groupname) VALUES('mentor');
 
 
