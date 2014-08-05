@@ -49,13 +49,13 @@ def update_password(username, raw_password):
 def set_user_groups(username, groups):
     data.execute("DELETE FROM User_groups WHERE username = ?", username)
     for group in groups:
-        user_group_add(username, group)
+        group_add_user(group, username)
 
-def user_group_add(username, group):
-    data.execute("INSERT INTO User_groups(username, groupname) VALUES(?,?)", username, group)
+def group_add_user(groupname, username):
+    data.execute("INSERT INTO User_groups(groupname, username) VALUES(?,?)", groupname, username)
 
-def user_group_remove(username, group):
-    data.execute("DELETE FROM User_groups WHERE username = ? and groupname = ?", username, group)
+def group_remove_user(groupname, username):
+    data.execute("DELETE FROM User_groups WHERE groupname = ? AND username = ?", groupname, username)
 
 @usermanager.route('/usermanager/logout')
 def logout():

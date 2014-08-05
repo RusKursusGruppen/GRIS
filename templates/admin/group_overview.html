@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% for group in groups %}
+    <h2><a href="{{url_for('admin.group', groupname=group[0])}}">{{group[0]}}</a></h2>
+    <p>
+      {% for user in group[1] %}
+          <a href="{{url_for('usermanager.user', username=user['username'])}}">{{user['username']}}</a>
+      <br/>
+      {% endfor %}
+    </p>
+{% endfor %}
+{% endblock %}
