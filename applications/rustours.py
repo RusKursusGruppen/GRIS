@@ -60,6 +60,7 @@ def settings(t_id):
             return redirect(url_front())
 
         b = data.Bucket(request.form)
+        b.theme
         b.type
         if b.tour_name == "":
             b.tour_name = "Unavngiven rustur"
@@ -105,6 +106,7 @@ def settings(t_id):
         w.form()
         w.formtable()
         w.textfield("tour_name", "Navn")
+        w.textfield("theme", "Tema")
         w.textfield("year", "År")
         w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
         w.html(html.autocomplete_multiple(all_tutors, "tutors", default=actual_tutors), description="Vejledere", value="abekat")

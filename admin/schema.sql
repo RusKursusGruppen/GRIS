@@ -56,6 +56,7 @@ DROP TABLE IF EXISTS Tours CASCADE;
 CREATE TABLE Tours(
     t_id                serial PRIMARY KEY,
     tour_name           text,
+    theme               text,
     type                text CHECK(type IN ('p', 't', 'm')),
     year                integer
 );
