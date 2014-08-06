@@ -101,7 +101,7 @@ def settings(t_id):
         actual_tutors = data.execute("SELECT * FROM Tours_tutors INNER JOIN Users USING(username) WHERE t_id = ?", t_id)
         actual_tutors = ['&quot;{0}&quot; {1}; '.format(tutor['username'], tutor['name']) for tutor in actual_tutors]
         actual_tutors.sort()
-        actual_tutors ="".join(actual_tutors)
+        actual_tutors = "".join(actual_tutors)
 
         w = html.WebBuilder()
         w.form()
