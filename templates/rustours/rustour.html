@@ -7,9 +7,11 @@
 {% block body %}
   <h2>{{tour['tour_name']}} - {{{'p':'Pigetur', 't':'Transetur','m':'Munketur'}[tour['type']]}}</h2>
 
-  <p>
-    <b>Tema</b>: {{tour['theme']}}
-  </p>
+  {% if tour['theme'] != None %}
+      <p>
+        <b>Tema</b>: {{tour['theme']}}
+      </p>
+  {% endif %}
 
   <h3>Rusvejledere</h3>
   {% for tutor in tutors %}
