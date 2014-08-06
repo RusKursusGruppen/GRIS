@@ -31,7 +31,6 @@ CREATE TABLE Groups(
 INSERT INTO Groups(groupname) VALUES('all');
 INSERT INTO Groups(groupname) VALUES('admin');
 INSERT INTO Groups(groupname) VALUES('rkg');
-INSERT INTO Groups(groupname) VALUES('tutor');
 INSERT INTO Groups(groupname) VALUES('mentor');
 
 
@@ -56,6 +55,7 @@ DROP TABLE IF EXISTS Tours CASCADE;
 CREATE TABLE Tours(
     t_id                serial PRIMARY KEY,
     tour_name           text,
+    theme               text,
     type                text CHECK(type IN ('p', 't', 'm')),
     year                integer
 );
@@ -74,6 +74,8 @@ CREATE TABLE Dutyteams(
     name                text
 );
 
+
+--- MENTOR TEAMS ---
 DROP TABLE IF EXISTS Mentorteams CASCADE;
 CREATE TABLE Mentorteams(
     m_id                serial PRIMARY KEY,
@@ -87,6 +89,7 @@ CREATE TABLE Mentors(
     username            text REFERENCES Users(username),
     PRIMARY KEY (m_id, username)
 );
+
 
 --- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer CASCADE;

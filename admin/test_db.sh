@@ -18,7 +18,7 @@ from lib import data
 from applications import usermanager
 
 # Create users:
-usermanager.create_user('rkg','abe','RKG',['admin', 'rkg', 'tutor', 'mentor'])
+usermanager.create_user('rkg','abe','RKG', ['admin', 'rkg', 'mentor'])
 usermanager.create_user('fugl','123', 'FUGL')
 usermanager.create_user('kat','123', 'KAT')
 usermanager.create_user('tiger','123', 'TIGER')

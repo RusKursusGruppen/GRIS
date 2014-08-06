@@ -10,13 +10,13 @@ from lib.tools import logged_in, now, rkgyear, nonify
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 
 @rusmanager.route('/rusmanager')
-@logged_in('tutor', 'mentor')
+@logged_in('rkg', 'mentor')
 def overview():
     russer = data.execute("select r_id, name from Russer")
     return render_template("rusmanager/overview.html", russer=russer)
 
 @rusmanager.route('/rusmanager/<r_id>', methods=['GET', 'POST'])
-@logged_in('tutor', 'mentor')
+@logged_in('rkg', 'mentor')
 def rus(r_id):
     if request.method == "POST":
         if 'cancel' in request.form:
@@ -124,7 +124,7 @@ def rus(r_id):
         return render_template("rusmanager/rus.html", form=form, name=rus['name'])
 
 @rusmanager.route('/rusmanager/new', methods=['GET', 'POST'])
-@logged_in('tutor', 'mentor')
+@logged_in('rkg', 'mentor')
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:

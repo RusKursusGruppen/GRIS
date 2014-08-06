@@ -15,7 +15,6 @@ mentorteams = Blueprint('mentorteams', __name__, template_folder = '../templates
 def overview():
     teams = data.execute("SELECT * FROM Mentorteams ORDER BY year DESC")
     teams = itertools.groupby(teams, key=lambda team: team['year'])
-    print(teams)
     return render_template("mentorteams/overview.html", teams=teams)
 
 @mentorteams.route('/mentorteams/team/<m_id>')
@@ -29,7 +28,7 @@ def mentorteam(m_id):
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:
-            flash(escape("Rus IKKE tilføjet"))
+            flash(escape("Mentorhold ikke oprettet"))
             return redirect(url_for('mentorteams.overview'))
 
         b = data.Bucket(request.form)
@@ -55,6 +54,8 @@ def new():
 @mentorteams.route('/mentorteams/team/<m_id>/settings', methods=['GET', 'POST'])
 def settings(m_id):
     if request.method == "POST":
+        if 'cancel' in request.form:
+            return redirect(url_front())
 
         b = data.Bucket(request.form)
         if b.mentor_names == "":
@@ -104,4 +105,34 @@ def settings(m_id):
         w.textfield("year", "År")
         w.html(html.autocomplete_multiple(all_mentors, "mentors", default=actual_mentors), description="Mentorer", value="abekat")
         form = w.create(team)
-        return render_template("form.html", form=form)
+        return render_template("settings.html", form=form)
+
+
+@mentorteams.route('/mentorteams/team/<m_id>/delete', methods=['GET', 'POST'])
+def delete(m_id):
+    if request.method == "POST":
+        if 'delete' in request.form:
+            try:
+                data.execute("DELETE FROM Mentorteams WHERE m_id = ?", m_id)
+            except:
+                flash("Could not delete team, there are people/items associated with it")
+                return redirect(url_for('mentorteams.mentorteam', m_id=m_id))
+            return redirect(url_for('mentorteams.overview'))
+        else:
+            flash(escape("Nothing deleted"))
+            return redirect(url_for('mentorteams.mentorteam', m_id=m_id))
+
+    else:
+        teams = data.execute("SELECT * FROM Mentorteams WHERE m_id = ?", m_id)
+        if len(teams) != 1:
+            flash(escape("Det hold findes ikke"))
+            return redirect(url_for("mentorteams.overview"))
+        team = teams[0]
+
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.html("Vil du slette holdet?")
+        w.html('<button type="submit" name="delete" value="delete">Slet</button>', "Slet mentorhold?")
+        form = w.create()
+        return render_template('form.html', form=form)
