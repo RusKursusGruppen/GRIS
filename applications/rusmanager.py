@@ -142,7 +142,7 @@ def rus(r_id):
         wb.select("mentor", "Mentorhold:", mentors)
         wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")
-        wb.html(html.autocomplete_multiple(russer, "friends", default=friends), description="Tilføj bekendte")
+        wb.html(html.autocomplete_multiple(russer, "friends", default=friends), description="Tilføj bekendte russer")
         form = wb.create(rus)
 
         return render_template("rusmanager/rus.html", form=form, name=rus['name'])
