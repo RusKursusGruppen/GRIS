@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block submenu %}
+  <a href="{{url_for('dutyteams.settings', tj_id=duty['tj_id'])}}">Ret</a>
+{% endblock %}
+
+{% block body %}
+  <h2>{{duty['name']}}</h2>
+
+  <h3>Russer</h3>
+  {% for rus in russer %}
+  <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
+  <br/>
+  {% endfor %}
+
+{% endblock %}

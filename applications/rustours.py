@@ -22,7 +22,8 @@ def rustour(t_id):
     tour = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE rustour = ?", t_id)
     tutors = data.execute("SELECT * FROM tours_tutors WHERE t_id = ?", t_id)
-    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors)
+    duty = data.execute("SELECT * FROM Dutyteams WHERE t_id = ?", t_id)
+    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors, duty=duty)
 
 @rustours.route('/rustours/new', methods=['GET', 'POST'])
 def new():

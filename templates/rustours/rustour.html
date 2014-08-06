@@ -19,4 +19,10 @@
   <br/>
   {% endfor %}
 
+  <h3>Tjansehold</h3>
+  {% for duty in dutyteams %}
+  <a href="{{url_for('dutyteams.dutyteam', tj_id=dutyteam['tj_id])}}">{{dutyteam['name']}}</a>
+  <br/>
+  {% endfor %}
+
 {% endblock %}
