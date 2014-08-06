@@ -57,6 +57,7 @@ def rus(r_id):
         b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
 
+        # Friends:
         friends = request.form['friends']
         friends = friends.replace('"', '')
         friends = friends.replace('&quot;', '')
@@ -66,10 +67,25 @@ def rus(r_id):
             try:
                 b = data.Bucket()
                 b.r_id1, b.r_id2 = sorted((int(friend), int(r_id)))
-
                 b >= "Friends"
             except psycopg2.IntegrityError as e:
                 print(e)
+
+        # Friends of us:
+        user_friends = request.form['user_friends']
+        user_friends = user_friends.replace('"', '')
+        user_friends = user_friends.replace('&quot;', '')
+        user_friends = [name.split()[0] for name in re.split(';\s', user_friends) if name != ""]
+
+        for friend in user_friends:
+            try:
+                b = data.Bucket()
+                b.r_id = r_id
+                b.username = friend
+                b >= "Friends_of_us"
+            except psycopg2.IntegrityError as e:
+                print(e)
+
 
         flash("Rus opdateret")
         return redirect(url_for('rusmanager.overview'))
@@ -104,6 +120,14 @@ def rus(r_id):
         friends = data.execute("SELECT * FROM ((SELECT r_id2 as r_id FROM Friends WHERE r_id1 = ?) UNION (SELECT r_id1 as r_id FROM Friends where r_id2 = ?)) as a INNER JOIN Russer USING (r_id) ORDER BY Name", r_id, r_id)
         friends = ['&quot;{0}&quot; {1}; '.format(friend['r_id'], friend['name']) for friend in friends]
         friends = "".join(friends)
+
+        # Friends of us:
+        users = data.execute("SELECT username, name FROM Users WHERE deleted = 0")
+        users = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in users]
+        user_friends = data.execute("SELECT username, name FROM Friends_of_us INNER JOIN USERS Using (username) WHERE r_id = ?", r_id)
+        user_friends = ['&quot;{0}&quot; {1}; '.format(friend['username'], friend['name']) for friend in user_friends]
+        user_friends = "".join(user_friends)
+
 
         wb = html.WebBuilder()
         wb.form()
@@ -143,6 +167,8 @@ def rus(r_id):
         wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")
         wb.html(html.autocomplete_multiple(russer, "friends", default=friends), description="Tilføj bekendte russer")
+        wb.html(html.autocomplete_multiple(users, "user_friends", default=user_friends), description="Tilføj bekendte vejledere")
+
         form = wb.create(rus)
 
         return render_template("rusmanager/rus.html", form=form, name=rus['name'])
