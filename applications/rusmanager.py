@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import random, datetime, re
+import random, datetime, re, itertools
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 import psycopg2
 
 from lib import data, password, html
-from lib.tools import logged_in, now, rkgyear, nonify
+from lib.tools import logged_in, now, rkgyear, nonify, get
 
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 
@@ -192,3 +192,17 @@ def new():
         w.textfield("name", "Navn")
         form = w.create()
         return render_template("form.html", form=form)
+
+@rusmanager.route('/rusmanager/friends')
+def friends():
+    friends = data.execute("SELECT r_id1, name1, r_id2, name AS name2 FROM (SELECT r_id1, name AS name1, r_id2 FROM (SELECT * FROM Friends UNION (SELECT r_id2 AS r_id1, r_id1 AS r_id2 FROM Friends)) AS a INNER JOIN Russer ON r_id1 = r_id) AS b INNER JOIN Russer ON r_id2 = r_id ORDER BY name1")
+    friends = itertools.groupby(friends, key=get('name1'))
+    friends = [(x[0], list(x[1])) for x in friends]
+    friends = [({'name1':name, 'r_id1':l[0]['r_id1']}, l) for name, l in friends]
+
+    user_friends = data.execute("SELECT username, Users.name as users_name, r_id, Russer.name as russer_name FROM Friends_of_us INNER JOIN Users USING (username) INNER JOIN Russer Using (r_id) ORDER BY Russer.name")
+    user_friends = itertools.groupby(user_friends, key=get('russer_name'))
+    user_friends = [(x[0], list(x[1])) for x in user_friends]
+    user_friends = [({'russer_name':name, 'r_id':l[0]['r_id']}, l) for name, l in user_friends]
+
+    return render_template("friends.html", friends=friends, user_friends=user_friends)
