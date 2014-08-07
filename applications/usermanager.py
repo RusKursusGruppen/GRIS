@@ -135,6 +135,44 @@ def settings():
         form = w.create(user)
         return render_template("form.html", form=form)
 
+@usermanager.route('/usermanager/settings/password', methods=['GET', 'POST'])
+@logged_in
+def change_password():
+    if request.method == "POST":
+        if 'cancel' in request.form:
+            flash(escape("Ændringer annulleret"))
+            return redirect(url_for('usermanager.settings'))
+
+        username = session["username"]
+        current_password = data.execute("SELECT password FROM Users WHERE username = ?", username)[0]['password']
+        print(current_password)
+
+        b = data.Bucket(request.form)
+        if not password.check(b.current, current_password):
+            return logout()
+
+        if b.new1 != b.new2:
+            flash("De to løsner er ikke ens")
+            return redirect(url_for('usermanager.change_password'))
+
+        if b.new1 == "":
+            flash("Du specificerede ikke et nyt løsen")
+            return redirect(url_for('usermanager.change_password'))
+
+        update_password(username, b.new1)
+
+        return redirect(url_for('usermanager.settings'))
+
+    else:
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        w.password("current", "Nuværende løsen")
+        w.password("new1", "Nyt løsen")
+        w.password("new2", "Gentag nyt løsen")
+        form = w.create()
+        return render_template("form.html", form=form)
+
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
 @logged_in
 def user(username):
