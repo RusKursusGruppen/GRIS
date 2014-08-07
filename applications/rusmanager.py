@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import random, datetime
+import random, datetime, re, itertools
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
+import psycopg2
 
 from lib import data, password, html
-from lib.tools import logged_in, now, rkgyear, nonify
+from lib.tools import logged_in, now, rkgyear, nonify, get
 
 rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/rusmanager')
 
@@ -56,6 +57,36 @@ def rus(r_id):
         b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
 
+        # Friends:
+        friends = request.form['friends']
+        friends = friends.replace('"', '')
+        friends = friends.replace('&quot;', '')
+        friend_ids = [name.split()[0] for name in re.split(';\s', friends) if name != ""]
+
+        for friend in friend_ids:
+            try:
+                b = data.Bucket()
+                b.r_id1, b.r_id2 = sorted((int(friend), int(r_id)))
+                b >= "Friends"
+            except psycopg2.IntegrityError as e:
+                print(e)
+
+        # Friends of us:
+        user_friends = request.form['user_friends']
+        user_friends = user_friends.replace('"', '')
+        user_friends = user_friends.replace('&quot;', '')
+        user_friends = [name.split()[0] for name in re.split(';\s', user_friends) if name != ""]
+
+        for friend in user_friends:
+            try:
+                b = data.Bucket()
+                b.r_id = r_id
+                b.username = friend
+                b >= "Friends_of_us"
+            except psycopg2.IntegrityError as e:
+                print(e)
+
+
         flash("Rus opdateret")
         return redirect(url_for('rusmanager.overview'))
     else:
@@ -81,6 +112,22 @@ def rus(r_id):
         mentors = data.execute("SELECT * FROM Mentorteams WHERE year = ?", year)
         mentors = [(mentor['m_id'], mentor['mentor_names']) for mentor in mentors]
         mentors = [(None, "None")] + mentors
+
+
+        # Friends:
+        russer = data.execute("SELECT r_id, name FROM Russer WHERE r_id != ?", r_id)
+        russer = ['\\"{0}\\" {1}'.format(rus['r_id'], rus['name']) for rus in russer]
+        friends = data.execute("SELECT * FROM ((SELECT r_id2 as r_id FROM Friends WHERE r_id1 = ?) UNION (SELECT r_id1 as r_id FROM Friends where r_id2 = ?)) as a INNER JOIN Russer USING (r_id) ORDER BY Name", r_id, r_id)
+        friends = ['&quot;{0}&quot; {1}; '.format(friend['r_id'], friend['name']) for friend in friends]
+        friends = "".join(friends)
+
+        # Friends of us:
+        users = data.execute("SELECT username, name FROM Users WHERE deleted = 0")
+        users = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in users]
+        user_friends = data.execute("SELECT username, name FROM Friends_of_us INNER JOIN USERS Using (username) WHERE r_id = ?", r_id)
+        user_friends = ['&quot;{0}&quot; {1}; '.format(friend['username'], friend['name']) for friend in user_friends]
+        user_friends = "".join(user_friends)
+
 
         wb = html.WebBuilder()
         wb.form()
@@ -119,6 +166,9 @@ def rus(r_id):
         wb.select("mentor", "Mentorhold:", mentors)
         wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")
+        wb.html(html.autocomplete_multiple(russer, "friends", default=friends), description="Tilføj bekendte russer")
+        wb.html(html.autocomplete_multiple(users, "user_friends", default=user_friends), description="Tilføj bekendte vejledere")
+
         form = wb.create(rus)
 
         return render_template("rusmanager/rus.html", form=form, name=rus['name'])
@@ -142,3 +192,17 @@ def new():
         w.textfield("name", "Navn")
         form = w.create()
         return render_template("form.html", form=form)
+
+@rusmanager.route('/rusmanager/friends')
+def friends():
+    friends = data.execute("SELECT r_id1, name1, r_id2, name AS name2 FROM (SELECT r_id1, name AS name1, r_id2 FROM (SELECT * FROM Friends UNION (SELECT r_id2 AS r_id1, r_id1 AS r_id2 FROM Friends)) AS a INNER JOIN Russer ON r_id1 = r_id) AS b INNER JOIN Russer ON r_id2 = r_id ORDER BY name1")
+    friends = itertools.groupby(friends, key=get('name1'))
+    friends = [(x[0], list(x[1])) for x in friends]
+    friends = [({'name1':name, 'r_id1':l[0]['r_id1']}, l) for name, l in friends]
+
+    user_friends = data.execute("SELECT username, Users.name as users_name, r_id, Russer.name as russer_name FROM Friends_of_us INNER JOIN Users USING (username) INNER JOIN Russer Using (r_id) ORDER BY Russer.name")
+    user_friends = itertools.groupby(user_friends, key=get('russer_name'))
+    user_friends = [(x[0], list(x[1])) for x in user_friends]
+    user_friends = [({'russer_name':name, 'r_id':l[0]['r_id']}, l) for name, l in user_friends]
+
+    return render_template("friends.html", friends=friends, user_friends=user_friends)
