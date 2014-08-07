@@ -92,8 +92,6 @@ def autocomplete_multiple(items, name, seperator=";", default=""):
       });
   });
   </script>
-</head>
-<body>
 
 <div class="ui-widget">
   <input id="%s" name="%s" size="50" value="%s"/>
