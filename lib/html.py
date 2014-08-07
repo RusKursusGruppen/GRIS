@@ -176,6 +176,9 @@ class WebBuilder(object):
     def textfield(self, dbq="", description="", **kwargs):
         self._newobj(_Textfield(dbq, description, kwargs))
 
+    def password(self, dbq="", description="", **kwargs):
+        self._newobj(_Passwordfield(dbq, description, kwargs))
+
     def textarea(self, dbq="", description="", **kwargs):
         self._newobj(_Textarea(dbq, description, kwargs))
 
@@ -226,6 +229,13 @@ class _Webobject(object):
 class _Textfield(_Webobject):
     def compile(self, dbqv):
         result = "<input type=text "
+        result += self._attributes_string(dbqv)
+        result += ">"
+        return result
+
+class _Passwordfield(_Webobject):
+    def compile(self, dbqv):
+        result = "<input type=password "
         result += self._attributes_string(dbqv)
         result += ">"
         return result
