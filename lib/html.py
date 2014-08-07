@@ -32,9 +32,9 @@ $(function() {
     })
   })
 </script>
-<div class="ui-widget">
+<!-- <div class="ui-widget"> -->
 <input id="%s" name="%s" value="%s"/>
-</div>
+<!-- </div> -->
 """
     return javascript % (text, key, key, name, default)
 
@@ -93,9 +93,9 @@ def autocomplete_multiple(items, name, seperator=";", default=""):
   });
   </script>
 
-<div class="ui-widget">
+<!-- <div class="ui-widget"> -->
   <input id="%s" name="%s" size="50" value="%s"/>
-</div>
+<!-- </div> -->
 """
     return javascript % (text, seperator, key, seperator, key, name, default)
 
