@@ -2,9 +2,7 @@
 
 {% block submenu %}
   <a href="{{url_for('rusmanager.new')}}">Ny Rus</a>
-  <a href="foo"><strike>Rusture</strike></a>
-  <a href="foo"><strike>Tjansehold</strike></a>
-  <a href="foo"><strike>Kender</strike></a>
+  <a href="{{url_for('rusmanager.friends')}}">Kender</a>
 {% endblock %}
 
 {% block body %}
