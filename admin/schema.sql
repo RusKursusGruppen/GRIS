@@ -48,7 +48,12 @@ CREATE TABLE User_creation_keys(
        created          text NOT NULL
 );
 
-
+DROP TABLE IF EXISTS User_forgotten_password_keys CASCADE;
+CREATE TABLE User_forgotten_password_keys(
+       key              text PRIMARY KEY,
+       username         text REFERENCES Users(username),
+       created          text NOT NULL
+);
 
 --- TOUR INFORMATION ---
 DROP TABLE IF EXISTS Tours CASCADE;
