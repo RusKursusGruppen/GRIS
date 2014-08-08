@@ -186,18 +186,16 @@ def change_password():
         form = w.create()
         return render_template("form.html", form=form)
 
-@usermanager.route("/usermanager/settings/password/renew")
+@usermanager.route("/usermanager/settings/password/renew/<key>", methods=['GET', 'POST'])
 def renew_password(key):
     # data.execute("DELETE OLD STUFF...")
-    result = data.execute("SELECT * FROM User_forgotten_password_keys WHERE key = ?")
+    result = data.execute("SELECT * FROM User_forgotten_password_keys WHERE key = ?", key)
     if len(result) != 1:
         flash("Linket du fulgte er desvære udløbet, prøv igen")
         return redirect(url_front())
+    result = result[0]
 
     if request.method == "POST":
-        if 'cancel' in request.form:
-            flash(escape("Ændringer annulleret"))
-            return redirect(url_for('usermanager.settings'))
 
         # data.execute("DELETE this key")
 
@@ -205,13 +203,14 @@ def renew_password(key):
 
         if b.new1 != b.new2:
             flash("De to løsner er ikke ens")
-            return redirect(url_for('usermanager.renew_password'))
+            return redirect(url_for('usermanager.renew_password', key=key))
+            print("kat")
 
         if b.new1 == "":
             flash("Du specificerede ikke et nyt løsen")
-            return redirect(url_for('usermanager.renew_password'))
+            return redirect(url_for('usermanager.renew_password', key=key))
 
-        update_password(username, b.new1)
+        update_password(result['username'], b.new1)
 
         return redirect(url_front())
 
@@ -258,7 +257,7 @@ def forgot_password(username):
     if email == None or email == '':
         raise Exception("No such user/No valid email")
 
-    url = url_for("usermanager.renew_password", key=key)
+    url = config.URL + url_for("usermanager.renew_password", key=key)
     text = forgot_password_mail.format(user['name'], url)
     mail.send(email, "Glemt løsn", text)
 
@@ -339,7 +338,7 @@ def invite():
         print(key)
 
         email_address = request.form['email']
-        url = url_for("usermanager.new", key=key)
+        url = config.URL + url_for("usermanager.new", key=key)
         text = invite_mail.format(key, url)
 
         mail.send(email_address, "Invitation til GRIS", text)
