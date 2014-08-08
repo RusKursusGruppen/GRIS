@@ -11,6 +11,9 @@ from lib import log
 import config
 
 def execute(com, *args):
+    if com.count("?") != len(args):
+        raise Exception("Not enough SQL arguments for query "+com)
+
     com = com.replace("?", "%s")
     try:
         with psycopg2.connect(host=config.DATABASE_HOST,
@@ -32,6 +35,11 @@ def execute(com, *args):
         raise
 
 def executemany(com, argSeq):
+    argSeq = list(argSeq)
+    for arg in argSeq:
+        if com.count("?") != len(args):
+            raise Exception("Not enough SQL arguments for query "+com)
+
     com = com.replace("?", "%s")
     try:
         with psycopg2.connect(host=config.DATABASE_HOST,

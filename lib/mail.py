@@ -6,11 +6,14 @@ import config
 
 def send(to, subject, text):
     msg = MIMEText(text, 'plain', "utf-8")
-    msg['To'] = to
+    if isinstance(to, str):
+        # We dont bother to send the destination header for lists of mails
+        msg['To'] = to
     msg['From'] = config.EMAIL
     msg['Subject'] = subject
 
-    s = SMTP()
-    s.connect()
-    s.sendmail(msg['From'], [msg['To']], msg.as_string())
-    s.quit()
+    session = SMTP(config.EMAIL_HOST, config.EMAIL_HOST_PORT)
+    session.ehlo()
+    session.starttls()
+    session.login(config.EMAIL, config.EMAIL_PASSWORD)
+    session.sendmail(config.EMAIL, to, msg.as_string())
