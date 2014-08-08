@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random, datetime, string, time
+import psycopg2
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
@@ -18,6 +19,18 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         raw_password = request.form['password']
+
+        if 'forgot' in request.form:
+            try:
+                forgot_password(username)
+            except Exception as e:
+                if str(e) != "No such user/No valid email":
+                    raise
+                flash("Kunne ikke sende en mail til denne bruger")
+                return redirect(url_for('usermanager.login'))
+
+            return render_template('forgot.html', username=username)
+
         print(type(raw_password))
         user = data.execute('SELECT password, deleted FROM Users WHERE username = ?', username)
         if empty(user) or not password.check(raw_password, user[0]['password']):
@@ -173,6 +186,42 @@ def change_password():
         form = w.create()
         return render_template("form.html", form=form)
 
+def forgot_password(username):
+    user = data.execute("SELECT name, email from Users WHERE username = ?", username)
+    if len(user) != 1:
+        raise Exception("No such user/No valid email")
+
+    min = config.USER_CREATION_KEY_MIN_LENGTH
+    max = config.USER_CREATION_KEY_MAX_LENGTH
+    length = random.randrange(min, max)
+    alphabet = string.ascii_letters + string.digits
+
+    found = True
+    while found:
+        key = ''.join(random.choice(alphabet) for x in range(length))
+        try:
+            b = data.Bucket()
+            b.username = username
+            b.key = key
+            b.created = now()
+            b >= "User_forgotten_password_keys"
+            found = False
+            break
+        except psycopg2.IntegrityError as e:
+            if str(e).startswith('duplicate key value violates unique constraint "user_forgotten_password_keys_pkey"'):
+                found = True
+                continue
+            else:
+                raise
+    user = user[0]
+    email = user['email']
+
+    if email == None or email == '':
+        raise Exception("No such user/No valid email")
+
+    text = forgot_password_mail.format(user['name'])
+    mail.send(email, "Glemt løsn", text)
+
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
 @logged_in
 def user(username):
@@ -272,4 +321,13 @@ For at oprette en bruger skal du følge det følgende link.
 Linket er unikt og virker kun en enkelt gang.
 
 <a href="http://rkg.diku.dk/gris/usermanger/new/{0}>Opret bruger</a>
+"""
+
+
+forgot_password_mail = """
+Hej {0}, du har glemt dit løsen.
+Vi har derfor sendt dig dette link hvor du kan vælge et nyt.
+Linket virker kun de næste 20 minutter.
+
+Hvis du ikke har glemt dit løsen kan du se bort fra denne mail.
 """
