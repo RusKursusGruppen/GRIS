@@ -186,6 +186,10 @@ def change_password():
         form = w.create()
         return render_template("form.html", form=form)
 
+@usermanager.route("/usermanager/settings/password/renew"):
+def renew_password(key):
+    pass
+
 def forgot_password(username):
     user = data.execute("SELECT name, email from Users WHERE username = ?", username)
     if len(user) != 1:
@@ -219,7 +223,8 @@ def forgot_password(username):
     if email == None or email == '':
         raise Exception("No such user/No valid email")
 
-    text = forgot_password_mail.format(user['name'])
+    url = url_for("renew_password", key=key)
+    text = forgot_password_mail.format(user['name'], url)
     mail.send(email, "Glemt løsn", text)
 
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
@@ -328,6 +333,8 @@ forgot_password_mail = """
 Hej {0}, du har glemt dit løsen.
 Vi har derfor sendt dig dette link hvor du kan vælge et nyt.
 Linket virker kun de næste 20 minutter.
+
+<a href="{1}">Vælg nyt løsen</a>
 
 Hvis du ikke har glemt dit løsen kan du se bort fra denne mail.
 """
