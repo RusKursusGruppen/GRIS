@@ -11,6 +11,8 @@ from lib import log
 import config
 
 def execute(com, *args):
+    if com.count("?") != len(args):
+        raise Exception("Not enough SQL arguments for query "+com)
     com = com.replace("?", "%s")
     try:
         with psycopg2.connect(host=config.DATABASE_HOST,
