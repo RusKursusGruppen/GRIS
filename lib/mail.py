@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 import config
 
 def send(to, subject, text):
-    msg = MIMEText(text, 'plain', "utf-8")
+    msg = MIMEText(text, 'html', "utf-8")
     if isinstance(to, str):
         # We dont bother to send the destination header for lists of mails
         msg['To'] = to
