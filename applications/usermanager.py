@@ -250,7 +250,8 @@ def invite():
         print(key)
 
         email_address = request.form['email']
-        text = invite_mail.format(key)
+        url = url_for("usermanager.new", key=key)
+        text = invite_mail.format(key, url)
 
         mail.send(email_address, "Invitation til GRIS", text)
         flash("Invitation sendt")
@@ -271,5 +272,5 @@ GRIS er RKGs intranet, hvis du skal være med i RKG skal du have en bruger her.
 For at oprette en bruger skal du følge det følgende link.
 Linket er unikt og virker kun en enkelt gang.
 
-<a href="http://rkg.diku.dk/gris/usermanger/new/{0}>Opret bruger</a>
+<a href="{0}">Opret bruger</a>
 """
