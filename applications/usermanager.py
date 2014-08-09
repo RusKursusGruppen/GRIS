@@ -212,6 +212,9 @@ def renew_password(key):
 
         update_password(result['username'], b.new1)
 
+        session['logged_in'] = True
+        session['username']  = result['username']
+
         return redirect(url_front())
 
     else:
