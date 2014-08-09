@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
@@ -14,6 +13,7 @@ from applications.admin import admin
 from applications.bookkeeper import bookkeeper
 from applications.rustours import rustours
 from applications.mentorteams import mentorteams
+from applications.dutyteams import dutyteams
 
 ### APPLICATION ###
 app = Flask(__name__)
@@ -26,6 +26,7 @@ app.register_blueprint(admin)
 app.register_blueprint(bookkeeper)
 app.register_blueprint(rustours)
 app.register_blueprint(mentorteams)
+app.register_blueprint(dutyteams)
 
 ### ERROR HANDLER ###
 @app.errorhandler(401)
