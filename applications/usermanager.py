@@ -259,7 +259,7 @@ def forgot_password(username):
 
     url = config.URL + url_for("usermanager.renew_password", key=key)
     text = forgot_password_mail.format(user['name'], url)
-    mail.send(email, "Glemt løsn", text)
+    mail.send(email, "Glemt løsen", text)
 
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
 @logged_in
