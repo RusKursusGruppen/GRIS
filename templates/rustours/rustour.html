@@ -2,6 +2,7 @@
 
 {% block submenu %}
   <a href="{{url_for('rustours.settings', t_id=tour['t_id'])}}">Ret</a>
+  <a href="{{url_for('rustours.dutyteams', t_id=tour['t_id'])}}">Tjansehold</a>
 {% endblock %}
 
 {% block body %}
