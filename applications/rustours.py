@@ -5,7 +5,7 @@ import random, datetime, string, time, itertools, re
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front, now, rkgyear
+from lib.tools import logged_in, empty, url_front, now, rkgyear, get
 
 import config
 
@@ -22,7 +22,19 @@ def rustour(t_id):
     tour = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE rustour = ?", t_id)
     tutors = data.execute("SELECT * FROM tours_tutors WHERE t_id = ?", t_id)
-    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors)
+    # dutyteams = data.execute("SELECT Russer.r_id AS r_id, Russer.name AS name, Dutyteams.name AS dutyteam FROM Russer LEFT OUTER JOIN Dutyteams ON Russer.dutyteam = Dutyteams.tj_id WHERE Dutyteams.t_id = ? ORDER BY Dutyteams.tj_id", t_id)
+    dutyteams = data.execute("SELECT Russer.r_id, Russer.name, Dutyteams.name as dutyteam FROM Russer FULL OUTER JOIN Dutyteams ON Russer.dutyteam = Dutyteams.tj_id WHERE Russer.rustour = ? and Russer.dutyteam IS NOT NULL ORDER BY Dutyteams.tj_id ASC", t_id)
+    print(dutyteams)
+    dutyteams = itertools.groupby(dutyteams, key=get("dutyteam"))
+    dutyteams = [(x[0], list(x[1])) for x in dutyteams]
+    all_teams = data.execute("SELECT name FROM Dutyteams WHERE t_id = ? ORDER BY tj_id ASC", t_id)
+    empty_teams = [x['name'] for x in all_teams]
+    for team in dutyteams:
+        empty_teams.remove(team[0])
+    unassigned = data.execute("SELECT r_id, name FROM Russer WHERE rustour = ? AND dutyteam IS NULL ORDER BY name DESC", t_id)
+    print(unassigned)
+
+    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors, dutyteams=dutyteams, empty_teams=empty_teams, unassigned=unassigned)
 
 @rustours.route('/rustours/new', methods=['GET', 'POST'])
 def new():
@@ -155,7 +167,7 @@ def dutyteams(t_id):
             b.t_id = t_id
             b >= "Dutyteams"
 
-        dutyteams = data.execute("SELECT tj_id FROM Dutyteams WHERE t_id = ? ORDER BY tj_id DESC", t_id)
+        dutyteams = data.execute("SELECT tj_id FROM Dutyteams WHERE t_id = ?", t_id)
         dutyteams = set(str(dutyteam['tj_id']) for dutyteam in dutyteams)
         print(dutyteams)
 
