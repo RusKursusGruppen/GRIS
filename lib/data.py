@@ -12,7 +12,7 @@ import config
 
 def execute(com, *args):
     if com.count("?") != len(args):
-        raise Exception("Not enough SQL arguments for query "+com)
+        raise Exception("Wrong number of SQL arguments for query "+com)
 
     com = com.replace("?", "%s")
     try:
@@ -38,7 +38,7 @@ def executemany(com, argSeq):
     argSeq = list(argSeq)
     for arg in argSeq:
         if com.count("?") != len(args):
-            raise Exception("Not enough SQL arguments for query "+com)
+            raise Exception("Wrong number of SQL arguments for query "+com)
 
     com = com.replace("?", "%s")
     try:
