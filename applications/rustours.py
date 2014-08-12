@@ -165,7 +165,7 @@ def delete(t_id):
 def dutyteams(t_id):
     if request.method == "POST":
         if 'cancel' in request.form:
-            return redirect(url_front())
+            return redirect(url_for('rustours.rustour', t_id=t_id))
 
         if request.form['new'] != "":
             b = data.Bucket()
