@@ -43,6 +43,7 @@ def random_greeting():
         , "lalalalalala..."
         , "Vi har mange programmer til ølregnskab... alle er i BETA"
         , "rkg@dikumail.dk"
+        , "qsort (p:xs) = qsort [x | x<-xs, x<p] ++ [p] ++ qsort [x | x<-xs, x>=p]"
         , "3% kode, 79% slam"])
 
     if callable(result):
