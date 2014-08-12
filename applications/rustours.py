@@ -32,7 +32,7 @@ def rustour(t_id):
 
     result = []
     for team in all_teams:
-        if dutyteams[0][0] == team:
+        if len(dutyteams) > 0 and dutyteams[0][0] == team:
             result.append(dutyteams.pop(0))
         else:
             result.append((team, []))
