@@ -108,6 +108,13 @@ class Bucket(object):
                     print("FAIL: ", item)
                 return None
 
+    def __contains__(self, item):
+        try:
+            self[item]
+            return True
+        except NameError:
+            return False
+
     def __getitem__(self, item):
         prevlock = self.__lock__
         + self
