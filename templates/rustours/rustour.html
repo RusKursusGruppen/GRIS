@@ -33,12 +33,6 @@
       {% endfor %}
   {% endfor %}
 
-kage
-  {% for dutyteam in empty_teams %}
-      <h4>{{dutyteam}}</h4>
-  {% endfor %}
-
-
   <h3>Ikke på tjansehold:</h3>
   {% for rus in unassigned %}
       <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
