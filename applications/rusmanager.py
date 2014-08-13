@@ -13,7 +13,7 @@ rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/r
 @rusmanager.route('/rusmanager')
 @logged_in('rkg', 'mentor')
 def overview():
-    russer = data.execute("select r_id, name from Russer")
+    russer = data.execute("SELECT r_id, name FROM Russer ORDER BY name ASC")
     return render_template("rusmanager/overview.html", russer=russer)
 
 @rusmanager.route('/rusmanager/<r_id>', methods=['GET', 'POST'])

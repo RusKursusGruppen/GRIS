@@ -2,6 +2,7 @@
 
 {% block submenu %}
   <a href="{{url_for('rustours.settings', t_id=tour['t_id'])}}">Ret</a>
+  <a href="{{url_for('rustours.dutyteams', t_id=tour['t_id'])}}">Tjansehold</a>
 {% endblock %}
 
 {% block body %}
@@ -11,16 +12,31 @@
     <b>Tema</b>: {{ tour['theme'] if tour['theme'] != None else "" }}
   </p>
 
-  <h3>Rusvejledere</h3>
+  <h3>Rusvejledere:</h3>
   {% for tutor in tutors %}
   <a href="{{url_for('usermanager.user', username=tutor['username'])}}">{{tutor['username']}}</a>
   <br/>
   {% endfor %}
 
-  <h3>Russer</h3>
+  <h3>Russer:</h3>
   {% for rus in russer %}
   <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
   <br/>
+  {% endfor %}
+
+  <h3>Tjansehold:</h3>
+  {% for dutyteam in dutyteams %}
+      <h4>{{dutyteam[0]}}</h4>
+      {% for rus in dutyteam[1] %}
+          <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
+          <br/>
+      {% endfor %}
+  {% endfor %}
+
+  <h3>Ikke på tjansehold:</h3>
+  {% for rus in unassigned %}
+      <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
+      <br/>
   {% endfor %}
 
 {% endblock %}

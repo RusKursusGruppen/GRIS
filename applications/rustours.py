@@ -5,7 +5,7 @@ import random, datetime, string, time, itertools, re
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front, now, rkgyear
+from lib.tools import logged_in, empty, url_front, now, rkgyear, get
 
 import config
 
@@ -20,9 +20,27 @@ def overview():
 @rustours.route('/rustours/tour/<t_id>')
 def rustour(t_id):
     tour = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)[0]
-    russer = data.execute("SELECT * FROM Russer WHERE rustour = ?", t_id)
+    russer = data.execute("SELECT * FROM Russer WHERE rustour = ? ORDER BY name ASC", t_id)
     tutors = data.execute("SELECT * FROM tours_tutors WHERE t_id = ?", t_id)
-    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors)
+
+    dutyteams = data.execute("SELECT Russer.r_id, Russer.name, Dutyteams.name as dutyteam FROM Russer FULL OUTER JOIN Dutyteams ON Russer.dutyteam = Dutyteams.tj_id WHERE Russer.rustour = ? and Russer.dutyteam IS NOT NULL ORDER BY Dutyteams.tj_id ASC", t_id)
+    dutyteams = itertools.groupby(dutyteams, key=get("dutyteam"))
+    dutyteams = [(x[0], list(x[1])) for x in dutyteams]
+
+    all_teams = data.execute("SELECT name FROM Dutyteams WHERE t_id = ? ORDER BY tj_id ASC", t_id)
+    all_teams = [x['name'] for x in all_teams]
+
+    result = []
+    for team in all_teams:
+        if len(dutyteams) > 0 and dutyteams[0][0] == team:
+            result.append(dutyteams.pop(0))
+        else:
+            result.append((team, []))
+    dutyteams = result
+
+    unassigned = data.execute("SELECT r_id, name FROM Russer WHERE rustour = ? AND dutyteam IS NULL ORDER BY name DESC", t_id)
+
+    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors, dutyteams=dutyteams, unassigned=unassigned)
 
 @rustours.route('/rustours/new', methods=['GET', 'POST'])
 def new():
@@ -139,5 +157,44 @@ def delete(t_id):
         w.formtable()
         w.html("Vil du slette rusturen?")
         w.html('<button type="submit" name="delete" value="delete">Slet rustur</button>', "Slet rustur?")
+        form = w.create()
+        return render_template('form.html', form=form)
+
+@rustours.route('/rustours/tour/<t_id>/dutyteams', methods=['GET', 'POST'])
+@logged_in
+def dutyteams(t_id):
+    if request.method == "POST":
+        if 'cancel' in request.form:
+            return redirect(url_for('rustours.rustour', t_id=t_id))
+
+        if request.form['new'] != "":
+            b = data.Bucket()
+            b.name = request.form['new']
+            b.t_id = t_id
+            b >= "Dutyteams"
+
+        dutyteams = data.execute("SELECT tj_id FROM Dutyteams WHERE t_id = ?", t_id)
+        dutyteams = set(str(dutyteam['tj_id']) for dutyteam in dutyteams)
+        print(dutyteams)
+
+        for tj_id in request.form.keys():
+
+            if tj_id in dutyteams:
+                b = data.Bucket()
+                b.name = request.form[tj_id]
+                print(b.name)
+                b >> ("UPDATE Dutyteams $ WHERE t_id = ? AND tj_id = ?", t_id, tj_id)
+
+        return redirect(url_for("rustours.rustour", t_id=t_id))
+
+    else:
+        dutyteams = data.execute("SELECT * FROM Dutyteams WHERE t_id = ? ORDER BY tj_id ASC", t_id)
+
+        w = html.WebBuilder()
+        w.form()
+        w.formtable()
+        for dutyteam in dutyteams:
+            w.textfield(dutyteam['tj_id'], "Omdøb:", value=dutyteam['name'])
+        w.textfield("new", "Nyt tjansehold:")
         form = w.create()
         return render_template('form.html', form=form)
