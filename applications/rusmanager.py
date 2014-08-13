@@ -51,8 +51,14 @@ def rus(r_id):
         b.attending_uniday = 1 if "attending_uniday" in request.form else 0
         b.attending_campus = 1 if "attending_campus" in request.form else 0
         b.attending_rustour = 1 if "attending_rustour" in request.form else 0
+
         b.rustour = nonify(b.rustour)
         b.dutyteam = nonify(b.dutyteam)
+        if b.dutyteam is not None:
+            t_id = data.execute("SELECT t_id FROM Dutyteams WHERE tj_id = ?", b.dutyteam)
+            t_id = str(t_id[0]['t_id'])
+            if b.rustour != t_id:
+                b.dutyteam = None
         b.mentor = nonify(b.mentor)
         b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
