@@ -20,7 +20,7 @@ def overview():
 @rustours.route('/rustours/tour/<t_id>')
 def rustour(t_id):
     tour = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)[0]
-    russer = data.execute("SELECT * FROM Russer WHERE rustour = ?", t_id)
+    russer = data.execute("SELECT * FROM Russer WHERE rustour = ? ORDER BY name ASC", t_id)
     tutors = data.execute("SELECT * FROM tours_tutors WHERE t_id = ?", t_id)
 
     dutyteams = data.execute("SELECT Russer.r_id, Russer.name, Dutyteams.name as dutyteam FROM Russer FULL OUTER JOIN Dutyteams ON Russer.dutyteam = Dutyteams.tj_id WHERE Russer.rustour = ? and Russer.dutyteam IS NOT NULL ORDER BY Dutyteams.tj_id ASC", t_id)
