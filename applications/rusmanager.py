@@ -114,6 +114,8 @@ def rus(r_id):
         birthday = rus["birthday"]
         if birthday == None:
             birthday = ""
+        else:
+            birthday = birthday.isoformat()
 
         dutyteams = data.execute("SELECT * FROM Dutyteams WHERE t_id = ?", rus["rustour"])
         dutyteams = [(dutyteam['tj_id'], dutyteam['name']) for dutyteam in dutyteams]
@@ -147,10 +149,7 @@ def rus(r_id):
         wb.checkbox("called", "Opringet")
         wb.textfield("name", "Navn")
         wb.select("gender", "Køn", gender)
-#        wb.textfield("birthday", "Fødselsdag")
-        wb.html('<input type="text" id="rusmanager.birthday" maxlength="25" size="25" name="birthday" value="'+birthday+'">' +
-               html.calendar("rusmanager.birthday")
-               + '<span class="note">(Format: yyyy-MM-dd)</span>', description="Fødselsdag")
+        wb.calendar("birthday", "Fødselsdag", "")
         wb.textfield("phone", "Tlf")
         wb.textfield("email", "email")
         wb.textfield("co", "co")
