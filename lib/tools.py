@@ -70,7 +70,7 @@ def string_to_time(str):
     return datetime.datetime.strptime(str, format)
 
 def nonify(value):
-    if value == "None":
+    if value == "None" or value == "":
         return None
     return value
 
