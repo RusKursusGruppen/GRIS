@@ -116,10 +116,13 @@ class Bucket(object):
             return False
 
     def __getitem__(self, item):
+        """Returns item in the bucket or if none is found, the item in the unsafe part"""
         prevlock = self.__lock__
         + self
         try:
             return self.__getattribute__(item)
+        except AttributeError:
+            return self.__unsafe__[item]
         finally:
             self.__lock__ = prevlock
 
