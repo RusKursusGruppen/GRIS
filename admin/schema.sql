@@ -18,7 +18,6 @@ CREATE TABLE Users(
     birthday            date,
 
     diku_age            text,
-    earlier_tours       text, --sepererat med semicolaer (pepsi)
     about_me            text,
 
     deleted             int DEFAULT 0 -- Field for marking a user as deleted

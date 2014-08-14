@@ -111,7 +111,6 @@ def settings():
         b.birthday
         b.driverslicence = 1 if "driverslicence" in request.form else 0
         b.diku_age
-        b.earlier_tours
         b.about_me# = request.form["about_me"]
         b >> ("UPDATE Users $ WHERE username = ?", username)
 
@@ -140,7 +139,6 @@ def settings():
         w.calendar("birthday", "Fødselsdag")
         w.checkbox("driverslicence", "Har du kørekort?")
         w.textfield("diku_age", "Hvornår startede du på DIKU?")
-        w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
         w.textarea("about_me", "Lidt om mig")
 
         form = w.create(user)
