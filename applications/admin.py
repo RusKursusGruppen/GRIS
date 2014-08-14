@@ -46,7 +46,7 @@ def delete_user():
         b.deleted = 1
         b >> ("UPDATE Users SET $ WHERE username = ?", request.form["user"])
 
-        data.execute("DELETE FROM User_groups WHERE username = ?", request.form["user"])
+        data.execute("DELETE FROM Group_users WHERE username = ?", request.form["user"])
 
         flash("Bruger slettet")
 
@@ -67,7 +67,7 @@ def delete_user():
 @admin.route('/admin/groups/overview')
 @logged_in('admin')
 def groups_overview():
-    groups = data.execute('SELECT * FROM User_groups INNER JOIN Users USING (username) ORDER BY groupname, username')
+    groups = data.execute('SELECT * FROM Group_users INNER JOIN Users USING (username) ORDER BY groupname, username')
     groups = itertools.groupby(groups, key=get('groupname'))
     return render_template("group_overview.html", groups=groups)
 
@@ -90,7 +90,7 @@ def group(groupname):
         return redirect(url_for('admin.groups_overview'))
     else:
         users = data.execute('SELECT username, name FROM Users WHERE deleted = 0')
-        group = data.execute('SELECT username FROM User_groups WHERE groupname = ?', groupname)
+        group = data.execute('SELECT username FROM Group_users WHERE groupname = ?', groupname)
         group = set(user['username'] for user in group)
 
 

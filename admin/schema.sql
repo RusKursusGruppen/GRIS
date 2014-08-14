@@ -35,7 +35,7 @@ INSERT INTO Groups(groupname) VALUES('mentor');
 
 
 DROP TABLE IF EXISTS User_groups CASCADE;
-CREATE TABLE User_groups(
+CREATE TABLE Group_users(
        username         text REFERENCES Users(username),
        groupname        text REFERENCES Groups(groupname),
        PRIMARY KEY (username, groupname)

@@ -41,7 +41,7 @@ def login():
             session['logged_in'] = True
             session['username']  = username
 
-            groups = data.execute('SELECT groupname FROM User_groups WHERE username = ?', username)
+            groups = data.execute('SELECT groupname FROM Group_users WHERE username = ?', username)
             groups = [group['groupname'] for group in groups]
             session['groups'] = groups
 
@@ -60,15 +60,15 @@ def update_password(username, raw_password):
     data.execute("UPDATE Users SET password = ? WHERE username = ?", passwd, username)
 
 def set_user_groups(username, groups):
-    data.execute("DELETE FROM User_groups WHERE username = ?", username)
+    data.execute("DELETE FROM Group_users WHERE username = ?", username)
     for group in groups:
         group_add_user(group, username)
 
 def group_add_user(groupname, username):
-    data.execute("INSERT INTO User_groups(groupname, username) VALUES(?,?)", groupname, username)
+    data.execute("INSERT INTO Group_users(groupname, username) VALUES(?,?)", groupname, username)
 
 def group_remove_user(groupname, username):
-    data.execute("DELETE FROM User_groups WHERE groupname = ? AND username = ?", groupname, username)
+    data.execute("DELETE FROM Group_users WHERE groupname = ? AND username = ?", groupname, username)
 
 @usermanager.route('/usermanager/logout')
 def logout():

@@ -89,7 +89,7 @@ def settings(m_id):
             return redirect(url_for("mentorteams.overview"))
         team = teams[0]
 
-        all_mentors = data.execute("SELECT * FROM Users WHERE username IN (Select username from User_groups where groupname = 'mentor')")
+        all_mentors = data.execute("SELECT * FROM Users WHERE username IN (Select username from Group_users where groupname = 'mentor')")
         all_mentors = ['\\"{0}\\" {1}'.format(mentor['username'], mentor['name']) for mentor in all_mentors]
         all_mentors.sort()
 

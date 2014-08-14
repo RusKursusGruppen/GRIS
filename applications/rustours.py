@@ -111,7 +111,7 @@ def settings(t_id):
             return redirect(url_for("rustours.overview"))
         tour = tours[0]
 
-        all_tutors = data.execute("SELECT * FROM Users WHERE username IN (Select username from User_groups where groupname = 'rkg')")
+        all_tutors = data.execute("SELECT * FROM Users WHERE username IN (Select username from Group_users where groupname = 'rkg')")
         all_tutors = ['\\"{0}\\" {1}'.format(tutor['username'], tutor['name']) for tutor in all_tutors]
         all_tutors.sort()
 

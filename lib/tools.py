@@ -44,7 +44,7 @@ def logged_in(*args):
                     session['login_origin'] = request.path
                     abort(401)
                 else:
-                    groups = lib.data.execute('SELECT groupname FROM User_groups WHERE username = ?', session['username'])
+                    groups = lib.data.execute('SELECT groupname FROM Group_users WHERE username = ?', session['username'])
                     for group in groups:
                         if group['groupname'] in rights:
                             return fn(*args, **kwargs)
