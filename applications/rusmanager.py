@@ -14,7 +14,7 @@ rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/r
 @logged_in('rkg', 'mentor')
 def overview():
     russer = data.execute("SELECT r_id, name FROM Russer ORDER BY name ASC")
-    return render_template("overview.html", russer=russer)
+    return render_template("rusmanager/overview.html", russer=russer)
 
 @rusmanager.route('/rusmanager/<r_id>', methods=['GET', 'POST'])
 @logged_in('rkg', 'mentor')
@@ -185,7 +185,7 @@ def rus(r_id):
 
         form = wb.create(rus)
 
-        return render_template("rus.html", form=form, name=rus['name'])
+        return render_template("rusmanager/rus.html", form=form, name=rus['name'])
 
 @rusmanager.route('/rusmanager/new', methods=['GET', 'POST'])
 @logged_in('rkg', 'mentor')
@@ -220,4 +220,4 @@ def friends():
     user_friends = [(x[0], list(x[1])) for x in user_friends]
     user_friends = [({'russer_name':name, 'r_id':l[0]['r_id']}, l) for name, l in user_friends]
 
-    return render_template("friends.html", friends=friends, user_friends=user_friends)
+    return render_template("rusmanager/friends.html", friends=friends, user_friends=user_friends)

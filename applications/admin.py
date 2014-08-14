@@ -21,7 +21,7 @@ admin = Blueprint('admin', __name__, template_folder = '../templates/admin')
 @logged_in('admin')
 def overview():
     #adminrights
-    return render_template("admin.html")
+    return render_template("rusmanager/admin.html")
 
 @admin.route('/admin/git_pull', methods=["GET", "POST"])
 @logged_in('admin')
@@ -31,12 +31,12 @@ def git_pull():
         #response = subprocess.check_output(["ls", "-l"])
     else:
         response = ""
-    return render_template("git_pull.html",response=response)
+    return render_template("rusmanager/git_pull.html",response=response)
 
 @admin.route('/admin/delete_user', methods=["GET", "POST"])
 @logged_in('admin')
 def delete_user():
-#    return render_template("delete_user.html")
+#    return render_template("rusmanager/delete_user.html")
     if request.method == "POST":
         if 'cancel' in request.form:
             flash(escape("Ændringer anulleret"))
@@ -62,14 +62,14 @@ def delete_user():
         w.select("user", "Brugere:", users)
         form = w.create()
 
-        return render_template("delete_user.html", form=form)
+        return render_template("rusmanager/delete_user.html", form=form)
 
 @admin.route('/admin/groups/overview')
 @logged_in('admin')
 def groups_overview():
     groups = data.execute('SELECT * FROM Group_users INNER JOIN Users USING (username) ORDER BY groupname, username')
     groups = itertools.groupby(groups, key=get('groupname'))
-    return render_template("group_overview.html", groups=groups)
+    return render_template("rusmanager/group_overview.html", groups=groups)
 
 @admin.route('/admin/groups/<groupname>', methods=["GET", "POST"])
 @logged_in('admin')

@@ -16,7 +16,7 @@ mentorteams = Blueprint('mentorteams', __name__, template_folder = '../templates
 def overview():
     teams = data.execute("SELECT * FROM Mentorteams ORDER BY year DESC")
     teams = itertools.groupby(teams, key=get("year"))
-    return render_template("overview.html", teams=teams)
+    return render_template("rusmanager/overview.html", teams=teams)
 
 @mentorteams.route('/mentorteams/team/<m_id>')
 @logged_in('mentor')
@@ -24,7 +24,7 @@ def mentorteam(m_id):
     team = data.execute("SELECT * FROM Mentorteams WHERE m_id = ?", m_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE mentor = ?", m_id)
     mentors = data.execute("SELECT * FROM Mentors WHERE m_id = ?", m_id)
-    return render_template("mentorteam.html", team=team, russer=russer, mentors=mentors)
+    return render_template("rusmanager/mentorteam.html", team=team, russer=russer, mentors=mentors)
 
 @mentorteams.route('/mentorteams/new', methods=['GET', 'POST'])
 @logged_in('mentor')
@@ -109,7 +109,7 @@ def settings(m_id):
         w.textfield("year", "År")
         w.html(html.autocomplete_multiple(all_mentors, "mentors", default=actual_mentors), description="Mentorer", value="abekat")
         form = w.create(team)
-        return render_template("settings.html", form=form)
+        return render_template("rusmanager/settings.html", form=form)
 
 
 @mentorteams.route('/mentorteams/team/<m_id>/delete', methods=['GET', 'POST'])

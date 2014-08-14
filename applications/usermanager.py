@@ -29,7 +29,7 @@ def login():
                 flash("Kunne ikke sende en mail til denne bruger")
                 return redirect(url_for('usermanager.login'))
 
-            return render_template("forgot.html", username=username)
+            return render_template("usermanager/forgot.html", username=username)
 
         print(type(raw_password))
         user = data.execute('SELECT password, deleted FROM Users WHERE username = ?', username)
@@ -48,7 +48,7 @@ def login():
             update_password(username, raw_password)
             flash("Login succesful")
             return redirect(session.pop('login_origin', url_front()))
-    return render_template("login.html", error=error)
+    return render_template("usermanager/login.html", error=error)
 
 def create_user(username, raw_password, name="", groups=[]):
     passw = password.encode(raw_password)
@@ -81,13 +81,13 @@ def logout():
 @logged_in
 def overview():
     users = data.execute("select username, name from Users where deleted = ? order by name", False)
-    return render_template("overview.html", users=users)
+    return render_template("usermanager/overview.html", users=users)
 
 @usermanager.route('/usermanager/deleted_users')
 @logged_in
 def deleted_users():
     users = data.execute("select username, name from Users where deleted = ? order by name", True)
-    return render_template("deleted_users.html", users=users)
+    return render_template("usermanager/deleted_users.html", users=users)
 
 
 
@@ -269,7 +269,7 @@ def user(username):
     user = user[0]
     user = unnonify(user)
 
-    return render_template("user.html", user=user)
+    return render_template("usermanager/user.html", user=user)
 
 
 ### USER INVITATION ###

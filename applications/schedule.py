@@ -14,7 +14,7 @@ schedule = Blueprint('schedule', __name__, template_folder = '../templates/sched
 @logged_in
 def overview():
     events = data.execute("SELECT s_id, title, closes FROM Schedule")
-    return render_template("overview.html",events=events)
+    return render_template("schedule/overview.html",events=events)
 
 @schedule.route('/schedule/new', methods=['GET','POST'])
 @logged_in
@@ -43,10 +43,10 @@ def new():
         deadline_calendar = html.calendar('schedule.deadline', 'yyyyMMdd', 'arrow', True, 24, False, 'future')
         time_calendar = html.calendar('schedule.time', 'yyyyMMdd', 'arrow', True, 24, False, 'future')
 
-        return render_template("new.html", deadline_calendar=deadline_calendar, time_calendar=time_calendar)
+        return render_template("schedule/new.html", deadline_calendar=deadline_calendar, time_calendar=time_calendar)
 
 @schedule.route('/schedule/<sid>', methods=['GET', 'POST'])
 @logged_in
 def event(sid):
     event = data.execute("SELECT s_id, title, description, created, closes FROM Schedule WHERE s_id = ?", sid)
-    return render_template("event.html", event=event)
+    return render_template("schedule/event.html", event=event)
