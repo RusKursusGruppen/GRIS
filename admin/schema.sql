@@ -15,7 +15,7 @@ CREATE TABLE Users(
     city                text,
     phone               text,
     email               text,
-    birthday            text,
+    birthday            date,
 
     diku_age            text,
     earlier_tours       text, --sepererat med semicolaer (pepsi)
@@ -45,14 +45,14 @@ CREATE TABLE Group_users(
 DROP TABLE IF EXISTS User_creation_keys CASCADE;
 CREATE TABLE User_creation_keys(
        key              text PRIMARY KEY,
-       created          text NOT NULL
+       created          timestamp NOT NULL
 );
 
 DROP TABLE IF EXISTS User_forgotten_password_keys CASCADE;
 CREATE TABLE User_forgotten_password_keys(
        key              text PRIMARY KEY,
        username         text REFERENCES Users(username),
-       created          text NOT NULL
+       created          timestamp NOT NULL
 );
 
 --- TOUR INFORMATION ---
@@ -103,6 +103,8 @@ CREATE TABLE Russer(
 
     name                text NOT NULL,
     gender              text CHECK (gender IN ('male', 'female', 'other')),
+    birthday            date,
+
     filled_by           text,
     can_contact         boolean DEFAULT TRUE,
     called              integer NOT NULL,
@@ -118,8 +120,6 @@ CREATE TABLE Russer(
 
     phone               text,
     email               text,
-
-    birthday            text,
 
     vacation            text,
     priority            text,
@@ -169,7 +169,7 @@ DROP TABLE IF EXISTS News CASCADE;
 CREATE TABLE News(
     n_id                serial PRIMARY KEY,
     creator             text REFERENCES Users(username),
-    created             text NOT NULL,
+    created             timestamp NOT NULL,
     title               text,
     text                text
 );
@@ -218,7 +218,7 @@ DROP TABLE IF EXISTS Books CASCADE;
 CREATE TABLE Books(
     b_id                serial PRIMARY KEY,
     creator             text REFERENCES Users(username),
-    created             text,
+    created             timestamp NOT NULL,
     title               text,
     description         text
 );
@@ -227,7 +227,7 @@ DROP TABLE IF EXISTS Entries CASCADE;
 CREATE TABLE Entries(
     e_id                serial PRIMARY KEY,
     b_id                integer REFERENCES Books(b_id) NOT NULL,
-    date                text,
+    date                date,
     creditor            text REFERENCES Users(username),
     description         text,
     amount_text       text, -- The unevaluated text,
@@ -239,7 +239,7 @@ DROP TABLE IF EXISTS Debts CASCADE;
 CREATE TABLE Debts(
     e_id                integer REFERENCES Entries(e_id),
     debtor              text REFERENCES Users(username),
-    share_text        text,  -- The unevaluated text,
+    share_text          text,  -- The unevaluated text,
     share               integer, -- and its result.
     PRIMARY KEY (e_id, debtor)
 );
@@ -254,7 +254,7 @@ CREATE TABLE Book_participants(
 DROP TABLE IF EXISTS Payments CASCADE;
 CREATE TABLE Payments(
     b_id                integer REFERENCES Books(b_id),
-    date                text,
+    date                date,
     creditor            text REFERENCES Users(username),
     debtor              text REFERENCES Users(username),
     amount              integer,
