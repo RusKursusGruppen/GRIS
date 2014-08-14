@@ -190,7 +190,10 @@ def change_password():
 
 @usermanager.route("/usermanager/settings/password/renew/<key>", methods=['GET', 'POST'])
 def renew_password(key):
-    # data.execute("DELETE OLD STUFF...")
+    # EXPLANATION: weed out old creation keys
+    overtime = now() - datetime.timedelta(minutes=20)
+    data.execute("DELETE FROM User_forgotten_password_keys WHERE created <= ?", overtime)
+
     result = data.execute("SELECT * FROM User_forgotten_password_keys WHERE key = ?", key)
     if len(result) != 1:
         flash("Linket du fulgte er desvære udløbet, prøv igen")
@@ -198,8 +201,7 @@ def renew_password(key):
     result = result[0]
 
     if request.method == "POST":
-
-        # data.execute("DELETE this key")
+        data.execute("DELETE FROM User_forgotten_password_keys WHERE key = ?", key)
 
         b = data.Bucket(request.form)
 
