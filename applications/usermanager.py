@@ -137,7 +137,7 @@ def settings():
         w.textfield("city", "By")
         w.textfield("phone", "Telefonnummer")
         w.textfield("email", "Email")
-        wb.calendar("birthday", "Fødselsdag")
+        w.calendar("birthday", "Fødselsdag")
         w.checkbox("driverslicence", "Har du kørekort?")
         w.textfield("diku_age", "Hvornår startede du på DIKU?")
         w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
