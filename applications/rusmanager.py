@@ -161,7 +161,7 @@ def rus(r_id):
         wb.textfield("new_city", "Ny by")
         wb.textfield("vacation", "Ferie")
         wb.textfield("priority", "DIKU prioritet")
-        wb.textfield("gymnasium", "Gymnasium")
+        wb.textfield("gymnasium", "Adgangsgivende eksamen (inkl. år)")
         wb.textfield("since_gymnasium", "Lavet efterfølgende")
         wb.textfield("code_experience", "Kode erfaring")
         wb.textfield("special_needs", "Specielle behov")
