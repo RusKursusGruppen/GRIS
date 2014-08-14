@@ -32,10 +32,13 @@ def logged_in(*args):
 
     else:
         # EXPLANATION: decorator factory called with something to iterate
-        if not isinstance(args[0], str):
-            rights = args[0]
+        if isinstance(args[0], str):
+            rights = list(args)
         else:
-            rights = args
+            rights = list(args[0])
+
+        # Admins can do everything
+        rights.append("admin")
 
         def decorator(fn):
             @wraps(fn)
