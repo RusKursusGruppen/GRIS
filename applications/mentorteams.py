@@ -12,12 +12,14 @@ import config
 mentorteams = Blueprint('mentorteams', __name__, template_folder = '../templates/mentorteams')
 
 @mentorteams.route('/mentorteams')
+@logged_in
 def overview():
     teams = data.execute("SELECT * FROM Mentorteams ORDER BY year DESC")
     teams = itertools.groupby(teams, key=lambda team: team['year'])
     return render_template("mentorteams/overview.html", teams=teams)
 
 @mentorteams.route('/mentorteams/team/<m_id>')
+@logged_in('mentor')
 def mentorteam(m_id):
     team = data.execute("SELECT * FROM Mentorteams WHERE m_id = ?", m_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE mentor = ?", m_id)
@@ -25,6 +27,7 @@ def mentorteam(m_id):
     return render_template("mentorteams/mentorteam.html", team=team, russer=russer, mentors=mentors)
 
 @mentorteams.route('/mentorteams/new', methods=['GET', 'POST'])
+@logged_in('mentor')
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:
@@ -52,6 +55,7 @@ def new():
         return render_template("form.html", form=form)
 
 @mentorteams.route('/mentorteams/team/<m_id>/settings', methods=['GET', 'POST'])
+@logged_in('mentor')
 def settings(m_id):
     if request.method == "POST":
         if 'cancel' in request.form:
@@ -109,6 +113,7 @@ def settings(m_id):
 
 
 @mentorteams.route('/mentorteams/team/<m_id>/delete', methods=['GET', 'POST'])
+@logged_in('admin')
 def delete(m_id):
     if request.method == "POST":
         if 'delete' in request.form:

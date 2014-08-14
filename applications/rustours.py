@@ -12,12 +12,14 @@ import config
 rustours = Blueprint('rustours', __name__, template_folder = '../templates/rustours')
 
 @rustours.route('/rustours')
+@logged_in
 def overview():
     tours = data.execute("SELECT * FROM Tours ORDER BY year DESC")
     tours = itertools.groupby(tours, key=lambda tour: tour['year'])
     return render_template("rustours/overview.html", tours=tours)
 
 @rustours.route('/rustours/tour/<t_id>')
+@logged_in('rkg')
 def rustour(t_id):
     tour = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE rustour = ? ORDER BY name ASC", t_id)
@@ -43,6 +45,7 @@ def rustour(t_id):
     return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors, dutyteams=dutyteams, unassigned=unassigned)
 
 @rustours.route('/rustours/new', methods=['GET', 'POST'])
+@logged_in('rkg')
 def new():
     if request.method == "POST":
         if 'cancel' in request.form:
@@ -72,6 +75,7 @@ def new():
         return render_template("form.html", form=form)
 
 @rustours.route('/rustours/tour/<t_id>/settings', methods=['GET', 'POST'])
+@logged_in('rkg')
 def settings(t_id):
     if request.method == "POST":
         if 'cancel' in request.form:
@@ -132,6 +136,7 @@ def settings(t_id):
         return render_template("settings.html", form=form, t_id=t_id)
 
 @rustours.route('/rustours/tour/<t_id>/delete', methods=['GET', 'POST'])
+@logged_in('rkg')
 def delete(t_id):
     if request.method == "POST":
         if 'delete' in request.form:
@@ -161,7 +166,7 @@ def delete(t_id):
         return render_template('form.html', form=form)
 
 @rustours.route('/rustours/tour/<t_id>/dutyteams', methods=['GET', 'POST'])
-@logged_in
+@logged_in('admin')
 def dutyteams(t_id):
     if request.method == "POST":
         if 'cancel' in request.form:

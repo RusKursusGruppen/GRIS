@@ -208,6 +208,7 @@ def new():
         return render_template("form.html", form=form)
 
 @rusmanager.route('/rusmanager/friends')
+@logged_in('rkg', 'mentor')
 def friends():
     friends = data.execute("SELECT r_id1, name1, r_id2, name AS name2 FROM (SELECT r_id1, name AS name1, r_id2 FROM (SELECT * FROM Friends UNION (SELECT r_id2 AS r_id1, r_id1 AS r_id2 FROM Friends)) AS a INNER JOIN Russer ON r_id1 = r_id) AS b INNER JOIN Russer ON r_id2 = r_id ORDER BY name1")
     friends = itertools.groupby(friends, key=get('name1'))
