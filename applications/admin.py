@@ -75,6 +75,10 @@ def groups_overview():
 @logged_in('admin')
 def group(groupname):
     if request.method == "POST":
+        if 'cancel' in request.form:
+            flash("Ændringer anulleret")
+            return redirect(url_for('admin.groups_overview'))
+
         users = data.execute('SELECT username FROM Users WHERE deleted = ?', False)
 
 
