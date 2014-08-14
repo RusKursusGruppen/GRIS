@@ -75,7 +75,7 @@ CREATE TABLE Tours_tutors(
 
 DROP TABLE IF EXISTS Dutyteams CASCADE;
 CREATE TABLE Dutyteams(
-    tj_id               serial PRIMARY KEY,
+    d_id               serial PRIMARY KEY,
     t_id                integer REFERENCES Tours(t_id) NOT NULL,
     name                text
 );
@@ -142,7 +142,7 @@ CREATE TABLE Russer(
     attending_rustour   integer NOT NULL default 0,
 
     rustour             integer REFERENCES Tours(t_id),
-    dutyteam            integer REFERENCES Dutyteams(tj_id),
+    dutyteam            integer REFERENCES Dutyteams(d_id),
 
     mentor              integer REFERENCES Mentorteams(m_id)
 );

@@ -60,7 +60,7 @@ def rus(r_id):
         b.rustour = nonify(b.rustour)
         b.dutyteam = nonify(b.dutyteam)
         if b.dutyteam is not None:
-            t_id = data.execute("SELECT t_id FROM Dutyteams WHERE tj_id = ?", b.dutyteam)
+            t_id = data.execute("SELECT t_id FROM Dutyteams WHERE d_id = ?", b.dutyteam)
             t_id = str(t_id[0]['t_id'])
             if b.rustour != t_id:
                 b.dutyteam = None
@@ -118,7 +118,7 @@ def rus(r_id):
             birthday = birthday.isoformat()
 
         dutyteams = data.execute("SELECT * FROM Dutyteams WHERE t_id = ?", rus["rustour"])
-        dutyteams = [(dutyteam['tj_id'], dutyteam['name']) for dutyteam in dutyteams]
+        dutyteams = [(dutyteam['d_id'], dutyteam['name']) for dutyteam in dutyteams]
         dutyteams = [(None, "None")] + dutyteams
 
         mentors = data.execute("SELECT * FROM Mentorteams WHERE year = ?", year)
