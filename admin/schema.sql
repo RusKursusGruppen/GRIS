@@ -45,6 +45,7 @@ CREATE TABLE Group_users(
 DROP TABLE IF EXISTS User_creation_keys CASCADE;
 CREATE TABLE User_creation_keys(
        key              text PRIMARY KEY,
+       email            text,
        created          timestamp NOT NULL
 );
 

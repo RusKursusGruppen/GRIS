@@ -301,6 +301,8 @@ def generate_key():
                 raise
 
 def sanitize_username(username):
+    if len(username) <= 0:
+        return False
     legal_characters = string.ascii_letters + "æøåÆØÅ-_0123456789"
     return all(c in legal_characters for c in username)
 
@@ -311,14 +313,13 @@ def sanitize_username(username):
 @usermanager.route('/usermanager/new/<key>', methods=['GET', 'POST'])
 def new(key):
     time.sleep(random.randint(2,6))
-    #time.sleep(3)
 
     # EXPLANATION: weed out old creation keys
     overtime = now() - datetime.timedelta(days=30)
     data.execute("DELETE FROM User_creation_keys WHERE created <= ?", overtime)
 
     # EXPLANATION: Check if key exists/is valid
-    result = data.execute("SELECT key FROM User_creation_keys WHERE key = ?", key)
+    result = data.execute("SELECT key, email FROM User_creation_keys WHERE key = ?", key)
     if empty(result):
         time.sleep(random.randint(5,21))
         # TODO: Send to errorpage?
@@ -330,18 +331,33 @@ def new(key):
             flash("Oprettelse anulleret")
             return redirect(url_front())
 
-        username = request.form['username']
-        if not sanitize_username(username):
+        b = data.Bucket(request.form)
+        if not sanitize_username(b.username):
             raise Exception()
-        name = request.form['name']
-        raw_password = request.form['password']
-        admin = request.form['admin']
-        create_user(username, raw_password, name, admin)
+
+        if b.password1 != b.password2:
+            flash("Du gav to forskellige løsener, prøv igen")
+            return html.back()
+        if b.password1 == "":
+            flash("Du skal vælge et løsen")
+            return html.back()
+
+        create_user(b.username, b.password1, b.name)
         flash("Ny bruger oprettet")
 
         return redirect(url_for('usermanager.login'))
     else:
-        return render_template("usermanager/new.html", key=key)
+
+        wb = html.WebBuilder()
+        wb.form()
+        wb.formtable()
+        wb.textfield("username", "Brugernavn (Hvad du bliver kaldt på DIKU):")
+        wb.textfield("name", "Fulde navn:")
+        wb.textfield("email", "Email:", value=result[0]["email"])
+        wb.password("password1", "Løsen")
+        wb.password("password2", "Gentag løsen")
+        form = wb.create()
+        return render_template("form.html", form=form)
 
 @usermanager.route('/usermanager/invite', methods=['GET', 'POST'])
 @logged_in
@@ -355,6 +371,8 @@ def invite():
         email_address = request.form['email']
         url = config.URL + url_for("usermanager.new", key=key)
         text = invite_mail.format(url=url)
+
+        data.execute("UPDATE User_creation_keys SET email = ? WHERE key = ?", email_address, key)
 
         mail.send(email_address, "Invitation til GRIS", text)
         flash("Invitation sendt")
