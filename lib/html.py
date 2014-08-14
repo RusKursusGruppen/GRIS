@@ -188,7 +188,7 @@ class WebBuilder(object):
     def select(self, dbq="", description="", items={}, **kwargs):
         self._newobj(_Select(dbq, description, items, kwargs))
 
-    def calendar(self, dbq, description, value, maxlength="25", size="25", d_Format="yyyyMMdd", selector="arrow", time=False, t_Format=24, seconds=False, futurepast=""):
+    def calendar(self, dbq, description, value="", maxlength="25", size="25", d_Format="yyyyMMdd", selector="arrow", time=False, t_Format=24, seconds=False, futurepast=""):
         self._newobj(_Calendar(dbq, description, value, maxlength, size, d_Format, selector, time, t_Format, seconds, futurepast))
 
     def html(self, code, description="", **kwargs):
