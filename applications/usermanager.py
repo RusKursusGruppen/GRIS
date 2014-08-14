@@ -261,7 +261,7 @@ def forgot_password(username):
         raise Exception("No such user/No valid email")
 
     url = config.URL + url_for("usermanager.renew_password", key=key)
-    text = forgot_password_mail.format(user['name'], url)
+    text = forgot_password_mail.format(name=user['name'], url=url)
     mail.send(email, "Glemt løsen", text)
 
 @usermanager.route('/usermanager/user/<username>', methods=['GET', 'POST'])
@@ -350,7 +350,7 @@ def invite():
 
         email_address = request.form['email']
         url = config.URL + url_for("usermanager.new", key=key)
-        text = invite_mail.format(key, url)
+        text = invite_mail.format(url=url)
 
         mail.send(email_address, "Invitation til GRIS", text)
         flash("Invitation sendt")
@@ -371,16 +371,16 @@ GRIS er RKGs intranet, hvis du skal være med i RKG skal du have en bruger her.
 For at oprette en bruger skal du følge det følgende link.
 Linket er unikt og virker kun en enkelt gang.
 
-<a href="{0}">Opret bruger</a>
+<a href="{url}">Opret bruger</a>
 """
 
 
 forgot_password_mail = """
-Hej {0}, du har glemt dit løsen.
+Hej {name}, du har glemt dit løsen.
 Vi har derfor sendt dig dette link hvor du kan vælge et nyt.
 Linket virker kun de næste 20 minutter.
 
-<a href="{1}">Vælg nyt løsen</a>
+<a href="{url}">Vælg nyt løsen</a>
 
 Hvis du ikke har glemt dit løsen kan du se bort fra denne mail.
 """
