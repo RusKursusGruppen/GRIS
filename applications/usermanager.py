@@ -281,11 +281,20 @@ def generate_key():
     max = config.USER_CREATION_KEY_MAX_LENGTH
     length = random.randrange(min, max)
     alphabet = string.ascii_letters + string.digits
+
     while True:
         key = ''.join(random.choice(alphabet) for x in range(length))
-        result = data.execute("select key from User_creation_keys where key = ?", key)
-        if empty(result):
+        try:
+            b = data.Bucket()
+            b.key = key
+            b.created = now()
+            b >= "User_creation_keys"
             return key
+        except psycopg2.IntegrityError as e:
+            if str(e).startswith('duplicate key value violates unique constraint "user_creation_keys_pkey"'):
+                continue
+            else:
+                raise
 
 def sanitize_username(username):
     legal_characters = string.ascii_letters + "æøåÆØÅ-_0123456789"
@@ -336,9 +345,8 @@ def invite():
     if request.method == "POST":
         if 'cancel' in request.form:
             return redirect(url_front())
+
         key = generate_key()
-        data.execute("INSERT INTO User_creation_keys(key, created) VALUES (?, ?)", key, now())
-        print(key)
 
         email_address = request.form['email']
         url = config.URL + url_for("usermanager.new", key=key)
