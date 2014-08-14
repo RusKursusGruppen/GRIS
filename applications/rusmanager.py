@@ -149,7 +149,7 @@ def rus(r_id):
         wb.checkbox("called", "Opringet")
         wb.textfield("name", "Navn")
         wb.select("gender", "Køn", gender)
-        wb.calendar("birthday", "Fødselsdag", "")
+        wb.calendar("birthday", "Fødselsdag")
         wb.textfield("phone", "Tlf")
         wb.textfield("email", "email")
         wb.textfield("co", "co")
