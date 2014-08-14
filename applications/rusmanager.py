@@ -45,6 +45,7 @@ def rus(r_id):
         b.gymnasium
         b.since_gymnasium
         b.supplementary_exams
+        b.merit
         b.code_experience
         b.special_needs
         b.plays_instrument
@@ -165,6 +166,7 @@ def rus(r_id):
         wb.textfield("gymnasium", "Adgangsgivende eksamen (inkl. år)")
         wb.textfield("since_gymnasium", "Lavet efterfølgende")
         wb.textfield("supplementary_exams", "Tager du supplerende eksamener")
+        wb.textfield("merit", "Merit")
         wb.textfield("code_experience", "Kode erfaring")
         wb.textfield("special_needs", "Specielle behov")
         wb.textfield("plays_instrument", "Spiller instrument")

@@ -127,6 +127,7 @@ CREATE TABLE Russer(
     gymnasium           text,
     since_gymnasium     text,
     supplementary_exams text,
+    merit               text,
 
     code_experience     text,
     special_needs       text,
