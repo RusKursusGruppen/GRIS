@@ -9,33 +9,39 @@
 {% block body %}
 <h3>Brugerdetaljer</h3>
 <p>
-Brugernavn: {{user["username"]}}<br/>
-Fulde navn: {{user["name"]}}
+  <b>Brugernavn:</b> {{user["username"]}}<br/>
+  <b>Fulde navn:</b> {{user["name"]}}
 </p>
 
 <p>
-Adresse: {{user["address"]}}<br/>
-Postnummer: {{user["zipcode"]}}<br/>
-By: {{user["city"]}}
+  <b>Email:</b> {{user["email"]}}<br/>
+  <b>Telefon:</b> {{user["phone"]}}
 </p>
 
 <p>
-Telefon: {{user["phone"]}}<br/>
-Email: {{user["email"]}}
-</p>
-
----------------------------------
-<p>
-Fødselsdag: {{user["birthday"]}}<br/>
-Kørekort: {% if user["driverslicence"] == 1 %}Ja{% else %}Nej{% endif %}
+  <b>Adresse:</b> {{user["address"]}}<br/>
+  <b>Postnummer:</b> {{user["zipcode"]}}<br/>
+  <b>By:</b> {{user["city"]}}
 </p>
 
 <p>
-Startede på DIKU: {{user["diku_age"]}}<br/>
-Tidligere rusture: {{user["earlier_tours"]}}
+  <b>Fødselsdag:</b> {{user["birthday"]}}
 </p>
 
 <p>
-Lidt om mig selv: {{user["about_me"]|markdown}}
+  <b>Kørekort:</b> {% if user["driverslicence"] == 1 %}Ja{% else %}Nej{% endif %}
+</p>
+
+<hr>
+
+<p>
+  <b>Startede på DIKU:</b> {{user["diku_age"]}}<br/>
+  <b>Tidligere rusture:</b> {{user["earlier_tours"]}}
+</p>
+
+<hr>
+
+<p>
+  <b>Lidt om mig selv:</b> {{user["about_me"]|markdown}}
 </p>
 {% endblock %}
