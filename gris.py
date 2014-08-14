@@ -36,7 +36,7 @@ def error(code):
 
 @app.errorhandler(404)
 def error404(code):
-	return render_template('error/404.html')
+	return render_template("error/404.html")
 
 
 ### JINJA ###

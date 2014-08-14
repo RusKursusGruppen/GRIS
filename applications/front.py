@@ -15,7 +15,7 @@ front = Blueprint('front', __name__, template_folder = '../templates/front')
 @logged_in
 def frontpage():
     news = data.execute("SELECT * FROM News ORDER BY created DESC")# WHERE for_tutors = ? OR for_mentors = ?", tutor, mentor)
-    return render_template("front/frontpage.html", news=news)
+    return render_template("frontpage.html", news=news)
 
 @front.route('/add_news', methods=['GET', 'POST'])
 @logged_in
@@ -43,7 +43,7 @@ def add_news():
         w.textarea("text", "Tekst")
 
         form = w.create()
-        return render_template('form.html', form=form)
+        return render_template("form.html", form=form)
 
 @front.route('/modify_news/<id>', methods=['GET', 'POST'])
 @logged_in
@@ -79,4 +79,4 @@ def modify_news(id):
         w.html('<button type="submit" name="delete" value="delete">Slet nyhed</button>', "")
 
         form = w.create(news)
-        return render_template('form.html', form=form)
+        return render_template("form.html", form=form)

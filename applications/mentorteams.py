@@ -16,7 +16,7 @@ mentorteams = Blueprint('mentorteams', __name__, template_folder = '../templates
 def overview():
     teams = data.execute("SELECT * FROM Mentorteams ORDER BY year DESC")
     teams = itertools.groupby(teams, key=get("year"))
-    return render_template("mentorteams/overview.html", teams=teams)
+    return render_template("overview.html", teams=teams)
 
 @mentorteams.route('/mentorteams/team/<m_id>')
 @logged_in('mentor')
@@ -24,7 +24,7 @@ def mentorteam(m_id):
     team = data.execute("SELECT * FROM Mentorteams WHERE m_id = ?", m_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE mentor = ?", m_id)
     mentors = data.execute("SELECT * FROM Mentors WHERE m_id = ?", m_id)
-    return render_template("mentorteams/mentorteam.html", team=team, russer=russer, mentors=mentors)
+    return render_template("mentorteam.html", team=team, russer=russer, mentors=mentors)
 
 @mentorteams.route('/mentorteams/new', methods=['GET', 'POST'])
 @logged_in('mentor')
@@ -140,4 +140,4 @@ def delete(m_id):
         w.html("Vil du slette holdet?")
         w.html('<button type="submit" name="delete" value="delete">Slet</button>', "Slet mentorhold?")
         form = w.create()
-        return render_template('form.html', form=form)
+        return render_template("form.html", form=form)

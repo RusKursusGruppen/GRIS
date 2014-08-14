@@ -16,7 +16,7 @@ rustours = Blueprint('rustours', __name__, template_folder = '../templates/rusto
 def overview():
     tours = data.execute("SELECT * FROM Tours ORDER BY year DESC")
     tours = itertools.groupby(tours, key=get("year"))
-    return render_template("rustours/overview.html", tours=tours)
+    return render_template("overview.html", tours=tours)
 
 @rustours.route('/rustours/tour/<t_id>')
 @logged_in('rkg')
@@ -42,7 +42,7 @@ def rustour(t_id):
 
     unassigned = data.execute("SELECT r_id, name FROM Russer WHERE rustour = ? AND dutyteam IS NULL ORDER BY name DESC", t_id)
 
-    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors, dutyteams=dutyteams, unassigned=unassigned)
+    return render_template("rustour.html", tour=tour, russer=russer, tutors=tutors, dutyteams=dutyteams, unassigned=unassigned)
 
 @rustours.route('/rustours/new', methods=['GET', 'POST'])
 @logged_in('rkg')
@@ -163,7 +163,7 @@ def delete(t_id):
         w.html("Vil du slette rusturen?")
         w.html('<button type="submit" name="delete" value="delete">Slet rustur</button>', "Slet rustur?")
         form = w.create()
-        return render_template('form.html', form=form)
+        return render_template("form.html", form=form)
 
 @rustours.route('/rustours/tour/<t_id>/dutyteams', methods=['GET', 'POST'])
 @logged_in('admin')
@@ -202,4 +202,4 @@ def dutyteams(t_id):
             w.textfield(dutyteam['d_id'], "Omdøb:", value=dutyteam['name'])
         w.textfield("new", "Nyt tjansehold:")
         form = w.create()
-        return render_template('form.html', form=form)
+        return render_template("form.html", form=form)
