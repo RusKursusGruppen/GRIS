@@ -5,7 +5,7 @@ import random, datetime, string, time, itertools, re
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front, now, rkgyear
+from lib.tools import logged_in, empty, url_front, now, rkgyear, get
 
 import config
 
@@ -15,7 +15,7 @@ mentorteams = Blueprint('mentorteams', __name__, template_folder = '../templates
 @logged_in
 def overview():
     teams = data.execute("SELECT * FROM Mentorteams ORDER BY year DESC")
-    teams = itertools.groupby(teams, key=lambda team: team['year'])
+    teams = itertools.groupby(teams, key=get("year"))
     return render_template("mentorteams/overview.html", teams=teams)
 
 @mentorteams.route('/mentorteams/team/<m_id>')
