@@ -137,11 +137,7 @@ def settings():
         w.textfield("city", "By")
         w.textfield("phone", "Telefonnummer")
         w.textfield("email", "Email")
-#        w.textfield("birthday", "Fødselsdag")
-        w.html('<input type="text" id="usermanager.birthday" maxlength="25" size="25" name="birthday" value="'+birthday+'">' +
-               html.calendar("usermanager.birthday")
-               + '<span class="note">(Format: yyyy-MM-dd)</span>', description="Fødselsdag")
-
+        wb.calendar("birthday", "Fødselsdag")
         w.checkbox("driverslicence", "Har du kørekort?")
         w.textfield("diku_age", "Hvornår startede du på DIKU?")
         w.textfield("earlier_tours", "Tidligere rusture (brug ; mellem de forskellige turnavne)")
