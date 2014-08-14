@@ -114,7 +114,7 @@ def rus(r_id):
         birthday = rus["birthday"]
         if birthday == None:
             birthday = ""
-        else:
+        elif isinstance(birthday, datetime.date):
             birthday = birthday.isoformat()
 
         dutyteams = data.execute("SELECT * FROM Dutyteams WHERE t_id = ?", rus["rustour"])

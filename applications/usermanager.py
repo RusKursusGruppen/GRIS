@@ -125,7 +125,7 @@ def settings():
         birthday = user["birthday"]
         if birthday == None:
             birthday = ""
-        else:
+        elif isinstance(birthday, datetime.date):
             birthday = birthday.isoformat()
 
         w = html.WebBuilder()
