@@ -28,6 +28,7 @@ def rus(r_id):
         b.filled_by = session["username"]
         b.called = 1 if "called" in request.form else 0
         b.name
+        b.gender
         b.co
         b.address
         b.zipcode
@@ -134,12 +135,14 @@ def rus(r_id):
         user_friends = ['&quot;{0}&quot; {1}; '.format(friend['username'], friend['name']) for friend in user_friends]
         user_friends = "".join(user_friends)
 
+        gender = [("male", "Mand"), ("female", "Kvinde"), ("other", "andet")]
 
         wb = html.WebBuilder()
         wb.form()
         wb.formtable()
         wb.checkbox("called", "Opringet")
         wb.textfield("name", "Navn")
+        wb.select("gender", "Køn", gender)
 #        wb.textfield("birthday", "Fødselsdag")
         wb.html('<input type="text" id="rusmanager.birthday" maxlength="25" size="25" name="birthday" value="'+birthday+'">' +
                html.calendar("rusmanager.birthday")

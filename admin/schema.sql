@@ -102,6 +102,7 @@ CREATE TABLE Russer(
     r_id                serial PRIMARY KEY,
 
     name                text NOT NULL,
+    gender              text CHECK (gender IN ('m', 'f', 'o')),
     filled_by           text,
     called              integer NOT NULL,
     co                  text,
