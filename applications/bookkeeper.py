@@ -311,14 +311,11 @@ def entry(b_id, e_id=None):
             entry = data.execute("SELECT * FROM Entries WHERE e_id = ?", e_id)[0]
             description = entry['description']
             amount_string = entry['amount_string']
-            date = entry['date']
+            date = entry['date'].isoformat()
             creditor = entry['creditor']
         w.textfield("description", "Hvad", value=description)
         w.textfield("amount_string", "Beløb", value=amount_string)
-        # TODO: make WebBuilder understand calendars
-        w.html('<input type="text" id="bookkeeper.date" maxlength="25" size="25" name="date" value="'+date+'">' +
-               html.calendar("bookkeeper.date")
-               + '<span class="note">(Format: yyyy-MM-dd)</span>', description="Hvornår")
+        w.calendar("date", "Hvornår", value=date)
 
         participants = data.execute("SELECT * FROM Book_participants as B INNER JOIN Users as U ON B.participant = U.username WHERE b_id = ?", b_id)
         participant_names = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in participants]
