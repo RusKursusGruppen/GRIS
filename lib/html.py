@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import itertools, string
+import itertools, string, datetime
 from functools import reduce
 
 from jinja2 import Markup
@@ -188,6 +188,9 @@ class WebBuilder(object):
     def select(self, dbq="", description="", items={}, **kwargs):
         self._newobj(_Select(dbq, description, items, kwargs))
 
+    def calendar(self, dbq, description, value, maxlength="25", size="25", d_Format="yyyyMMdd", selector="arrow", time=False, t_Format=24, seconds=False, futurepast=""):
+        self._newobj(_Calendar(dbq, description, value, maxlength, size, d_Format, selector, time, t_Format, seconds, futurepast))
+
     def html(self, code, description="", **kwargs):
         self._newobj(_Html(code, description, kwargs))
 
@@ -284,6 +287,46 @@ class _Select(_Webobject):
                 d.append('<option value="{0}">{1}</option>'.format(k, v))
         d.append("</select>")
         return '\n'.join(d)
+
+class _Calendar(_Webobject):
+    def __init__(self, dbq, description, value, maxlength, size, d_Format, selector, time, t_Format, seconds, futurepast):
+        self.dbq = dbq
+        self.description = description
+
+        self.id = dbq + _semiunique_key()
+        self.value = value
+        self.maxlength = maxlength
+        self.size = size
+        self.name = dbq
+
+        self.d_Format = d_Format
+        self.selector = selector
+        self.time = time
+        self.t_Format = t_Format
+        self.seconds = seconds
+        self.futurepast = futurepast
+
+    def compile(self, dbqv):
+        result = '<input type="text" id="{id}" maxlength="{maxlength}" size="{size}" name="{name}" value="{value}">'
+        result += '{cal}'
+        result += '<span class="note">{note}</span>'
+
+        if self.time:
+            format = self.d_Format + " " + self.t_Format
+        else:
+            format = self.d_Format
+        note = "(Format: {format})".format(format=format)
+
+        print(dbqv)
+        print(type(dbqv))
+        value = dbqv if dbqv else self.value
+        if isinstance(value, datetime.date):
+            value = value.isoformat()
+        print(value)
+        cal = calendar(self.id, self.d_Format, self.selector, self.time, self.t_Format, self.seconds, self.futurepast)
+
+        result = result.format(id=self.id, maxlength=self.maxlength, size=self.size, name=self.name, value=value, cal=cal, note=note)
+        return result
 
 class _Html(_Webobject):
     def __init__(self, code, description, attributes):
