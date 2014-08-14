@@ -26,6 +26,7 @@ def rus(r_id):
 
         b = data.Bucket(request.form)
         b.filled_by = session["username"]
+        b.can_contact = True if "can_contact" in request.form else False
         b.called = 1 if "called" in request.form else 0
         b.name
         b.gender
@@ -140,6 +141,7 @@ def rus(r_id):
         wb = html.WebBuilder()
         wb.form()
         wb.formtable()
+        wb.checkbox("can_contact", "Må kontaktes")
         wb.checkbox("called", "Opringet")
         wb.textfield("name", "Navn")
         wb.select("gender", "Køn", gender)

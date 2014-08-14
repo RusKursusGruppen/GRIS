@@ -104,6 +104,7 @@ CREATE TABLE Russer(
     name                text NOT NULL,
     gender              text CHECK (gender IN ('male', 'female', 'other')),
     filled_by           text,
+    can_contact         boolean DEFAULT TRUE,
     called              integer NOT NULL,
     co                  text,
     address             text,
