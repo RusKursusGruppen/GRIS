@@ -27,7 +27,7 @@ def rus(r_id):
         b = data.Bucket(request.form)
         b.filled_by = session["username"]
         b.can_contact = True if "can_contact" in request.form else False
-        b.called = 1 if "called" in request.form else 0
+        b.called = "called" in request.form
         b.name
         b.gender
         b.birthday = nonify(b.birthday)
@@ -52,10 +52,10 @@ def rus(r_id):
         b.plays_instrument
         b.other
         b.tshirt
-        b.paid = 1 if "paid" in request.form else 0
-        b.attending_uniday = 1 if "attending_uniday" in request.form else 0
-        b.attending_campus = 1 if "attending_campus" in request.form else 0
-        b.attending_rustour = 1 if "attending_rustour" in request.form else 0
+        b.paid = "paid" in request.form
+        b.attending_uniday = "attending_uniday" in request.form
+        b.attending_campus = "attending_campus" in request.form
+        b.attending_rustour = "attending_rustour" in request.form
 
         b.rustour = nonify(b.rustour)
         b.dutyteam = nonify(b.dutyteam)
@@ -134,7 +134,7 @@ def rus(r_id):
         friends = "".join(friends)
 
         # Friends of us:
-        users = data.execute("SELECT username, name FROM Users WHERE deleted = 0")
+        users = data.execute("SELECT username, name FROM Users WHERE deleted = ?", False)
         users = ['\\"{0}\\" {1}'.format(user['username'], user['name']) for user in users]
         user_friends = data.execute("SELECT username, name FROM Friends_of_us INNER JOIN USERS Using (username) WHERE r_id = ?", r_id)
         user_friends = ['&quot;{0}&quot; {1}; '.format(friend['username'], friend['name']) for friend in user_friends]
@@ -196,7 +196,7 @@ def new():
             return redirect(url_for('rusmanager.overview'))
 
         name = " ".join([x.capitalize() for x in request.form['name'].split()])
-        r_id = data.execute("INSERT INTO Russer(name, called) VALUES(?,?) RETURNING r_id", name, 0)[0][0]
+        r_id = data.execute("INSERT INTO Russer(name) VALUES(?) RETURNING r_id", name)[0][0]
         flash("Rus oprettet")
         return redirect(url_for('rusmanager.rus', r_id=r_id))
     else:

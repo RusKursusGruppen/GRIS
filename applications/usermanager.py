@@ -35,7 +35,7 @@ def login():
         user = data.execute('SELECT password, deleted FROM Users WHERE username = ?', username)
         if empty(user) or not password.check(raw_password, user[0]['password']):
             flash('Invalid username or password')
-        elif user[0]["deleted"] == 1:
+        elif user[0]["deleted"]:
             flash('Sorry, your user has been deleted')
         else:
             session['logged_in'] = True
@@ -80,13 +80,13 @@ def logout():
 @usermanager.route('/usermanager')
 @logged_in
 def overview():
-    users = data.execute("select username, name from Users where deleted = 0 order by name")
+    users = data.execute("select username, name from Users where deleted = ? order by name", False)
     return render_template("usermanager/overview.html", users=users)
 
 @usermanager.route('/usermanager/deleted_users')
 @logged_in
 def deleted_users():
-    users = data.execute("select username, name from Users where deleted = 1 order by name")
+    users = data.execute("select username, name from Users where deleted = ? order by name", True)
     return render_template("usermanager/deleted_users.html", users=users)
 
 
@@ -109,7 +109,7 @@ def settings():
         b.zipcode
         b.city
         b.birthday
-        b.driverslicence = 1 if "driverslicence" in request.form else 0
+        b.driverslicence = "driverslicence" in request.form
         b.diku_age
         b.about_me# = request.form["about_me"]
         b >> ("UPDATE Users $ WHERE username = ?", username)

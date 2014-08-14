@@ -43,7 +43,7 @@ def delete_user():
             return redirect(url_for('admin.overview'))
 
         b = data.Bucket(request.form)
-        b.deleted = 1
+        b.deleted = True
         b >> ("UPDATE Users SET $ WHERE username = ?", request.form["user"])
 
         data.execute("DELETE FROM Group_users WHERE username = ?", request.form["user"])
@@ -53,7 +53,7 @@ def delete_user():
         return redirect(url_for('admin.delete_user'))
 
     else:
-        users = data.execute("SELECT * FROM Users WHERE deleted = 0")
+        users = data.execute("SELECT * FROM Users WHERE deleted = ?", False)
         users = [(user['username'], "{0}: {1}".format(user['username'], user['name'])) for user in users]
 
         w = html.WebBuilder()
@@ -75,7 +75,7 @@ def groups_overview():
 @logged_in('admin')
 def group(groupname):
     if request.method == "POST":
-        users = data.execute('SELECT username FROM Users WHERE deleted = 0')
+        users = data.execute('SELECT username FROM Users WHERE deleted = ?', False)
 
 
         for user in users:
@@ -89,7 +89,7 @@ def group(groupname):
                 pass
         return redirect(url_for('admin.groups_overview'))
     else:
-        users = data.execute('SELECT username, name FROM Users WHERE deleted = 0')
+        users = data.execute('SELECT username, name FROM Users WHERE deleted = ?', False)
         group = data.execute('SELECT username FROM Group_users WHERE groupname = ?', groupname)
         group = set(user['username'] for user in group)
 

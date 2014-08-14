@@ -9,7 +9,7 @@ CREATE TABLE Users(
     password            text NOT NULL,
 
     name                text DEFAULT 'RUS',
-    driverslicence      int NOT NULL default 0,
+    driverslicence      boolean,
     address             text,
     zipcode             text,
     city                text,
@@ -20,7 +20,7 @@ CREATE TABLE Users(
     diku_age            text,
     about_me            text,
 
-    deleted             int DEFAULT 0 -- Field for marking a user as deleted
+    deleted             boolean DEFAULT FALSE -- Field for marking a user as deleted
 );
 
 DROP TABLE IF EXISTS Groups CASCADE;
@@ -74,7 +74,7 @@ CREATE TABLE Tours_tutors(
 
 DROP TABLE IF EXISTS Dutyteams CASCADE;
 CREATE TABLE Dutyteams(
-    d_id               serial PRIMARY KEY,
+    d_id                serial PRIMARY KEY,
     t_id                integer REFERENCES Tours(t_id) NOT NULL,
     name                text
 );
@@ -107,7 +107,7 @@ CREATE TABLE Russer(
 
     filled_by           text,
     can_contact         boolean DEFAULT TRUE,
-    called              integer NOT NULL,
+    called              boolean DEFAULT FALSE,
     co                  text,
     address             text,
     zipcode             text,
@@ -134,11 +134,11 @@ CREATE TABLE Russer(
     plays_instrument    text,
     other               text,
     tshirt              text,
-    paid                integer NOT NULL default 0,
+    paid                boolean DEFAULT FALSE,
 
-    attending_uniday    integer NOT NULL default 0,
-    attending_campus    integer NOT NULL default 0,
-    attending_rustour   integer NOT NULL default 0,
+    attending_uniday    boolean,
+    attending_campus    boolean,
+    attending_rustour   boolean,
 
     rustour             integer REFERENCES Tours(t_id),
     dutyteam            integer REFERENCES Dutyteams(d_id),
@@ -230,7 +230,7 @@ CREATE TABLE Entries(
     date                date,
     creditor            text REFERENCES Users(username),
     description         text,
-    amount_text       text, -- The unevaluated text,
+    amount_text         text, -- The unevaluated text,
     amount              integer -- and its result.
 );
 
@@ -258,7 +258,7 @@ CREATE TABLE Payments(
     creditor            text REFERENCES Users(username),
     debtor              text REFERENCES Users(username),
     amount              integer,
-    confirmed           integer NOT NULL default 0, --0 not confirmed, -1 rejected, 1 confirmed
+    confirmed           text CHECK (confirmed in ('confirmed', 'rejected', 'unconfirmed')),
     PRIMARY KEY (b_id, creditor, debtor)
 );
 
