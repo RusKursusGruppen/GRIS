@@ -30,6 +30,7 @@ def rus(r_id):
         b.called = 1 if "called" in request.form else 0
         b.name
         b.gender
+        b.birthday = nonify(b.birthday)
         b.co
         b.address
         b.zipcode
@@ -64,7 +65,6 @@ def rus(r_id):
             if b.rustour != t_id:
                 b.dutyteam = None
         b.mentor = nonify(b.mentor)
-        b.birthday
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
 
         # Friends:
