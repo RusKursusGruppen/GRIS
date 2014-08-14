@@ -237,8 +237,8 @@ def forgot_password(username):
     length = random.randrange(min, max)
     alphabet = string.ascii_letters + string.digits
 
-    found = True
-    while found:
+    finished = False
+    while not finished:
         key = ''.join(random.choice(alphabet) for x in range(length))
         try:
             b = data.Bucket()
@@ -246,11 +246,11 @@ def forgot_password(username):
             b.key = key
             b.created = now()
             b >= "User_forgotten_password_keys"
-            found = False
+            finished = True
             break
         except psycopg2.IntegrityError as e:
             if str(e).startswith('duplicate key value violates unique constraint "user_forgotten_password_keys_pkey"'):
-                found = True
+                finished = False
                 continue
             else:
                 raise
