@@ -103,11 +103,11 @@ def settings():
 
         b = data.Bucket(request.form)
         b.name
+        b.email
+        b.phone
         b.address
         b.zipcode
         b.city
-        b.phone
-        b.email
         b.birthday
         b.driverslicence = 1 if "driverslicence" in request.form else 0
         b.diku_age
@@ -132,11 +132,11 @@ def settings():
         w.form()
         w.formtable()
         w.textfield("name", "Fulde navn")
+        w.textfield("email", "Email")
+        w.textfield("phone", "Telefonnummer")
         w.textfield("address", "Adresse")
         w.textfield("zipcode", "Postnummer")
         w.textfield("city", "By")
-        w.textfield("phone", "Telefonnummer")
-        w.textfield("email", "Email")
         w.calendar("birthday", "Fødselsdag")
         w.checkbox("driverslicence", "Har du kørekort?")
         w.textfield("diku_age", "Hvornår startede du på DIKU?")
