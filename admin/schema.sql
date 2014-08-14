@@ -27,7 +27,6 @@ DROP TABLE IF EXISTS Groups CASCADE;
 CREATE TABLE Groups(
        groupname        text PRIMARY KEY
 );
-INSERT INTO Groups(groupname) VALUES('all');
 INSERT INTO Groups(groupname) VALUES('admin');
 INSERT INTO Groups(groupname) VALUES('rkg');
 INSERT INTO Groups(groupname) VALUES('mentor');
