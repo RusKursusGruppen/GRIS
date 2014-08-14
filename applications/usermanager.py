@@ -125,6 +125,8 @@ def settings():
         birthday = user["birthday"]
         if birthday == None:
             birthday = ""
+        else:
+            birthday = birthday.isoformat()
 
         w = html.WebBuilder()
         w.form()
