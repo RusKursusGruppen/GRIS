@@ -58,6 +58,9 @@ def create_user(username, raw_password, name="", email="", groups=[]):
     b >= "Users"
     set_user_groups(username, groups)
 
+    message = mail.new_user_adminmail.format(username=b.username, name=b.name, email=b.email)
+    mail.admin("User Created", message)
+
 def update_password(username, raw_password):
     passwd = password.encode(raw_password)
     data.execute("UPDATE Users SET password = ? WHERE username = ?", passwd, username)
@@ -383,6 +386,10 @@ def invite():
 
             mail.send(email_address, "Invitation til GRIS", text)
         flash("Invitationer sendt")
+
+
+        message = mail.invitation_send_adminmail.format(email=request.form['email'])
+        mail.admin("User Invited", message)
 
         return redirect(url_for("usermanager.overview"))
 

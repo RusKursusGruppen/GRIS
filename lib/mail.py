@@ -26,3 +26,15 @@ def admin(subject, text, type="plain"):
         admins = data.execute("SELECT email FROM Group_users INNER JOIN Users USING (username) WHERE groupname = ? and email IS NOT NULL", "admin")
         if len(admins) > 0:
             send(admins, subject, text, type)
+
+new_user_adminmail = """
+A new user has been created
+Username: {username}
+Name: {name}
+email: {email}
+"""
+
+invitation_send_adminmail = """
+An invitation has been send to:
+{email}
+"""
