@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 HOST = "127.0.0.1"
+PORT = 5000
 URL = "http://localhost:5000"
 
 CSRF_ENABLED = True

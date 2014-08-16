@@ -60,4 +60,4 @@ def goodbye():
         mail.admin("GRIS shutdown", "GRIS has exited at {0}\nThis could either be caused by an error or by a restart.".format(now()))
 
 if __name__ == '__main__':
-    app.run(config.HOST)
+    app.run(config.HOST, config.PORT)
