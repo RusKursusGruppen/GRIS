@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
 
+HOST = "127.0.0.1"
+URL = "http://localhost:5000"
+
 CSRF_ENABLED = True
 DEBUG = True
 SECRET_KEY = 'randomly generated secret development key'
 BCRYPT_LOG_ROUNDS = 12
 USER_CREATION_KEY_MIN_LENGTH = 128
 USER_CREATION_KEY_MAX_LENGTH = 256
-EMAIL = "name <mail@something.com>"
+
+EMAIL = "mail@example.com"
+EMAIL_PASSWORD = ""
+EMAIL_HOST = ""
+EMAIL_HOST_PORT = 587
+
 LOGFILE = "log.txt"
 PRINT_LOG = False
 

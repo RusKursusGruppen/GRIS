@@ -6,6 +6,8 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 from lib import data, tools, greetings
 from lib.tools import logged_in, now
 
+import config
+
 from applications.schedule import schedule
 from applications.rusmanager import rusmanager
 from applications.usermanager import usermanager
@@ -50,4 +52,4 @@ app.jinja_env.globals.update(url_front=tools.url_front)
 app.jinja_env.globals.update(random_greeting=greetings.random_greeting)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(config.HOST)
