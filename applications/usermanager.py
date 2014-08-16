@@ -357,24 +357,24 @@ def invite():
         if 'cancel' in request.form:
             return redirect(url_front())
 
-        key = generate_key()
+        email_addresses = request.form['email']
+        for email_address in email_addresses.splitlines():
+            key = generate_key()
+            url = config.URL + url_for("usermanager.new", key=key)
+            text = invite_mail.format(url=url)
 
-        email_address = request.form['email']
-        url = config.URL + url_for("usermanager.new", key=key)
-        text = invite_mail.format(url=url)
+            data.execute("UPDATE User_creation_keys SET email = ? WHERE key = ?", email_address, key)
 
-        data.execute("UPDATE User_creation_keys SET email = ? WHERE key = ?", email_address, key)
+            mail.send(email_address, "Invitation til GRIS", text)
+        flash("Invitationer sendt")
 
-        mail.send(email_address, "Invitation til GRIS", text)
-        flash("Invitation sendt")
-
-        return redirect(url_front())
+        return redirect(url_for("usermanager.overview"))
 
     else:
         w = html.WebBuilder()
         w.form()
         w.formtable()
-        w.textfield("email", "Email")
+        w.textarea("email", "Emails (1 pr. linje)")
         form = w.create()
         return render_template("form.html", form=form)
 
