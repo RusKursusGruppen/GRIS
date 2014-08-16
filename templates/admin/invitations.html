@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+
+{% block body %}
+{% for invitation in invitations %}
+{{invitation}}
+{% else %}
+Der er ingen åbne invitationer
+{% endfor %}
+{% endblock %}
