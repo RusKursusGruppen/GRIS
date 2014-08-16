@@ -49,9 +49,13 @@ def login():
             return redirect(session.pop('login_origin', url_front()))
     return render_template("usermanager/login.html", error=error)
 
-def create_user(username, raw_password, name="", groups=[]):
-    passw = password.encode(raw_password)
-    data.execute("INSERT INTO Users(username, password, name) VALUES(?,?,?)", username, passw, name)
+def create_user(username, raw_password, name="", email="", groups=[]):
+    b = data.Bucket()
+    b.username = username
+    b.password = password.encode(raw_password)
+    b.name = name
+    b.email = email
+    b >= "Users"
     set_user_groups(username, groups)
 
 def update_password(username, raw_password):
@@ -342,10 +346,13 @@ def new(key):
             flash("Du skal vælge et løsen")
             return html.back()
 
-        create_user(b.username, b.password1, b.name)
+        create_user(b.username, b.password1, b.name, b.email)
         flash("Ny bruger oprettet")
 
-        return redirect(url_for('usermanager.login'))
+        session['logged_in'] = True
+        session['username']  = b.username
+
+        return redirect(url_for("usermanager.settings"))
     else:
 
         wb = html.WebBuilder()
