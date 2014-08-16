@@ -11,3 +11,11 @@ def create_secret_key():
     key = os.urandom(length)
     with open(filename, "wb") as file:
         file.write(key)
+    return key
+
+def load_secret_key():
+    if os.path.isfile(config.SECRET_KEY_FILE):
+        with open(config.SECRET_KEY_FILE, "rb") as file:
+            return file.read()
+    else:
+        return create_secret_key()

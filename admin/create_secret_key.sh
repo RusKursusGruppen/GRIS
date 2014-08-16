@@ -12,4 +12,7 @@ from lib.configuration import create_secret_key
 create_secret_key()
 EOF
 
-echo "Generated new secret_key"
+if [[ $? == 0 ]]
+then
+    echo "Generated new secret_key"
+fi

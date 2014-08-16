@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from lib.configuration import load_secret_key
+
 HOST = "127.0.0.1"
 PORT = 5000
 URL = "http://localhost:5000"
@@ -9,8 +11,7 @@ DEBUG = True
 
 SECRET_KEY_LENGTH = 24
 SECRET_KEY_FILE = "secret_key"
-with open(SECRET_KEY_FILE, "rb") as file:
-    SECRET_KEY = file.read()
+SECRET_KEY = load_secret_key()
 
 BCRYPT_LOG_ROUNDS = 12
 
