@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import atexit
+
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-from lib import data, tools, greetings
+from lib import data, tools, greetings, mail
 from lib.tools import logged_in, now
 
 import config
@@ -50,6 +52,11 @@ app.jinja_env.filters['markdown'] = filters.markdown
 app.jinja_env.filters['money'] = filters.money
 app.jinja_env.globals.update(url_front=tools.url_front)
 app.jinja_env.globals.update(random_greeting=greetings.random_greeting)
+
+### APPLICATION ###
+@atexit.register
+def goodbye():
+    mail.admin("GRIS shutdown", "GRIS has exited at {0}".format(now())
 
 if __name__ == '__main__':
     app.run(config.HOST)
