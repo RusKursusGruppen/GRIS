@@ -233,6 +233,7 @@ class _Textfield(_Webobject):
     def compile(self, dbqv):
         result = "<input type=text "
         result += self._attributes_string(dbqv)
+        result += " autofocus=\"autofocus\""
         result += ">"
         return result
 
