@@ -2,6 +2,9 @@
 
 from smtplib import SMTP
 from email.mime.text import MIMEText
+
+from lib import data
+
 import config
 
 def send(to, subject, text, type="html"):
@@ -19,6 +22,6 @@ def send(to, subject, text, type="html"):
     session.sendmail(config.EMAIL, to, msg.as_string())
 
 def admin(subject, text, type="plain"):
-    admins = data.execute("SELECT email FROM Groups INNER JOIN Users WHERE groupname = ?", "admin")
-    admins = [admin['email'] for admin in admins]
-    send(admins, subject, text, type)
+    admins = data.execute("SELECT email FROM Group_users INNER JOIN Users USING (username) WHERE groupname = ? and email IS NOT NULL", "admin")
+    if len(admins) > 0:
+        send(admins, subject, text, type)
