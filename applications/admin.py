@@ -121,3 +121,10 @@ def group(groupname):
             w.checkbox(user['username'], '"{0}" {1}'.format(user['username'], user['name']))
         form = w.create(kv)
         return render_template("form.html", form=form)
+
+@admin.route('/admin/invitations')
+def invitations():
+    usermanager.delete_old_keys()
+    emails = data.execute("SELECT email FROM User_creation_keys")
+    emails = [x['email'] for x in emails if x['email'] is not None]
+    return render_template("admin/invitations.html", invitations=emails)

@@ -182,9 +182,8 @@ def change_password():
 
 @usermanager.route("/usermanager/settings/password/renew/<key>", methods=['GET', 'POST'])
 def renew_password(key):
-    # EXPLANATION: weed out old creation keys
-    overtime = now() - datetime.timedelta(minutes=20)
-    data.execute("DELETE FROM User_forgotten_password_keys WHERE created <= ?", overtime)
+    # EXPLANATION: weed out old password keys
+    delete_old_keys()
 
     result = data.execute("SELECT * FROM User_forgotten_password_keys WHERE key = ?", key)
     if len(result) != 1:
@@ -301,13 +300,23 @@ def sanitize_username(username):
     illegal_characters = [';" ']
     return not any(illegal in username for illegal in illegal_characters)
 
+def delete_old_keys():
+    """Delete all old keys"""
+
+    # EXPLANATION: weed out old creation keys
+    overtime = now() - datetime.timedelta(days=30)
+    data.execute("DELETE FROM User_creation_keys WHERE created <= ?", overtime)
+
+    # EXPLANATION: weed out old password keys
+    overtime = now() - datetime.timedelta(minutes=20)
+    data.execute("DELETE FROM User_forgotten_password_keys WHERE created <= ?", overtime)
+
 @usermanager.route('/usermanager/new/<key>', methods=['GET', 'POST'])
 def new(key):
     time.sleep(random.randint(2,6))
 
     # EXPLANATION: weed out old creation keys
-    overtime = now() - datetime.timedelta(days=30)
-    data.execute("DELETE FROM User_creation_keys WHERE created <= ?", overtime)
+    delete_old_keys()
 
     # EXPLANATION: Check if key exists/is valid
     result = data.execute("SELECT key, email FROM User_creation_keys WHERE key = ?", key)
