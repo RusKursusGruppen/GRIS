@@ -69,6 +69,19 @@ def delete_user():
 def groups_overview():
     groups = data.execute('SELECT * FROM Group_users INNER JOIN Users USING (username) ORDER BY groupname, username')
     groups = itertools.groupby(groups, key=get('groupname'))
+    groups = [(x[0], list(x[1])) for x in groups]
+
+    all_groups = data.execute("SELECT groupname FROM Groups ORDER BY groupname")
+    all_groups = [group['groupname'] for group in all_groups]
+
+    result = []
+    for group in all_groups:
+        if len(groups) > 0 and groups[0][0] == group:
+            result.append(groups.pop(0))
+        else:
+            result.append((group, []))
+    groups = result
+
     return render_template("admin/group_overview.html", groups=groups)
 
 @admin.route('/admin/groups/<groupname>', methods=["GET", "POST"])
