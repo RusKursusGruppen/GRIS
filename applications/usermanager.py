@@ -6,7 +6,7 @@ import psycopg2
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
 from lib import data, password, mail, html
-from lib.tools import logged_in, empty, url_front, now, unnonify
+from lib.tools import logged_in, empty, url_front, now, unnonify, nonify
 
 import config
 
@@ -108,7 +108,7 @@ def settings():
         b.address
         b.zipcode
         b.city
-        b.birthday
+        b.birthday = nonify(b.birthday)
         b.driverslicence = "driverslicence" in request.form
         b.diku_age
         b.about_me# = request.form["about_me"]
