@@ -5,8 +5,14 @@ URL = "http://localhost:5000"
 
 CSRF_ENABLED = True
 DEBUG = True
-SECRET_KEY = 'randomly generated secret development key'
+
+SECRET_KEY_LENGTH = 24
+SECRET_KEY_FILE = "secret_key"
+with open(SECRET_KEY_FILE, "rb") as file:
+    SECRET_KEY = file.read()
+
 BCRYPT_LOG_ROUNDS = 12
+
 USER_CREATION_KEY_MIN_LENGTH = 128
 USER_CREATION_KEY_MAX_LENGTH = 256
 
