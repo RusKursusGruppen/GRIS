@@ -2,6 +2,7 @@
 
 from lib.configuration import load_secret_key
 
+
 HOST = "127.0.0.1"
 PORT = 5000
 URL = "http://localhost:5000"
