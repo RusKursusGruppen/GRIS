@@ -16,7 +16,7 @@ rustours = Blueprint('rustours', __name__, template_folder = '../templates/rusto
 def overview():
     tours = data.execute("SELECT * FROM Tours ORDER BY year DESC")
     tours = itertools.groupby(tours, key=get("year"))
-    return render_template("schedule/overview.html", tours=tours)
+    return render_template("rustours/overview.html", tours=tours)
 
 @rustours.route('/rustours/tour/<t_id>')
 @logged_in('rkg')
@@ -42,7 +42,7 @@ def rustour(t_id):
 
     unassigned = data.execute("SELECT r_id, name FROM Russer WHERE rustour = ? AND dutyteam IS NULL ORDER BY name DESC", t_id)
 
-    return render_template("schedule/rustour.html", tour=tour, russer=russer, tutors=tutors, dutyteams=dutyteams, unassigned=unassigned)
+    return render_template("rustours/rustour.html", tour=tour, russer=russer, tutors=tutors, dutyteams=dutyteams, unassigned=unassigned)
 
 @rustours.route('/rustours/new', methods=['GET', 'POST'])
 @logged_in('rkg')
@@ -133,7 +133,7 @@ def settings(t_id):
         w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
         w.html(html.autocomplete_multiple(all_tutors, "tutors", default=actual_tutors), description="Vejledere", value="abekat")
         form = w.create(tour)
-        return render_template("schedule/settings.html", form=form, t_id=t_id)
+        return render_template("rustours/settings.html", form=form, t_id=t_id)
 
 @rustours.route('/rustours/tour/<t_id>/delete', methods=['GET', 'POST'])
 @logged_in('rkg')

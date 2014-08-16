@@ -19,7 +19,7 @@ def overview():
     # TODO: Filter so you only see books referencing you
     books = data.execute("SELECT * FROM Books ORDER BY created DESC")
 
-    return render_template("rusmanager/overview.html", books=books)
+    return render_template("bookkeeper/overview.html", books=books)
 
 @bookkeeper.route("/bookkeeper/new", methods=["GET", "POST"])
 @logged_in
@@ -158,7 +158,7 @@ def book(b_id):
                 res[c] = row[c]
         breakdown.append(res)
 
-    return render_template("rusmanager/book.html", book=book, entries=entries, breakdown=breakdown, local_totals=local_totals, global_totals=global_totals)
+    return render_template("bookkeeper/book.html", book=book, entries=entries, breakdown=breakdown, local_totals=local_totals, global_totals=global_totals)
 
     #"select * from Entries as E join (select e_id, sum(share) as share_total from Debts) as T on E.e_id = T.e_id;"
     #raw_entries = data.execute('SELECT * FROM Entries AS E JOIN (SELECT e_id, SUM(share) AS share_total FROM Debts) AS T INNER JOIN (SELECT e_id, share FROM Debts WHERE debtor = ?) AS D ON E.e_id = T.e_id and E.e_id= D.e_id ORDER BY date ASC;', user)
@@ -237,7 +237,7 @@ def book(b_id):
 #         w.textfield("description", "Hvad")
 #         w.textfield("amount", "Beløb")
 #         form = w.create()
-#         return render_template("rusmanager/new_entry.html", form=form)
+#         return render_template("bookkeeper/new_entry.html", form=form)
 
 @bookkeeper.route("/bookkeeper/book/<b_id>/new_entry", methods=["GET", "POST"])
 @bookkeeper.route("/bookkeeper/book/<b_id>/entry/<e_id>", methods=["GET", "POST"])
