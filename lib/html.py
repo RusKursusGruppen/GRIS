@@ -317,12 +317,9 @@ class _Calendar(_Webobject):
             format = self.d_Format
         note = "(Format: {format})".format(format=format)
 
-        print(dbqv)
-        print(type(dbqv))
         value = dbqv if dbqv else self.value
         if isinstance(value, datetime.date):
             value = value.isoformat()
-        print(value)
         cal = calendar(self.id, self.d_Format, self.selector, self.time, self.t_Format, self.seconds, self.futurepast)
 
         result = result.format(id=self.id, maxlength=self.maxlength, size=self.size, name=self.name, value=value, cal=cal, note=note)

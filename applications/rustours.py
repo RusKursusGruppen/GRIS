@@ -180,14 +180,12 @@ def dutyteams(t_id):
 
         dutyteams = data.execute("SELECT d_id FROM Dutyteams WHERE t_id = ?", t_id)
         dutyteams = set(str(dutyteam['d_id']) for dutyteam in dutyteams)
-        print(dutyteams)
 
         for d_id in request.form.keys():
 
             if d_id in dutyteams:
                 b = data.Bucket()
                 b.name = request.form[d_id]
-                print(b.name)
                 b >> ("UPDATE Dutyteams $ WHERE t_id = ? AND d_id = ?", t_id, d_id)
 
         return redirect(url_for("rustours.rustour", t_id=t_id))

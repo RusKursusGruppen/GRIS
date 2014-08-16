@@ -31,7 +31,6 @@ def login():
 
             return render_template("usermanager/forgot.html", username=username)
 
-        print(type(raw_password))
         user = data.execute('SELECT password, deleted FROM Users WHERE username = ?', username)
         if empty(user) or not password.check(raw_password, user[0]['password']):
             flash('Invalid username or password')
@@ -154,7 +153,6 @@ def change_password():
 
         username = session["username"]
         current_password = data.execute("SELECT password FROM Users WHERE username = ?", username)[0]['password']
-        print(current_password)
 
         b = data.Bucket(request.form)
         if not password.check(b.current, current_password):
@@ -202,7 +200,6 @@ def renew_password(key):
         if b.new1 != b.new2:
             flash("De to løsner er ikke ens")
             return redirect(url_for('usermanager.renew_password', key=key))
-            print("kat")
 
         if b.new1 == "":
             flash("Du specificerede ikke et nyt løsen")
