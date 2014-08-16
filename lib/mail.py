@@ -22,6 +22,7 @@ def send(to, subject, text, type="html"):
     session.sendmail(config.EMAIL, to, msg.as_string())
 
 def admin(subject, text, type="plain"):
-    admins = data.execute("SELECT email FROM Group_users INNER JOIN Users USING (username) WHERE groupname = ? and email IS NOT NULL", "admin")
-    if len(admins) > 0:
-        send(admins, subject, text, type)
+    if config.MAIL_ADMINS:
+        admins = data.execute("SELECT email FROM Group_users INNER JOIN Users USING (username) WHERE groupname = ? and email IS NOT NULL", "admin")
+        if len(admins) > 0:
+            send(admins, subject, text, type)
