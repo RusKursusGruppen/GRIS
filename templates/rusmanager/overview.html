@@ -9,7 +9,7 @@
 <h2>Rusmanager</h2>
 <ul class=russer>
   {% for rus in russer %}
-  <li><a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a></li>
+  <li><a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a> {{ "☏" if rus['called'] else "" }} </li>
   {% else %}
   Der er ingen russer i databasen
   {% endfor %}
