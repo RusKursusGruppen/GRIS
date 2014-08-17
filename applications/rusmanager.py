@@ -79,7 +79,7 @@ def rus(r_id):
                 b.r_id1, b.r_id2 = sorted((int(friend), int(r_id)))
                 b >= "Friends"
             except psycopg2.IntegrityError as e:
-                print(e)
+                pass
 
         # Friends of us:
         user_friends = request.form['user_friends']
@@ -94,7 +94,7 @@ def rus(r_id):
                 b.username = friend
                 b >= "Friends_of_us"
             except psycopg2.IntegrityError as e:
-                print(e)
+                pass
 
         flash("Rus opdateret")
 
