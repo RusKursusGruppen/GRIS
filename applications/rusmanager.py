@@ -107,6 +107,19 @@ def rus(r_id):
             except (ValueError, IndexError):
                 pass
 
+        if "previous" in request.form:
+            russer = data.execute("SELECT r_id FROM Russer ORDER BY name ASC")
+            russer = [str(rus['r_id']) for rus in russer]
+            try:
+                index = russer.index(r_id) - 1
+                if index < 0:
+                    raise IndexError()
+                previous = russer[index]
+                return redirect(url_for('rusmanager.rus', r_id=previous))
+            except (ValueError, IndexError):
+                pass
+
+
         return redirect(url_for('rusmanager.overview'))
     else:
         rus = data.execute("SELECT * FROM Russer WHERE r_id = ?", r_id)
@@ -192,6 +205,7 @@ def rus(r_id):
         wb.html(html.autocomplete_multiple(russer, "friends", default=friends), description="Tilføj bekendte russer")
         wb.html(html.autocomplete_multiple(users, "user_friends", default=user_friends), description="Tilføj bekendte vejledere")
         wb.html('<button type="submit" name="next" value="next">Gem og gå videre</button>')
+        wb.html('<button type="submit" name="previous" value="previous">Gem og gå til forige</button>')
 
         form = wb.create(rus)
 
