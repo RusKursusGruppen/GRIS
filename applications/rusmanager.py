@@ -96,8 +96,20 @@ def rus(r_id):
             except psycopg2.IntegrityError as e:
                 print(e)
 
-
         flash("Rus opdateret")
+
+        print(r_id)
+        if "next" in request.form:
+            russer = data.execute("SELECT r_id FROM Russer ORDER BY name ASC")
+            russer = [str(rus['r_id']) for rus in russer]
+            print(repr(russer))
+            try:
+                next = russer[russer.index(r_id) + 1]
+                print(repr(next))
+                return redirect(url_for('rusmanager.rus', r_id=next))
+            except (ValueError, IndexError):
+                pass
+
         return redirect(url_for('rusmanager.overview'))
     else:
         rus = data.execute("SELECT * FROM Russer WHERE r_id = ?", r_id)
@@ -182,6 +194,7 @@ def rus(r_id):
         wb.checkbox("paid", "Betalt")
         wb.html(html.autocomplete_multiple(russer, "friends", default=friends), description="Tilføj bekendte russer")
         wb.html(html.autocomplete_multiple(users, "user_friends", default=user_friends), description="Tilføj bekendte vejledere")
+        wb.html('<button type="submit" name="next" value="next">Gem og gå videre</button>')
 
         form = wb.create(rus)
 
