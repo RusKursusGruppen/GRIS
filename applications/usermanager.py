@@ -199,7 +199,6 @@ def renew_password(key):
     result = result[0]
 
     if request.method == "POST":
-        data.execute("DELETE FROM User_forgotten_password_keys WHERE key = ?", key)
 
         b = data.Bucket(request.form)
 
@@ -211,6 +210,7 @@ def renew_password(key):
             flash("Du specificerede ikke et nyt løsen")
             return redirect(url_for('usermanager.renew_password', key=key))
 
+        data.execute("DELETE FROM User_forgotten_password_keys WHERE key = ?", key)
         update_password(result['username'], b.new1)
 
         session['logged_in'] = True
@@ -333,14 +333,15 @@ def new(key):
         return redirect(url_front())
 
     if request.method == "POST":
-        data.execute("DELETE FROM User_creation_keys WHERE key = ?", key)
         if 'cancel' in request.form:
+            data.execute("DELETE FROM User_creation_keys WHERE key = ?", key)
             flash("Oprettelse anulleret")
             return redirect(url_front())
 
         b = data.Bucket(request.form)
         if not sanitize_username(b.username):
-            raise Exception()
+            flash("Ugyldigt brugernavn")
+            return html.back()
 
         if b.password1 != b.password2:
             flash("Du gav to forskellige løsener, prøv igen")
@@ -349,6 +350,7 @@ def new(key):
             flash("Du skal vælge et løsen")
             return html.back()
 
+        data.execute("DELETE FROM User_creation_keys WHERE key = ?", key)
         create_user(b.username, b.password1, b.name, b.email)
         flash("Ny bruger oprettet")
 
