@@ -25,7 +25,9 @@ EMAIL_HOST = ""
 EMAIL_HOST_PORT = 587
 
 LOGFILE = "log.txt"
+REQUEST_LOGFILE = "request_log.txt"
 PRINT_LOG = False
+PRINT_REQUEST_LOG = False
 
 DATABASE_HOST = ""
 DATABASE_NAME = ""

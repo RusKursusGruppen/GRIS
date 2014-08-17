@@ -2,23 +2,29 @@
 
 import io
 
+import flask
 from flask import session
 
 from lib.tools import now
 
 import config
 
-def log(message, level="INFO"):
+def log(message, level="INFO", logfile=None, print_log=None):
     try:
         user = session['username']
     except:
         user = "NO USER"
     time = now()
-    string = "{0} | {1} | {2} | {3}\n".format(level, time, user, message)
+    string = "{0} | {1} | {2} | {3}".format(level, time, user, message)
 
-    with open(config.LOGFILE, "a") as f:
-        f.write(string)
-    if config.PRINT_LOG:
+    if logfile == None:
+        logfile = config.LOGFILE
+    if print_log == None:
+        print_log = config.PRINT_LOG
+
+    with open(logfile, "a") as f:
+        f.write(string + "\n")
+    if print_log:
         print(string)
 
 def data(sql, args, error=False):
@@ -32,3 +38,10 @@ def data(sql, args, error=False):
         log(string, level="DATABASE ERROR!!!")
     else:
         log(string, level="DATABASE")
+
+def request():
+    path = flask.request.path
+    if path == "/favicon.ico" or path.startswith("/static/"):
+        return
+
+    log(path, "REQUEST", config.REQUEST_LOGFILE, config.PRINT_REQUEST_LOG)

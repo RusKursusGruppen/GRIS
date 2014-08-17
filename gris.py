@@ -5,7 +5,7 @@ import atexit
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
-from lib import data, tools, greetings, mail
+from lib import data, tools, greetings, mail, log
 from lib.tools import logged_in, now
 
 import config
@@ -21,6 +21,7 @@ from applications.mentorteams import mentorteams
 
 ### APPLICATION ###
 app = Flask(__name__)
+app.before_request(log.request)
 app.config.from_object("config")
 app.register_blueprint(front)
 app.register_blueprint(schedule)
