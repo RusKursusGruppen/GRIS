@@ -273,9 +273,9 @@ def user(username):
     user = unnonify(user)
 
     tours = data.execute("SELECT t_id, tour_name, year, type FROM Tours INNER JOIN Tours_tutors USING (t_id) WHERE username = ? ORDER BY YEAR DESC", username)
-    print(tours)
+    mentorteams = data.execute("SELECT m_id, mentor_names, year FROM Mentorteams INNER JOIN Mentors USING (m_id) WHERE username = ? ORDER BY YEAR", username)
 
-    return render_template("usermanager/user.html", user=user, tours=tours)
+    return render_template("usermanager/user.html", user=user, tours=tours, mentorteams=mentorteams)
 
 
 ### USER INVITATION ###

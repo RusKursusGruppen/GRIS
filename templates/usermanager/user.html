@@ -39,14 +39,25 @@
 </p>
 
 <p>
-  <b>Var vejleder på:</b>
+  <b>Vejleder på:</b>
   {% for tour in tours %}
-<p>
-  <a href="{{url_for('rustours.rustour', t_id=tour['t_id'])}}">{{tour['tour_name']}}</a> - {{tour['year']}}
+  <p>
+    <a href="{{url_for('rustours.rustour', t_id=tour['t_id'])}}">{{tour['tour_name']}}</a> - {{tour['year']}}
+  </p>
+  {% else %}
+  Ingen Ture...
+  {% endfor %}
 </p>
-{% else %}
-Ingen Ture...
-{% endfor %}
+
+<p>
+  <b>Mentor på:</b>
+  {% for mentorteam in mentorteams %}
+  <p>
+    <a href="{{url_for('mentorteams.mentorteam', m_id=mentorteam['m_id'])}}">{{mentorteam['mentor_names']}}</a> - {{mentorteam['year']}}
+  </p>
+  {% else %}
+  Ingen mentorhold...
+  {% endfor %}
 </p>
 
 <hr>
