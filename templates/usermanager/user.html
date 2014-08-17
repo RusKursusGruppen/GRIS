@@ -36,7 +36,17 @@
 
 <p>
   <b>Startede på DIKU:</b> {{user["diku_age"]}}<br/>
-  <b>Tidligere rusture:</b> {{user["earlier_tours"]}}
+</p>
+
+<p>
+  <b>Var vejleder på:</b>
+  {% for tour in tours %}
+<p>
+  <a href="{{url_for('rustours.rustour', t_id=tour['t_id'])}}">{{tour['tour_name']}}</a> - {{tour['year']}}
+</p>
+{% else %}
+Ingen Ture...
+{% endfor %}
 </p>
 
 <hr>
