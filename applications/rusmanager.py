@@ -98,14 +98,11 @@ def rus(r_id):
 
         flash("Rus opdateret")
 
-        print(r_id)
         if "next" in request.form:
             russer = data.execute("SELECT r_id FROM Russer ORDER BY name ASC")
             russer = [str(rus['r_id']) for rus in russer]
-            print(repr(russer))
             try:
                 next = russer[russer.index(r_id) + 1]
-                print(repr(next))
                 return redirect(url_for('rusmanager.rus', r_id=next))
             except (ValueError, IndexError):
                 pass
