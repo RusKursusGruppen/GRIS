@@ -62,7 +62,8 @@ CREATE TABLE Tours(
     tour_name           text,
     theme               text,
     type                text CHECK(type IN ('p', 't', 'm')),
-    year                integer
+    year                integer,
+    notes               text
 );
 
 DROP TABLE IF EXISTS Tours_tutors CASCADE;

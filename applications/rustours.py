@@ -84,6 +84,7 @@ def settings(t_id):
         b = data.Bucket(request.form)
         b.theme
         b.type
+        b.notes
         if b.tour_name == "":
             b.tour_name = "Unavngiven rustur"
         if b.year.isdecimal():
@@ -132,6 +133,7 @@ def settings(t_id):
         w.textfield("year", "År")
         w.select("type", "Type", [('p', 'Pigetur'), ('t', 'Transetur'), ('m', 'Munketur')])
         w.html(html.autocomplete_multiple(all_tutors, "tutors", default=actual_tutors), description="Vejledere", value="abekat")
+        w.textarea("notes", "Noter")
         form = w.create(tour)
         return render_template("rustours/settings.html", form=form, t_id=t_id)
 
