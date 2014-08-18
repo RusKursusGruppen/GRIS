@@ -5,7 +5,7 @@ import io
 import flask
 from flask import session
 
-from lib.tools import now
+import lib.tools
 
 import config
 
@@ -14,8 +14,15 @@ def log(message, level="INFO", logfile=None, print_log=None):
         user = session['username']
     except:
         user = "NO USER"
-    time = now()
-    string = "{0} | {1} | {2} | {3}".format(level, time, user, message)
+
+    try:
+        ip = flask.request.environ["REMOTE_ADDR"]
+    except:
+        ip = "UNKNOWN IP"
+
+    time = lib.tools.now()
+    time = time.strftime("%Y-%m-%d %H:%M:%S")
+    string = "{0} | {1} | {2} | {3} | {4}".format(level, time, ip, user, message)
 
     if logfile == None:
         logfile = config.LOGFILE
