@@ -38,6 +38,7 @@ nosetests.xml
 config.py
 *.db
 log.txt
+request_log.txt
 secret_key
 
 # virtualenv
