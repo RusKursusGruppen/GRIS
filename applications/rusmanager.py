@@ -245,3 +245,8 @@ def friends():
     user_friends = [({'russer_name':name, 'r_id':l[0]['r_id']}, l) for name, l in user_friends]
 
     return render_template("rusmanager/friends.html", friends=friends, user_friends=user_friends)
+
+@rusmanager.route('/rusmanager/help')
+@logged_in('rkg', 'mentor')
+def help():
+    return render_template("rusmanager/help.html")
