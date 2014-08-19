@@ -141,3 +141,30 @@ def delete(m_id):
         w.html('<button type="submit" name="delete" value="delete">Slet</button>', "Slet mentorhold?")
         form = w.create()
         return render_template("form.html", form=form)
+
+@mentorteams.route('/mentorteams/team/<m_id>/add_to_rustour', methods=['GET', 'POST'])
+@logged_in('mentor')
+def add_to_rustour(m_id):
+    if request.method == "POST":
+        if 'cancel' in request.form:
+            flash(escape("Ingen ændringer"))
+            return redirect(url_for('mentorteams.mentorteam', m_id=m_id))
+
+        b = data.Bucket(request.form)
+
+        russer = data.execute("SELECT r_id FROM Russer WHERE mentor = ?", m_id)
+        russer = [(b.tour_name, rus['r_id']) for rus in russer]
+
+        data.executemany("UPDATE Russer SET rustour = ? WHERE r_id = ?", russer)
+        flash("Alle russer på mentorholdet er blevet sat på rustur".format(b.tour_name))
+        return redirect(url_for("mentorteams.mentorteam", m_id=m_id))
+    else:
+        rustours = data.execute("SELECT * FROM Tours WHERE year = ?", rkgyear())
+        rustours = [(tour['t_id'], tour['tour_name']) for tour in rustours]
+
+        wb = html.WebBuilder()
+        wb.form()
+        wb.formtable()
+        wb.select("tour_name", "Tildel rustur", rustours)
+        form = wb.create()
+        return render_template("form.html", form=form)

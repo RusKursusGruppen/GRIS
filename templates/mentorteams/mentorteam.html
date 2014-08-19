@@ -2,6 +2,7 @@
 
 {% block submenu %}
   <a href="{{url_for('mentorteams.settings', m_id=team['m_id'])}}">Ret</a>
+  <a href="{{url_for('mentorteams.add_to_rustour', m_id=team['m_id'])}}">Tilføj til rustur</a>
 {% endblock %}
 
 {% block body %}
