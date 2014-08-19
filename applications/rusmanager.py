@@ -57,6 +57,7 @@ def rus(r_id):
         b.attending_campus = "attending_campus" in request.form
         b.attending_rustour = "attending_rustour" in request.form
 
+        b.mentor = nonify(b.mentor)
         b.rustour = nonify(b.rustour)
         b.dutyteam = nonify(b.dutyteam)
         if b.dutyteam is not None:
@@ -64,7 +65,6 @@ def rus(r_id):
             t_id = str(t_id[0]['t_id'])
             if b.rustour != t_id:
                 b.dutyteam = None
-        b.mentor = nonify(b.mentor)
         b >> ("UPDATE Russer SET $ WHERE r_id = ?", r_id)
 
         # Friends:
@@ -197,10 +197,10 @@ def rus(r_id):
         wb.checkbox("attending_uniday", "Deltager unidag")
         wb.checkbox("attending_campus", "Deltager campus")
         wb.checkbox("attending_rustour", "Deltager rustur")
+        wb.select("mentor", "Mentorhold:", mentors)
         wb.select("rustour", "Skal på:", tours)
 #        wb.textfield("dutyteam", "Tjansehold")
         wb.select("dutyteam", "Tjansehold:", dutyteams)
-        wb.select("mentor", "Mentorhold:", mentors)
         wb.textfield("tshirt", "Tshirt størrelse")
         wb.checkbox("paid", "Betalt")
         wb.html(html.autocomplete_multiple(russer, "friends", default=friends), description="Tilføj bekendte russer")
