@@ -35,9 +35,19 @@ def execute(com, *args):
         raise
 
 def executemany(com, argSeq):
-    argSeq = list(argSeq)
+    args = []
     for arg in argSeq:
-        if com.count("?") != len(args):
+        if isinstance(arg, str):
+            length = 1
+            args.append((arg,))
+        else:
+            try:
+                length = len(arg)
+                args.append(arg)
+            except:
+                length = 1
+                args.append((arg,))
+        if com.count("?") != length:
             raise Exception("Wrong number of SQL arguments for query "+com)
 
     com = com.replace("?", "%s")
@@ -48,8 +58,8 @@ def executemany(com, argSeq):
                               port=config.DATABASE_PORT,
                               password=config.DATABASE_PASSWORD) as connection:
             with connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
-                cursor.executemany(com, argSeq)
-                log.data(com, argSeq)
+                cursor.executemany(com, args)
+                log.data(com, args)
                 try:
                     return cursor.fetchall()
                 except psycopg2.ProgrammingError as e:
@@ -57,7 +67,7 @@ def executemany(com, argSeq):
                         return None
                     raise
     except:
-        log.data(com, argSeq, error=True)
+        log.data(com, args, error=True)
         raise
 
 def script(filename):
