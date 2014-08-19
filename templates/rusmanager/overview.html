@@ -12,10 +12,7 @@
   {% for rus in russer %}
   <li>
     <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
-    {{ "☏" if not rus['called'] and rus['can_contact'] else "" }}
-    {{"✓" if rus['attending_campus'] and rus['attending_rustour'] else "" }}
-    {{"<strike>ℳ</strike>"|safe if rus['mentor'] == None else ""}}
-    {{ "⚐" if rus['attending_rustour'] and rus['rustour'] == None else ""}}
+    {{ rus_icons(rus)|safe }}
   </li>
   {% else %}
   Der er ingen russer i databasen

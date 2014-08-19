@@ -14,7 +14,7 @@ rusmanager = Blueprint('rusmanager', __name__, template_folder = '../templates/r
 @logged_in('rkg', 'mentor')
 def overview():
     russer = data.execute("SELECT * FROM Russer ORDER BY name ASC")
-    return render_template("rusmanager/overview.html", russer=russer)
+    return render_template("rusmanager/overview.html", russer=russer, rus_icons=rus_icons)
 
 @rusmanager.route('/rusmanager/<r_id>', methods=['GET', 'POST'])
 @logged_in('rkg', 'mentor')
@@ -167,6 +167,7 @@ def rus(r_id):
         wb = html.WebBuilder()
         wb.form()
         wb.formtable()
+        wb.html(rus_icons(rus))
         wb.checkbox("can_contact", "Må kontaktes")
         wb.checkbox("called", "Opringet")
         wb.textfield("name", "Navn")
@@ -250,3 +251,15 @@ def friends():
 @logged_in('rkg', 'mentor')
 def help():
     return render_template("rusmanager/help.html")
+
+def rus_icons(rus):
+    icons = []
+    if not rus['called'] and rus['can_contact']:
+        icons.append("☏")
+    if rus['attending_campus'] and rus['attending_rustour']:
+        icons.append("✓")
+    if rus['mentor'] == None:
+        icons.append("<strike>ℳ</strike>")
+    if rus['attending_rustour'] and rus['rustour'] == None:
+        icons.append("⚐")
+    return " ".join(icons)
