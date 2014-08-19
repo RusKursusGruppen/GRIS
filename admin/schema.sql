@@ -107,7 +107,7 @@ CREATE TABLE Russer(
     birthday            date,
 
     filled_by           text,
-    can_contact         boolean DEFAULT FALSE,
+    can_contact         boolean DEFAULT TRUE,
     called              boolean DEFAULT FALSE,
     co                  text,
     address             text,
