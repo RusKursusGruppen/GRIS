@@ -106,7 +106,7 @@ def group(groupname):
                 pass
         return redirect(url_for('admin.groups_overview'))
     else:
-        users = data.execute('SELECT username, name FROM Users WHERE deleted = ?', False)
+        users = data.execute('SELECT username, name FROM Users WHERE deleted = ? ORDER BY name ASC', False)
         group = data.execute('SELECT username FROM Group_users WHERE groupname = ?', groupname)
         group = set(user['username'] for user in group)
 
@@ -125,6 +125,6 @@ def group(groupname):
 @admin.route('/admin/invitations')
 def invitations():
     usermanager.delete_old_keys()
-    emails = data.execute("SELECT email FROM User_creation_keys")
+    emails = data.execute("SELECT email FROM User_creation_keys ORDER BY email ASC")
     emails = [x['email'] for x in emails if x['email'] is not None]
     return render_template("admin/invitations.html", invitations=emails)
