@@ -25,7 +25,7 @@ def logged_in(*args):
         def decorated(*args, **kwargs):
             if not session.get('logged_in'):
                 session['login_origin'] = request.path
-                abort(401)
+                abort(403)
             else:
                 return fn(*args, **kwargs)
         return decorated
@@ -45,14 +45,13 @@ def logged_in(*args):
             def decorated(*args, **kwargs):
                 if not session.get('logged_in'):
                     session['login_origin'] = request.path
-                    abort(401)
+                    abort(403)
                 else:
                     groups = lib.data.execute('SELECT groupname FROM Group_users WHERE username = ?', session['username'])
                     for group in groups:
                         if group['groupname'] in rights:
                             return fn(*args, **kwargs)
-                    flash("You do not have sufficient rights to access this page.")
-                    return redirect(url_front())
+                    abort(403)
             return decorated
         return decorator
 

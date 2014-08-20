@@ -250,7 +250,7 @@ def forgot_password(username):
             finished = True
             break
         except psycopg2.IntegrityError as e:
-            if str(e).startswith('duplicate key value violates unique constraint "user_forgotten_password_keys_pkey"'):
+            if e.pgerror.startswith('ERROR:  duplicate key value violates unique constraint "user_forgotten_password_keys_pkey"'):
                 finished = False
                 continue
             else:
@@ -295,7 +295,7 @@ def generate_key():
             b >= "User_creation_keys"
             return key
         except psycopg2.IntegrityError as e:
-            if str(e).startswith('duplicate key value violates unique constraint "user_creation_keys_pkey"'):
+            if e.pgerror.startswith('ERROR:  duplicate key value violates unique constraint "user_forgotten_password_keys_pkey"'):
                 continue
             else:
                 raise

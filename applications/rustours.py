@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random, datetime, string, time, itertools, re
+import psycopg2
 
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, get_flashed_messages, escape, Blueprint
 
@@ -101,11 +102,15 @@ def settings(t_id):
 
         old = data.execute("SELECT username FROM Tours_tutors WHERE t_id = ?", t_id)
         old = [tutor['username'] for tutor in old]
-
         for tutor in set(old) - set(tutors):
             data.execute("DELETE FROM Tours_tutors WHERE t_id = ? and username = ?", t_id, tutor)
         for tutor in sorted(set(tutors) - set(old)):
-            data.execute("INSERT INTO Tours_tutors(t_id, username) VALUES (?, ?)", t_id, tutor)
+            try:
+                data.execute("INSERT INTO Tours_tutors(t_id, username) VALUES (?, ?)", t_id, tutor)
+            except psycopg2.IntegrityError as e:
+                if e.pgerror.startswith('ERROR:  insert or update on table "tours_tutors" violates foreign key constraint "tours_tutors_username_fkey"'):
+                    flash("No tutor: "+tutor)
+                raise
 
         return redirect(url_for('rustours.rustour', t_id=t_id))
 
