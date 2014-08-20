@@ -26,6 +26,9 @@
   <h3>Russer:</h3>
   {% for rus in russer %}
   <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
+  {{ "ℂ <strike>ℝ</strike>"|safe if rus['attending_campus'] and not rus['attending_rustour'] else ""}}
+  {{ "<strike>ℂ</strike> ℝ"|safe if not rus['attending_campus'] and rus['attending_rustour'] else ""}}
+  {{ "<strike>ℂ ℝ</strike>"|safe if not rus['attending_campus'] and not rus['attending_rustour'] else ""}}
   <br/>
   {% endfor %}
 
