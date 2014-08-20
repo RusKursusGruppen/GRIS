@@ -14,7 +14,7 @@ mentorteams = Blueprint('mentorteams', __name__, template_folder = '../templates
 @mentorteams.route('/mentorteams')
 @logged_in
 def overview():
-    teams = data.execute("SELECT * FROM Mentorteams ORDER BY year DESC")
+    teams = data.execute("SELECT * FROM Mentorteams ORDER BY year, mentor_names DESC")
     teams = itertools.groupby(teams, key=get("year"))
     return render_template("mentorteams/overview.html", teams=teams)
 
