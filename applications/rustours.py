@@ -24,7 +24,7 @@ def overview():
 def rustour(t_id):
     tour = data.execute("SELECT * FROM Tours WHERE t_id = ?", t_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE rustour = ? ORDER BY name ASC", t_id)
-    tutors = data.execute("SELECT * FROM tours_tutors WHERE t_id = ?", t_id)
+    tutors = data.execute("SELECT * FROM tours_tutors WHERE t_id = ? ORDER BY username ASC", t_id)
 
     dutyteams = data.execute("SELECT Russer.r_id, Russer.name, Dutyteams.name as dutyteam FROM Russer FULL OUTER JOIN Dutyteams ON Russer.dutyteam = Dutyteams.d_id WHERE Russer.rustour = ? and Russer.dutyteam IS NOT NULL ORDER BY Dutyteams.d_id ASC", t_id)
     dutyteams = itertools.groupby(dutyteams, key=get("dutyteam"))
