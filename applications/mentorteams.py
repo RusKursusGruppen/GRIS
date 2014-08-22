@@ -20,7 +20,7 @@ def overview():
     return render_template("mentorteams/overview.html", teams=teams)
 
 @mentorteams.route('/mentorteams/team/<m_id>')
-@logged_in('mentor')
+@logged_in('mentor', 'rkg')
 def mentorteam(m_id):
     team = data.execute("SELECT * FROM Mentorteams WHERE m_id = ?", m_id)[0]
     russer = data.execute("SELECT * FROM Russer WHERE mentor = ?", m_id)
@@ -144,7 +144,7 @@ def delete(m_id):
         return render_template("form.html", form=form)
 
 @mentorteams.route('/mentorteams/team/<m_id>/add_to_rustour', methods=['GET', 'POST'])
-@logged_in('mentor')
+@logged_in('mentor', 'rkg')
 def add_to_rustour(m_id):
     if request.method == "POST":
         if 'cancel' in request.form:
