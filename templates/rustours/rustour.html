@@ -17,13 +17,13 @@
     {{tour['noter']}}
   </p>
 
-  <h3>Rusvejledere:</h3>
+  <h3>Rusvejledere: ({{tutors|length}})</h3>
   {% for tutor in tutors %}
   <a href="{{url_for('usermanager.user', username=tutor['username'])}}">{{tutor['username']}}</a>
   <br/>
   {% endfor %}
 
-  <h3>Russer:</h3>
+  <h3>Russer: ({{russer|length}})</h3>
   {% for rus in russer %}
   <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
   {{ "<strike>ℝ</strike>"|safe if rus['attending_campus'] and not rus['attending_rustour'] else ""}}
@@ -34,14 +34,14 @@
 
   <h3>Tjansehold:</h3>
   {% for dutyteam in dutyteams %}
-      <h4>{{dutyteam[0]}}</h4>
+      <h4>{{dutyteam[0]}} ({{dutyteam[1]|length}})</h4>
       {% for rus in dutyteam[1] %}
           <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
           <br/>
       {% endfor %}
   {% endfor %}
 
-  <h3>Ikke på tjansehold:</h3>
+  <h3>Ikke på tjansehold: ({{unassigned|length}})</h3>
   {% for rus in unassigned %}
       <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
       <br/>

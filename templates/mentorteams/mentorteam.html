@@ -8,13 +8,13 @@
 {% block body %}
   <h2>{{team['mentor_names']}}</h2>
 
-  <h3>Mentorer</h3>
+  <h3>Mentorer ({{mentors|length}})</h3>
   {% for mentor in mentors %}
   <a href="{{url_for('usermanager.user', username=mentor['username'])}}">{{mentor['username']}}</a>
   <br/>
   {% endfor %}
 
-  <h3>Russer</h3>
+  <h3>Russer ({{russer|length}})</h3>
   {% for rus in russer %}
   <a href="{{url_for('rusmanager.rus', r_id=rus['r_id'])}}">{{rus['name']}}</a>
   {{ "<strike>ℝ</strike>"|safe if rus['attending_campus'] and not rus['attending_rustour'] else ""}}
