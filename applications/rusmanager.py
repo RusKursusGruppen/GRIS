@@ -263,3 +263,29 @@ def rus_icons(rus):
     if rus['attending_rustour'] and rus['rustour'] == None:
         icons.append("⚐")
     return " ".join(icons)
+
+@rusmanager.route('/rusmanager/status')
+@logged_in('rkg', 'mentor')
+def status():
+    russer = data.execute("SELECT count(*) from Russer")[0]['count']
+    russer_attending_campus = data.execute("SELECT count(*) from Russer where attending_campus = ?", True)[0]['count']
+    russer_attending_rustour = data.execute("SELECT count(*) from Russer where attending_rustour = ?", True)[0]['count']
+
+    # rustour_attending_campus = data.execute("SELECT * FROM (SELECT t_id, COUNT(t_id) FROM Tours LEFT JOIN Russer ON (rustour = t_id) WHERE year = ? AND attending_campus = ? GROUP BY t_id) AS b INNER JOIN Tours USING (t_id) ORDER BY tour_name ASC", rkgyear(), True)
+    # rustour_attending_rustour = data.execute("SELECT * FROM (SELECT t_id, COUNT(t_id) FROM Tours LEFT JOIN Russer ON (rustour = t_id) WHERE year = ? AND attending_rustour = ? GROUP BY t_id) AS b INNER JOIN Tours USING (t_id) ORDER BY tour_name ASC", rkgyear(), True)
+    rustour_count = data.execute("SELECT * FROM Tours LEFT JOIN (SELECT rustour AS t_id, COUNT(*) FROM Russer GROUP BY rustour) AS a using (t_id) WHERE year = ? ORDER BY tour_name ASC", 2014)
+    rustour_attending_campus = data.execute("SELECT * FROM Tours LEFT JOIN (SELECT rustour AS t_id, COUNT(*) FROM Russer where attending_campus = ? GROUP BY rustour) AS a using (t_id) WHERE year = ? ORDER BY tour_name ASC", True, 2014)
+    rustour_attending_rustour = data.execute("SELECT * FROM Tours LEFT JOIN (SELECT rustour AS t_id, COUNT(*) FROM Russer where attending_rustour = ? GROUP BY rustour) AS a using (t_id) WHERE year = ? ORDER BY tour_name ASC", True, 2014)
+    rustours = zip(rustour_count, rustour_attending_campus, rustour_attending_rustour)
+    rustours = [{'t_id':x['t_id'], 'tour_name':x['tour_name'], 'count':x['count'], 'attending_campus':c['count'], 'attending_rustour':r['count']} for x,c,r in rustours]
+
+    # mentorteam_attending_campus = data.execute("SELECT * FROM (SELECT m_id, COUNT(m_id) FROM Mentorteams LEFT JOIN Russer ON (mentor = m_id) WHERE year = ? AND attending_campus = ? GROUP BY m_id) AS b INNER JOIN Mentorteams USING (m_id) ORDER BY mentor_names ASC", rkgyear(), True)
+    # mentorteam_attending_rustour = data.execute("SELECT * FROM (SELECT m_id, COUNT(m_id) FROM Mentorteams LEFT JOIN Russer ON (mentor = m_id) WHERE year = ? AND attending_rustour = ? GROUP BY m_id) AS b INNER JOIN Mentorteams USING (m_id) ORDER BY mentor_names ASC", rkgyear(), True)
+    mentorteam_count = data.execute("SELECT * FROM Mentorteams LEFT JOIN (SELECT mentor AS m_id, COUNT(*) FROM Russer GROUP BY mentor) AS a using (m_id) WHERE year = ? ORDER BY mentor_names ASC", 2014)
+    mentorteam_attending_campus = data.execute("SELECT * FROM Mentorteams LEFT JOIN (SELECT mentor AS m_id, COUNT(*) FROM Russer where attending_campus = ? GROUP BY mentor) AS a using (m_id) WHERE year = ? ORDER BY mentor_names ASC", True, 2014)
+    mentorteam_attending_rustour = data.execute("SELECT * FROM Mentorteams LEFT JOIN (SELECT mentor AS m_id, COUNT(*) FROM Russer where attending_rustour = ? GROUP BY mentor) AS a using (m_id) WHERE year = ? ORDER BY mentor_names ASC", True, 2014)
+    mentorteams = zip(mentorteam_count, mentorteam_attending_campus, mentorteam_attending_rustour)
+    mentorteams = [{'m_id':x['m_id'], 'mentor_names':x['mentor_names'], 'count':x['count'], 'attending_campus':c['count'], 'attending_rustour':r['count']} for x,c,r in mentorteams]
+
+    # return ""
+    return render_template("rusmanager/status.html", russer=russer, russer_attending_campus=russer_attending_campus, russer_attending_rustour=russer_attending_rustour, rustours=rustours, mentorteams=mentorteams)
