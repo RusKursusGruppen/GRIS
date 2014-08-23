@@ -173,7 +173,7 @@ def delete(t_id):
         return render_template("form.html", form=form)
 
 @rustours.route('/rustours/tour/<t_id>/dutyteams', methods=['GET', 'POST'])
-@logged_in('admin')
+@logged_in('rkg')
 def dutyteams(t_id):
     if request.method == "POST":
         if 'cancel' in request.form:
