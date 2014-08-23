@@ -13,7 +13,7 @@
   {% for rustour in rustours %}
   <p>
     <a href="{{url_for('rustours.rustour', t_id=rustour['t_id'])}}">{{rustour['tour_name']}}</a>:<br/>
-    antal = {{rustour['count']}}
+    antal = {{rustour['count']}}<br/>
     campus = {{rustour['attending_campus']}}<br/>
     rustour = {{rustour['attending_rustour']}}<br/>
   </p>
