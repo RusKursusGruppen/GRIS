@@ -15,7 +15,7 @@ rustours = Blueprint('rustours', __name__, template_folder = '../templates/rusto
 @rustours.route('/rustours')
 @logged_in
 def overview():
-    tours = data.execute("SELECT * FROM Tours ORDER BY year DESC")
+    tours = data.execute("SELECT * FROM Tours ORDER BY year DESC, tour_name ASC")
     tours = itertools.groupby(tours, key=get("year"))
     return render_template("rustours/overview.html", tours=tours)
 
