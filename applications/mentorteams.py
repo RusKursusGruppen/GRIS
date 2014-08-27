@@ -23,8 +23,8 @@ def overview():
 @logged_in('mentor', 'rkg')
 def mentorteam(m_id):
     team = data.execute("SELECT * FROM Mentorteams WHERE m_id = ?", m_id)[0]
-    russer = data.execute("SELECT * FROM Russer WHERE mentor = ? ORDER BY name", m_id)
-    mentors = data.execute("SELECT * FROM Mentors WHERE m_id = ? ORDER BY name", m_id)
+    russer = data.execute("SELECT * FROM Russer WHERE mentor = ? ORDER BY name ASC", m_id)
+    mentors = data.execute("SELECT * FROM Mentors WHERE m_id = ?", m_id)
     return render_template("mentorteams/mentorteam.html", team=team, russer=russer, mentors=mentors)
 
 @mentorteams.route('/mentorteams/new', methods=['GET', 'POST'])
