@@ -44,6 +44,9 @@ def random_greeting():
         , "Vi har mange programmer til ølregnskab... alle er i BETA"
         , "rkg@dikumail.dk"
         , "qsort (p:xs) = qsort [x | x<-xs, x<p] ++ [p] ++ qsort [x | x<-xs, x>=p]"
+        , "Er der ild i piben?"
+        , "Fedt med mad"
+        , "Tukanen er det mest retarderede menneske nogensinde"
         , "3% kode, 79% slam"])
 
     if callable(result):
