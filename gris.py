@@ -80,6 +80,7 @@ app.jinja_env.globals.update(random_greeting=greetings.random_greeting)
 ### APPLICATION ###
 @atexit.register
 def goodbye():
+    print("bye")
     if config.MAIL_ON_EXIT:
         mail.admin("GRIS shutdown", "GRIS has exited at {0}\nThis could either be caused by an error or by a restart.".format(now()))
 
