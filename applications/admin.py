@@ -128,3 +128,8 @@ def invitations():
     emails = data.execute("SELECT email FROM User_creation_keys ORDER BY email ASC")
     emails = [x['email'] for x in emails if x['email'] is not None]
     return render_template("admin/invitations.html", invitations=emails)
+
+@admin.route('/admin/quit')
+def quit():
+    import sys
+    sys.exit()
