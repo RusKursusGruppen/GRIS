@@ -123,6 +123,7 @@ def group(groupname):
         return render_template("form.html", form=form)
 
 @admin.route('/admin/invitations')
+@logged_in('admin')
 def invitations():
     usermanager.delete_old_keys()
     emails = data.execute("SELECT email FROM User_creation_keys ORDER BY email ASC")
@@ -130,6 +131,7 @@ def invitations():
     return render_template("admin/invitations.html", invitations=emails)
 
 @admin.route('/admin/quit')
+@logged_in('admin')
 def quit():
     import sys
     sys.exit()
