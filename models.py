@@ -33,24 +33,6 @@ class User(db.Model):
 
     deleted = Column(Boolean, default=False) # Field for marking a user as deleted
 
-    # def __init__(self, username, raw_password, name, email, groups=[]):
-    #     """Create a new user."""
-    #     self.username = username
-    #     self.password = raw_password # TODO: fix!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-    #     self.name = name
-    #     self.email = email
-
-    #     added_groups = []
-    #     for group in groups:
-    #         if isinstance(group, Group):
-    #             self.groups.append(group)
-    #         else:
-    #             groupname = group
-    #             group = Group.query.filter_by(groupname=groupname).first()
-    #             if group is None:
-    #                 group = Group(groupname)
-    #                 added_groups.append(group)
-
 class Group(Model):
     id = Column(Integer, primary_key=True)
     groupname = Column(Text, unique=True, nullable=False)
