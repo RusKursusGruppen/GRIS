@@ -3,18 +3,19 @@
 from gris import db
 Model = db.Model
 Table = db.Table
-
 Column = db.Column
-Integer = db.Integer
-Text = db.Text # Use this instead of strings
-Boolean = db.Boolean
-Date = db.Date
 ForeignKey = db.ForeignKey
 relationship = db.relationship
 backref = db.backref
 
+Boolean = db.Boolean
+Date = db.Date
+DateTime = db.DateTime
+Integer = db.Integer
+Text = db.Text # Use this instead of strings
+
 ### USERS ###
-class User(db.Model):
+class User(Model):
     id = Column(Integer, primary_key=True)
     username = Column(Text, unique=True, nullable=False)
     password = Column(Text, nullable=False)
@@ -43,3 +44,13 @@ users_groups = Table("users_groups",
                      Column("user_id", Integer, ForeignKey("user.id")),
                      Column("group_id", Integer, ForeignKey("group.id")))
 User.groups = relationship("Group", secondary=users_groups, backref="users")
+
+class User_creation_key(Model):
+    key = Column(Text, primary_key=True)
+    email = Column(Text, nullable=False)
+    created = Column(DateTime, nullable=False, default=db.func.now())
+
+class User_forgotten_password_key(Model):
+    key = Column(Text, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    created = Column(DateTime, nullable=False, default=db.func.now())
