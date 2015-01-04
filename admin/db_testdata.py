@@ -12,7 +12,24 @@ def db_testdata():
     user = models.User(username="rkg", password="123", name="RKG")
     user.groups.append(admin)
     db.session.add(user)
+
+    user = models.User(username="kat", password="123", name="kat")
+    user.groups.append(admin)
+    db.session.add(user)
+
+    user = models.User(username="fugl", password="123", name="Fugl")
+    user.groups.append(admin)
+    db.session.add(user)
+
+    user = models.User(username="tiger", password="123", name="TIGER")
+    db.session.add(user)
+
+    # k = models.User_creation_key(key="email="me")
+    # db.session.add(k)
+
+    db.session
     db.session.commit()
+
 
 if __name__ == "__main__":
     db_testdata()
