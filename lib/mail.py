@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from smtplib import SMTPRecipientsRefused
 import flask_mail
 
 from gris import db, mail
@@ -24,11 +25,16 @@ class Message(flask_mail.Message):
         if self.sender is None:
             self.sender = (config.MAIL_NAME, config.MAIL)
 
+        failed = []
         with mail.connect() as connection:
             for recipient in recipients:
                 self.recipients = [recipient]
-                flask_mail.Message.send(self, connection)
+                try:
+                    flask_mail.Message.send(self, connection)
+                except SMTPRecipientsRefused:
+                    failed.append(recipient)
         self.recipients = recipients
+        return failed
 
     def to_admins(self, override=False):
         if override or config.MAIL_ADMINS:
@@ -36,7 +42,7 @@ class Message(flask_mail.Message):
                       .filter(models.User.groups.any(groupname="admin"))\
                       .filter(models.User.email != None).all())
 
-            self.send([admin.email for admin in admins])
+            return self.send([admin.email for admin in admins])
 
 def create_mail_template(subject="", body=None, html=True):
     def fill_mail_template(**kwargs):
