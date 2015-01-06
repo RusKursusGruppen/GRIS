@@ -44,18 +44,22 @@ class Message(flask_mail.Message):
 
             return self.send([admin.email for admin in admins])
 
-def create_mail_template(subject="", body=None, html=True):
-    def fill_mail_template(**kwargs):
-        nonlocal subject, body, html
-        if body is not None:
-            body = body.format(**kwargs)
-        if html:
-            return Message(subject=subject, html=body)
-        else:
-            return Message(subject=subject, body=body)
-    return fill_mail_template
+class Template():
+    def __init__(self, subject=None, body=None, html=True):
+        self.subject = subject
+        self.body = body
+        self.html = html
 
-invitation_mail = create_mail_template(
+    def format(self, **kwargs):
+        if body is not None:
+            body = self.body.format(**kwargs)
+        if self.html:
+            return Message(subject=self.subject, html=body)
+        else:
+            return Message(subject=self.subject, body=body)
+
+
+invitation_mail = Template(
     "Invitation til GRIS", """
 Hej du er blevet inviteret til GRIS.
 GRIS er RKGs intranet, hvis du skal være med i RKG skal du have en bruger her.
@@ -65,7 +69,7 @@ Linket er unikt og virker kun en enkelt gang.
 <a href="{url}">Opret bruger</a>
 """)
 
-invitation_adminmail = create_mail_template(
+invitation_adminmail = Template(
     "User Invited", """
 An invitation has been send to the following addresses:
 {emails}
