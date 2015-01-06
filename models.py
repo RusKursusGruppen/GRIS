@@ -18,7 +18,7 @@ Text = db.Text # Use this instead of strings
 class User(Model):
     id = Column(Integer, primary_key=True)
     username = Column(Text, unique=True, nullable=False)
-    password = Column(Text, nullable=False)
+    password = Column(Text)
 
     name = Column(Text, default="RUS")
     driverslicence = Column(Boolean, default=False)
