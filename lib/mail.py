@@ -73,18 +73,52 @@ class Template():
 
         return Message(subject=self.subject, body=body, html=html)
 
-invitation_mail = Template(
-    "Invitation til GRIS", """
-Hej du er blevet inviteret til GRIS.
-GRIS er RKGs intranet, hvis du skal være med i RKG skal du have en bruger her.
-For at oprette en bruger skal du følge det følgende link.
-Linket er unikt og virker kun en enkelt gang.
 
-<a href="{url}">Opret bruger</a>
-""")
+
+invitation = Template(
+    "Invitation til GRIS", """
+<p>Hej du er blevet inviteret til GRIS.</p>
+<p>GRIS er RKGs intranet, hvis du skal være med i RKG skal du have en bruger her.</br>
+For at oprette en bruger skal du følge det følgende link.</br>
+Linket er unikt og virker kun en enkelt gang.</p>
+
+<p><a href="{url}">Opret bruger</a><p>
+    """)
 
 invitation_adminmail = Template(
     "User Invited", """
 An invitation has been send to the following addresses:
 {emails}
+
+Sending failed to the following:
+{failed}
     """, html=False)
+
+forgot_password = Template(
+    "Glemt Løsen", """
+<p>Hej {name}, du har glemt dit løsen.</br>
+Vi har derfor sendt dig dette link hvor du kan vælge et nyt.</br>
+Linket virker kun de næste 20 minutter.</p>
+
+<p><a href="{url}">Vælg nyt løsen</a></p>
+
+<p>Hvis du ikke har glemt dit løsen kan du se bort fra denne mail.</p>
+""")
+
+forgot_password_multiple_adminmail = Template(
+    "Strange forgotten password activity", """
+Multiple forgotten password emails has been send to {username}, without the previous link being used.
+
+There were already {times} key[s] in the database.
+    """, html=False)
+
+forgot_password_no_email_adminmail = Template(
+    "Could not send 'forgotten password' email", """
+A user with no email or an invalid has forgot his/her password.
+Or at least has pushed the button.
+
+Name: {name}
+Username: {username}
+Email: {email}
+Phone: {phone}
+""")
