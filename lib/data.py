@@ -91,18 +91,20 @@ class QueryList(list):
     def all(self):
         return self
 
-    def one(self):
+    def one(self, code=None, description=None):
         if len(self) != 1:
-            raise Exception("There are {} rows in the result, but only one was expected!".format(len(self)))
+            if code is None and description is None:
+                description = "There are {} rows in the result, but only one was expected!".format(len(self))
+            abort(code, description)
         else:
             return self[0]
 
-    def scalar(self):
-        if len(self) != 1:
-            raise Exception("There are {} rows in the result, but only one was expected!".format(len(self)))
-        row = self[0]
+    def scalar(self, code=None, description=None):
+        row = self.one(code, description)
         if len(row) != 1:
-            raise Exception("There are {} columns in the result, but only one was expected!".format(len(self)))
+            if code is None and description is None:
+                description = "There are {} columns in the result, but only one was expected!".format(len(self))
+            abort(code, description)
         return row[0]
 
 def execute(query, *args):
