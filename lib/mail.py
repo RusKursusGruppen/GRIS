@@ -50,14 +50,28 @@ class Template():
         self.body = body
         self.html = html
 
-    def format(self, **kwargs):
-        if body is not None:
-            body = self.body.format(**kwargs)
-        if self.html:
-            return Message(subject=self.subject, html=body)
-        else:
-            return Message(subject=self.subject, body=body)
+    def format(self, *args, **kwargs):
+        format_args = dict()
+        for arg in args:
+            format_args.update(arg)
+        format_args.update(**kwargs)
 
+        body = self.body
+        html = self.html
+
+        if isinstance(html, bool):
+            if self.html:
+                html = body
+                body = None
+            else:
+                html = None
+
+        if body is not None:
+            body = body.format(**kwargs)
+        if html is not None:
+            html = html.format(**kwargs)
+
+        return Message(subject=self.subject, body=body, html=html)
 
 invitation_mail = Template(
     "Invitation til GRIS", """
