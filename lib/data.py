@@ -243,6 +243,16 @@ class Bucket(object):
     def __iter__(self):
         return (x for x in dir(self) if not x.startswith("_"))
 
+    def __repr__(self):
+        keys = set(k for k in self)
+        result = "Bucket("
+        result += ", ".join(k + " = " + repr(self[k]) for k in self)
+        result += " | unsafe: {"
+        # result += repr(self._unsafe)
+        result += ", ".join((k if isinstance(k, str) else repr(k)) + ": " + repr(v) for k, v in self._unsafe.items() if k not in keys)
+        result += "})"
+        return result
+
     def __rshift__(self, args):
         """Pour, into database"""
         sql = args[0]
