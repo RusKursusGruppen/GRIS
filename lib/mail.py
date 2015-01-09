@@ -100,6 +100,16 @@ Sending failed to the following:
 {failed}
     """, html=False)
 
+
+new_user_adminmail = Template(
+    "User created","""
+A new user has been created
+Username: {username}
+Name: {name}
+email: {email}
+    """, html=False)
+
+
 forgot_password = Template(
     "Glemt Løsen", """
 <p>Hej {name}, du har glemt dit løsen.</br>
