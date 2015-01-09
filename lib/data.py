@@ -139,17 +139,24 @@ def script(filename):
 def store(bucket, sql, *args):
     bucket >> [sql]+list(args)
 
+def bucket_to_dict(bucket):
+    """Returns a dict of the validated data from the bucket"""
+    d = dict()
+    for key in bucket:
+        d[key] = bucket[key]
+    return d
+
 class Bucket(object):
     def __init__(self, *unsafe,  **kwargs):
-        self.__lock__ = False
+        self._lock = False
 
-        self.__unsafe__ = {}
+        self._unsafe = {}
         for d in unsafe:
             # EXPLANATION:
-            # You cant use self.__unsafe__.update(d) here as the request.form
+            # You cant use self._unsafe.update(d) here as the request.form
             # for some reason will pack its values in lists
             for k,v in d.items():
-                self.__unsafe__[k] = v
+                self._unsafe[k] = v
 
         for k,v in kwargs.items():
             object.__setattr__(self, k, v)
@@ -162,8 +169,8 @@ class Bucket(object):
         if item in object.__getattribute__(self, "__dict__"):
             return object.__getattribute__(self, item)
 
-        if not object.__getattribute__(self, "__lock__"):
-            unsafe = object.__getattribute__(self, "__unsafe__")
+        if not object.__getattribute__(self, "_lock"):
+            unsafe = object.__getattribute__(self, "_unsafe")
             if item in unsafe:
                 value = unsafe[item]
                 object.__setattr__(self, item, value)
@@ -189,17 +196,17 @@ class Bucket(object):
 
     def __getitem__(self, item):
         """Returns item in the bucket or if none is found, the item in the unsafe part"""
-        prevlock = self.__lock__
+        prevlock = self._lock
         + self
         try:
             return self.__getattribute__(item)
         except AttributeError:
-            return self.__unsafe__[item]
+            return self._unsafe[item]
         finally:
-            self.__lock__ = prevlock
+            self._lock = prevlock
 
     def __setitem__(self, item, value):
-        prevlock = self.__lock__
+        prevlock = self._lock
         + self
         try:
             if hasattr(self, item): #erroneoussssss
@@ -207,13 +214,13 @@ class Bucket(object):
             else:
                 raise AttributeError("To prevent sqlinjections you cant declare new attributes like this")
         finally:
-            self.__lock__ = prevlock
+            self._lock = prevlock
 
     def __pos__(self):
-        self.__lock__ = True
+        self._lock = True
 
     def __neg__(self):
-        self.__lock__ = False
+        self._lock = False
 
 
     def __iter__(self):
