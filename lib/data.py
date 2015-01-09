@@ -192,16 +192,13 @@ class Bucket(object):
                 object.__setattr__(self, item, value)
                 return value
 
-        try:
-            return object.__getattribute__(self, item)
-        except AttributeError as e:
-            if config.DEBUG:
-                print("bucket not filled")
-                raise e
-            else:
-                if not item.startswith("_"):
-                    print("FAIL: ", item)
-                return None
+        return object.__getattribute__(self, item)
+
+
+    def __len__(self):
+        keys = set(self)
+        keys.update(self._unsafe.keys())
+        return len(keys)
 
     def __contains__(self, item):
         try:
@@ -225,10 +222,14 @@ class Bucket(object):
         prevlock = self._lock
         + self
         try:
-            if hasattr(self, item): #erroneoussssss
+            # WARNING: hasattr tries to access self.item so the bucket needs to be locked!!
+            if hasattr(self, item):
                 self.__setattr__(item, value)
             else:
-                raise AttributeError("To prevent sqlinjections you cant declare new attributes like this")
+                # Should not be reached unless python changes implementation of hasattr
+                self._unsafe[item] = value
+        except AttributeError:
+            self._unsafe[item] = value
         finally:
             self._lock = prevlock
 
