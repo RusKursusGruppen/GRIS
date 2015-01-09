@@ -70,12 +70,14 @@ class Template():
             else:
                 html = None
 
+        if subject is not None:
+            subject = subject.format(format_args)
         if body is not None:
-            body = body.format(**kwargs)
+            body = body.format(format_args)
         if html is not None:
-            html = html.format(**kwargs)
+            html = html.format(format_args)
 
-        return Message(subject=self.subject, body=body, html=html)
+        return Message(subject=subject, body=body, html=html)
 
 
 
