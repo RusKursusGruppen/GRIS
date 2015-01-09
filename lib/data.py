@@ -91,6 +91,12 @@ class QueryList(list):
     def all(self):
         return self
 
+    def one_or_more(self):
+        if len(self) == 1:
+            return self[0]
+        else:
+            return self
+
     def one(self, code=None, description=None):
         if len(self) != 1:
             if code is None and description is None:
@@ -106,6 +112,17 @@ class QueryList(list):
                 description = "There are {} columns in the result, but only one was expected!".format(len(self))
             abort(code, description)
         return row[0]
+
+    def scalars(self, code=None, description=None):
+        result = []
+        for row in self:
+            if len(row) != 1:
+                if code is None and description is None:
+                    description = "There are {} columns in the result, but only one was expected!".format(len(self))
+                abort(code, description)
+            result.append(row[0])
+        return result
+
 
 def execute(query, *args):
     with Transaction() as t:
