@@ -53,9 +53,13 @@ class Template():
     def format(self, *args, **kwargs):
         format_args = dict()
         for arg in args:
-            format_args.update(arg)
+            if isinstance(arg, Bucket):
+                format_args.update(data.bucket_to_dict(arg))
+            else:
+                format_args.update(arg)
         format_args.update(**kwargs)
 
+        subject = self.subject
         body = self.body
         html = self.html
 
