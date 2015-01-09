@@ -11,20 +11,36 @@ from lib import log
 
 import config
 
+
+class BucketCursor(psycopg2.extensions.cursor):
+    def __init__(self, *args, **kwargs):
+        super(BucketCursor, self).__init__(*args, **kwargs)
+        self.row_factory = BucketRow
+        self._column_mapping = None
+
+    def column_mapping(self):
+        if self._column_mapping is None:
+            self._column_mapping = []
+            for i in range(len(self.description)):
+                self._column_mapping.append(self.description[i][0])
+        return self._column_mapping
+
 class Transaction():
     def __init__(self):
         self.connection = psycopg2.connect(host=config.DATABASE_HOST,
                                            database=config.DATABASE_NAME,
                                            user=config.DATABASE_USER,
                                            port=config.DATABASE_PORT,
-                                           password=config.DATABASE_PASSWORD)
+                                           password=config.DATABASE_PASSWORD,
+                                           cursor_factory=BucketRow)
 
     def _execute(self, query, args, many):
         if query.count("?") != len(args):
             raise Exception("Wrong number of SQL arguments for query "+query)
         query = query.replace("?", "%s")
         try:
-            with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+            # with self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor) as cursor:
+            with self.connection.cursor() as cursor:
                 if many:
                     cursor.executemany(query, args)
                 else:
@@ -255,9 +271,22 @@ class Bucket(object):
         sql += " returning *"
 
         result = execute(sql, *values)
-        if len(result) == 1:
-            return result[0]
-        return result
+        return result.one_or_more()
+
+class BucketRow(Bucket):
+    def __init__(self, cursor):
+        super(BucketRow, self).__init__()
+        self._column_mapping = cursor.column_mapping()
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            item = self._column_mapping[item]
+        return super(BucketRow, self).__getitem__(item)
+
+    def __setitem__(self, key, value):
+        if isinstance(key, int):
+            key = self._column_mapping[key]
+        return super(BucketRow, self).__setitem__(key, value)
 
 
 if __name__ == "__main__":
