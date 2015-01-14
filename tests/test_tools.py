@@ -37,6 +37,7 @@ class Abort(unittest.TestCase):
             function(*args, **kwargs)
         except exception as e:
             return e
+        return None
 
     def test_3(self):
         exception = werkzeug.exceptions.InternalServerError
