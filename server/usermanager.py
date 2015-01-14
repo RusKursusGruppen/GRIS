@@ -1,8 +1,55 @@
 # -*- coding: utf-8 -*-
 
-import random, string
+import random, string, time
+
+from flask import Blueprint, jsonify, request
 from lib.tools import abort, now
 
+
+blueprint = Blueprint("usermanager", __name__, url_prefix="/api")
+
+
+@blueprint.route("/usermanager/login", methods=['POST'])
+def login():
+    b = data.Bucket(request.form)
+    loginname = loginname(b.username)
+    users = data.execute("SELECT user_id, username, password, deleted FROM Users WHERE loginname = ?", loginname)
+
+    sleep(config.SLEEP_ATTEMPT)
+    if empty(users) or not password.check(b.raw_password, users.one()["password"]):
+        sleep(config.SLEEP_FAIL)
+        abort(400, "Invalid username or password")
+
+    user = users.one()
+    if user.deleted:
+        abort(400, "Sorry, your user has been deleted")
+
+    session["logged_in"] = True
+    session["user_id"] = user["user_id"]
+    session["username"] = user["username"]
+
+    password.update_password(user["user_id"], b.raw_password)
+    return True
+
+
+def create_user(username, raw_password, name="", email="", groups=[]):
+    b = data.Bucket()
+    b.username = username
+    b.loginname = loginname(username)
+    b.password = password.encode(raw_password)
+    b.name = name
+    b.email = email
+    user = (b >= "Users")
+    set_user_groups(user["user_id"], groups)
+
+    mail.new_user_adminmail.format(b).to_admins()
+
+def set_user_groups(user_id, group):
+    pass
+
+def update_password(user_id, raw_password):
+    passwd = password.encode(raw_password)
+    data.execute("UPDATE Users SET password = ? WHERE user_id = ?", passwd, user_id)
 
 def loginname(username):
     return username.lower()
@@ -48,7 +95,7 @@ def forgot_password(username):
     #TODO: Should the current password be deleted in the database? or would that be anoying as other people could delete your password if they know your username."
 
     user = data.execute("SELECT user_id, username, name, email, phone FROM Users WHERE loginname = ?",
-                        loginname(username)).one(500, "No such user")
+                        loginname(username)).one(400, "No such user")
 
     if user["email"] is None:
         mail.forgot_password_no_email_adminmail.format(user).to_admins()
