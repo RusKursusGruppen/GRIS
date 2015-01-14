@@ -1,37 +1,103 @@
 # -*- coding: utf-8 -*-
 
-import sys
-from contextlib import contextmanager
-import psycopg2
-import psycopg2.extras
-import itertools
+import sys, itertools
+import psycopg2, psycopg2.extras
+from flask import _app_ctx_stack
 
 from lib import log
 
-import config
+class BucketDatabase():
+    def __init__(self, app=None, context_stack=None):
+        self.app = None
+        self._stack = context_stack
+
+        if app is not None:
+            self.init_app(app, context_stack)
+
+    def init_app(self, app, context_stack=None):
+        # self._stack
+        self._stack = context_stack #or self._stack
+        if self._stack is None:
+            self._stack = _app_ctx_stack
+
+        self.app = app
+        self.app.config.setdefault("BUCKET_DATABASE_HOST", "")
+        self.app.config.setdefault("BUCKET_DATABASE_NAME", "")
+        self.app.config.setdefault("BUCKET_DATABASE_USER", "")
+        self.app.config.setdefault("BUCKET_DATABASE_PORT", "")
+        self.app.config.setdefault("BUCKET_DATABASE_PASSWORD", "")
+        self.app.teardown_appcontext(self.teardown)
+
+    def teardown(self, exception):
+        ctx = self._stack.top
+        if hasattr(ctx, "bucket_transaction_stack"):
+            ctx.bucket_transaction_stack.clear()
+
+    def Bucket(self, *args, **kwargs):
+        return Bucket(*args, **kwargs)
+
+    def bucket_and_master(*args, **kwargs):
+        return bucket_and_master(*args, **kwargs)
+
+    def Transaction(self):
+        return Transaction(self)
+
+    def execute(self, query, *args):
+        with self._top_transaction() as t:
+            return t.execute(query, *args)
+
+    def executemany(self, query, argSeq):
+        with self._top_transaction() as t:
+            return t.executemany(query, *args)
+
+    def script(self, filename):
+        with self._top_transaction() as t:
+            return t.script(query, *args)
+
+    def _top_transaction(self):
+        ctx = self._stack.top
+        if ctx is None or not hasattr(ctx, "bucket_transaction_stack") or len(ctx.bucket_transaction_stack) == 0:
+            return self.Transaction()
+        return ctx.bucket_transaction_stack[-1]
+
+    def _push_transaction(self, transaction):
+        ctx = self._stack.top
+        if ctx is not None:
+            if not hasattr(ctx, "bucket_transaction_stack"):
+                ctx.bucket_transaction_stack = []
+            ctx.bucket_transaction_stack.append(transaction)
+
+    def _pop_transaction(self):
+        ctx = self._stack.top
+        if ctx is None or not hasattr(ctx, "bucket_transaction_stack"):
+            raise Exception("Cant pop from empty stack")
+        return ctx.bucket_transaction_stack.pop()
 
 
-class BucketCursor(psycopg2.extensions.cursor):
-    def __init__(self, *args, **kwargs):
-        super(BucketCursor, self).__init__(*args, **kwargs)
-        self.row_factory = BucketRow
-        self._column_mapping = None
+def execute(query, *args):
+    with Transaction() as t:
+        return t.execute(query, *args)
 
-    def column_mapping(self):
-        if self._column_mapping is None:
-            self._column_mapping = []
-            for i in range(len(self.description)):
-                self._column_mapping.append(self.description[i][0])
-        return self._column_mapping
+def executemany(query, argSeq):
+    with Transaction() as t:
+        return t.executemany(query, *args)
+
+def script(filename):
+    with Transaction() as t:
+        return t.script(query, *args)
+
 
 class Transaction():
-    def __init__(self):
-        self.connection = psycopg2.connect(host=config.DATABASE_HOST,
-                                           database=config.DATABASE_NAME,
-                                           user=config.DATABASE_USER,
-                                           port=config.DATABASE_PORT,
-                                           password=config.DATABASE_PASSWORD,
-                                           cursor_factory=BucketRow)
+    def __init__(self, bucketDatabase):
+        self._bucketDatabase = bucketDatabase
+        self._contextdepth = 0
+
+        self.connection = psycopg2.connect(host=self._bucketDatabase.app.config["BUCKET_DATABASE_HOST"],
+                                           database=self._bucketDatabase.app.config["BUCKET_DATABASE_NAME"],
+                                           user=self._bucketDatabase.app.config["BUCKET_DATABASE_USER"],
+                                           port=self._bucketDatabase.app.config["BUCKET_DATABASE_PORT"],
+                                           password=self._bucketDatabase.app.config["BUCKET_DATABASE_PASSWORD"],
+                                           cursor_factory=BucketCursor)
 
     def _execute(self, query, args, many):
         if query.count("?") != len(args):
@@ -47,11 +113,7 @@ class Transaction():
 
                 log.data(query, args)
                 try:
-                    result = QueryList(cursor.fetchall())
-                    result.rowcount = cursor.rowcount
-                    result.lastrowid = cursor.lastrowid
-                    result.statusmessage = cursor.statusmessage
-                    return result
+                    return QueryList(cursor.fetchall())
                 except psycopg2.ProgrammingError as e:
                     if str(e) == "no results to fetch":
                         return None
@@ -97,10 +159,16 @@ class Transaction():
         self.connection.rollback()
 
     def __enter__(self):
+        self._bucketDatabase._push_transaction(self)
+        self._contextdepth += 1
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.commit()
+        self._bucketDatabase._pop_transaction()
+        self._contextdepth -= 1
+        if self._contextdepth == 0:
+            self.commit()
+
 
 class QueryList(list):
     def all(self):
@@ -139,29 +207,7 @@ class QueryList(list):
         return result
 
 
-def execute(query, *args):
-    with Transaction() as t:
-        return t.execute(query, *args)
-
-def executemany(query, argSeq):
-    with Transaction() as t:
-        return t.executemany(query, *args)
-
-def script(filename):
-    with Transaction() as t:
-        return t.script(filename)
-
-def store(bucket, sql, *args):
-    bucket >> [sql]+list(args)
-
-def bucket_to_dict(bucket):
-    """Returns a dict of the validated data from the bucket"""
-    d = dict()
-    for key in bucket:
-        d[key] = bucket[key]
-    return d
-
-class Bucket(object):
+class Bucket():
     def __init__(self, *unsafe,  **kwargs):
         self._lock = False
 
@@ -366,6 +412,28 @@ class BucketRow(Bucket):
             key = self._column_mapping[key]
         return super(BucketRow, self).__setitem__(key, value)
 
+
+def config_db(config = None):
+    class DummyApp():
+        def __init__(self, config):
+            self.config = config
+        def teardown_appcontext(self, *args, **kwargs):
+            pass
+
+    class DummyStack():
+        top = Bucket()
+
+    if config is None:
+        import config
+        app_config = {"BUCKET_DATABASE_HOST": config.BUCKET_DATABASE_HOST,
+                      "BUCKET_DATABASE_NAME": config.BUCKET_DATABASE_NAME,
+                      "BUCKET_DATABASE_USER": config.BUCKET_DATABASE_USER,
+                      "BUCKET_DATABASE_PORT": config.BUCKET_DATABASE_PORT,
+                      "BUCKET_DATABASE_PASSWORD": config.BUCKET_DATABASE_PASSWORD}
+        app = DummyApp(app_config, _app_ctx_stack)
+    else:
+        app = DummyApp(config)
+    return BucketDatabase(app, _app_ctx_stack)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
