@@ -1,4 +1,3 @@
-#!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
 import sys
@@ -194,6 +193,8 @@ class Bucket(object):
 
         return object.__getattribute__(self, item)
 
+    def __call__(self):
+        return BucketMaster(self)
 
     def __len__(self):
         keys = set(self)
@@ -239,17 +240,16 @@ class Bucket(object):
     def __neg__(self):
         self._lock = False
 
-
     def __iter__(self):
-        return (x for x in dir(self) if not x.startswith("_"))
+        return ((k, self[k]) for k in dir(self) if not k.startswith("_"))
 
     def __repr__(self):
-        keys = set(k for k in self)
+        keys = set(k for k,_ in self)
         result = "Bucket("
-        result += ", ".join(k + " = " + repr(self[k]) for k in self)
+        result += ", ".join(k + " = " + repr(v) for k,v in self)
         result += " | unsafe: {"
         # result += repr(self._unsafe)
-        result += ", ".join((k if isinstance(k, str) else repr(k)) + ": " + repr(v) for k, v in self._unsafe.items() if k not in keys)
+        result += ", ".join((k if isinstance(k, str) else repr(k)) + ": " + repr(v) for k,v in self._unsafe.items() if k not in keys)
         result += "})"
         return result
 
@@ -269,7 +269,7 @@ class Bucket(object):
         return execute(sql, *values)
 
     def __ge__(self, dest):
-        """Create entry in database"""
+        """Insert entry into database"""
         sql = "INSERT INTO {0}(".format(dest)
         keys = [c for c in self]
         questions = ["?"] * len(keys)
@@ -283,6 +283,73 @@ class Bucket(object):
 
         result = execute(sql, *values)
         return result.one_or_more()
+
+class BucketMaster():
+    def __init__(self, bucket):
+        self._bucket = bucket
+
+    def insert(self, destination):
+        return self._bucket >= destination
+
+    def pour(self, *args, **kwargs):
+        return self.store(*args, **kwargs)
+
+    def store(self, sql, *args):
+        return self._bucket >> [sql]+list(args)
+
+
+    def safe_keys(self):
+        return (k for k,_ in self._bucket)
+
+    def unsafe_keys(self):
+        safe = set(self.safe_keys())
+        return (k for k in self._bucket._unsafe if k not in safe)
+
+    def all_keys(self):
+        # Not all safe items are guaranteed to be in the unsafe ones
+        return itertools.chain(self.safe_keys(), self.unsafe_keys())
+
+
+    def safe_items(self):
+        return iter(self._bucket)
+
+    def unsafe_items(self):
+        safe = set(self.safe_keys())
+        return ((k, v) for k,v in self._bucket._unsafe.items() if k not in safe)
+
+    def all_items(self, bucket):
+        return itertools.chain(self.safe_items(), self.unsafe_items())
+
+
+    def safe_dict(self):
+        return {k:v for k,v in self.safe_items()}
+
+    def unsafe_dict(self):
+        return {k:v for k,v in self.unsafe_items()}
+
+    def all_dict(self):
+        return {k:v for k,v in self.all_items()}
+
+
+def bucket_and_master(*args, **kwargs):
+    bucket = Bucket(*args, **kwargs)
+    master = BucketMaster(bucket)
+    return bucket, master
+
+
+class BucketCursor(psycopg2.extensions.cursor):
+    def __init__(self, *args, **kwargs):
+        super(BucketCursor, self).__init__(*args, **kwargs)
+        self.row_factory = BucketRow
+        self._column_mapping = None
+
+    def column_mapping(self):
+        if self._column_mapping is None:
+            self._column_mapping = []
+            for i in range(len(self.description)):
+                self._column_mapping.append(self.description[i][0])
+        return self._column_mapping
+
 
 class BucketRow(Bucket):
     def __init__(self, cursor):

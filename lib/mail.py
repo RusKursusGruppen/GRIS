@@ -54,7 +54,7 @@ class Template():
         format_args = dict()
         for arg in args:
             if isinstance(arg, Bucket):
-                format_args.update(data.bucket_to_dict(arg))
+                format_args.update(arg().safe_dict())
             else:
                 format_args.update(arg)
         format_args.update(**kwargs)
