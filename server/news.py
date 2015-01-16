@@ -8,13 +8,13 @@ blueprint = Blueprint("news", __name__, url_prefix="/api")
 from gris import data
 
 
-@front.route('/news')
+@blueprint.route('/news')
 @logged_in
 def all():
     news = data.execute("SELECT * FROM News ORDER BY created DESC")
     return news
 
-@front.route('/news/add', methods=["POST"])
+@blueprint.route('/news/add', methods=["POST"])
 @logged_in
 def add():
     b = data.Bucket(request.form)
@@ -26,7 +26,7 @@ def add():
     b >= "News"
 
 
-@front.route('/news/update', methods=["POST"])
+@blueprint.route('/news/update', methods=["POST"])
 @logged_in
 def update():
     b = data.Bucket(request.form)
@@ -44,7 +44,7 @@ def update():
 
     b >> ("UPDATE News $ WHERE news_id = ?", b["news_id"])
 
-@front.route('/news/delete', methods=["POST"])
+@blueprint.route('/news/delete', methods=["POST"])
 @logged_in
 def delete():
     b = data.Bucket(request.form)
