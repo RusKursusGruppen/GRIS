@@ -36,29 +36,31 @@ class BucketDatabase():
     def Bucket(self, *args, **kwargs):
         return Bucket(*args, **kwargs)
 
-    def bucket_and_master(*args, **kwargs):
-        return bucket_and_master(*args, **kwargs)
+    def bucket_and_master(self, *args, **kwargs):
+        bucket = Bucket(*args, **kwargs)
+        master = BucketMaster(bucket)
+        return bucket, master
 
-    def Transaction(self):
+    def transaction(self):
+        ctx = self._stack.top
+        if ctx is None or not hasattr(ctx, "bucket_transaction_stack") or len(ctx.bucket_transaction_stack) == 0:
+            return self.new_transaction()
+        return ctx.bucket_transaction_stack[-1]
+
+    def new_transaction(self):
         return Transaction(self)
 
     def execute(self, query, *args):
-        with self._top_transaction() as t:
+        with self.transaction() as t:
             return t.execute(query, *args)
 
     def executemany(self, query, argSeq):
-        with self._top_transaction() as t:
+        with self.transaction() as t:
             return t.executemany(query, *args)
 
     def script(self, filename):
-        with self._top_transaction() as t:
+        with self.transaction() as t:
             return t.script(query, *args)
-
-    def _top_transaction(self):
-        ctx = self._stack.top
-        if ctx is None or not hasattr(ctx, "bucket_transaction_stack") or len(ctx.bucket_transaction_stack) == 0:
-            return self.Transaction()
-        return ctx.bucket_transaction_stack[-1]
 
     def _push_transaction(self, transaction):
         ctx = self._stack.top
@@ -72,19 +74,6 @@ class BucketDatabase():
         if ctx is None or not hasattr(ctx, "bucket_transaction_stack"):
             raise Exception("Cant pop from empty stack")
         return ctx.bucket_transaction_stack.pop()
-
-
-def execute(query, *args):
-    with Transaction() as t:
-        return t.execute(query, *args)
-
-def executemany(query, argSeq):
-    with Transaction() as t:
-        return t.executemany(query, *args)
-
-def script(filename):
-    with Transaction() as t:
-        return t.script(query, *args)
 
 
 class Transaction():
@@ -375,12 +364,6 @@ class BucketMaster():
 
     def all_dict(self):
         return {k:v for k,v in self.all_items()}
-
-
-def bucket_and_master(*args, **kwargs):
-    bucket = Bucket(*args, **kwargs)
-    master = BucketMaster(bucket)
-    return bucket, master
 
 
 class BucketCursor(psycopg2.extensions.cursor):
