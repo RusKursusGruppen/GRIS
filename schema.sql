@@ -8,20 +8,20 @@ CREATE TABLE Users(
     user_id             serial PRIMARY KEY,
     username            text UNIQUE NOT NULL,
     loginname           text UNIQUE NOT NULL,
-    password            text NOT NULL,
-
+    created             timestamp NOT NULL default CURRENT_TIMESTAMP,
     name                text DEFAULT 'RUS',
+    email               text,
+    phone               text,
     driverslicence      boolean,
     address             text,
     zipcode             text,
     city                text,
-    phone               text,
-    email               text,
     birthday            date,
 
     diku_age            text, -- Might be better as a nullable reference to the rus instance of this user?
     about_me            text,
 
+    password            text NOT NULL,
     deleted             boolean NOT NULL DEFAULT FALSE -- Field for marking a user as deleted
 );
 
@@ -37,7 +37,7 @@ INSERT INTO Groups(groupname) VALUES('mentor');
 
 DROP TABLE IF EXISTS User_groups CASCADE;
 CREATE TABLE Group_users(
-    user_id             serial REFERENCES Users(user_id),
+    user_id             integer REFERENCES Users(user_id),
     groupname           text REFERENCES Groups(groupname),
     PRIMARY KEY (username, groupname)
 );
@@ -53,14 +53,14 @@ CREATE TABLE User_creation_keys(
 DROP TABLE IF EXISTS User_forgotten_password_keys CASCADE;
 CREATE TABLE User_forgotten_password_keys(
     key                 text PRIMARY KEY,
-    user_id             serial REFERENCES Users(user_id),
+    user_id             integer REFERENCES Users(user_id),
     created             timestamp NOT NULL
 );
 
 --- TOUR INFORMATION ---
 DROP TABLE IF EXISTS Tours CASCADE;
 CREATE TABLE Tours(
-    t_id                serial PRIMARY KEY,
+    tour_id             serial PRIMARY KEY,
     tour_name           text,
     theme               text,
     type                text CHECK(type IN ('p', 't', 'm')),
@@ -70,39 +70,55 @@ CREATE TABLE Tours(
 
 DROP TABLE IF EXISTS Tours_tutors CASCADE;
 CREATE TABLE Tours_tutors(
-    t_id                integer REFERENCES Tours(t_id),
-    username            text REFERENCES Users(username),
-    PRIMARY KEY (t_id, username)
+    tour_id             integer REFERENCES Tours(tour_id),
+    user_id             integer REFERENCES Users(user_id),
+    PRIMARY KEY (t_id, user_id)
 );
 
-DROP TABLE IF EXISTS Dutyteams CASCADE;
-CREATE TABLE Dutyteams(
-    d_id                serial PRIMARY KEY,
-    t_id                integer REFERENCES Tours(t_id) NOT NULL,
-    name                text
+DROP TABLE IF EXISTS Team_categories CASCADE;
+CREATE TABLE Team_categories(
+    team_category_id    serial PRIMARY KEY,
+    tour_id             integer REFERENCES Tours(tour_id) NOT NULL,
+    category            text NOT NULL,
+    UNIQUE (tour_id, name)
+);
+
+DROP TABLE IF EXISTS Teams CASCADE;
+CREATE TABLE Teams(
+    team_id             serial PRIMARY KEY,
+    team_category_id    integer REFERENCES Team_categories(team_category_id),
+    tour_id             integer REFERENCES Tours(tour_id),
+    team_name           text
+);
+
+DROP TABLE IF EXISTS Team_members CASCADE;
+CREATE TABLE Team_members(
+    team_id             integer REFERENCES Teams(team_id),
+    rus_id              integer REFERENCES Russer(rus_id),
+    PRIMARY KEY (team_id, rus_id)
 );
 
 
 --- MENTOR TEAMS ---
-DROP TABLE IF EXISTS Mentorteams CASCADE;
-CREATE TABLE Mentorteams(
-    m_id                serial PRIMARY KEY,
-    mentor_names        text,
+DROP TABLE IF EXISTS Mentor_teams CASCADE;
+CREATE TABLE Mentor_teams(
+    mentor_id           serial PRIMARY KEY,
+    mentor_team_name    text,
     year                integer
 );
 
 DROP TABLE IF EXISTS Mentors CASCADE;
 CREATE TABLE Mentors(
-    m_id                integer REFERENCES Mentorteams(m_id),
-    username            text REFERENCES Users(username),
-    PRIMARY KEY (m_id, username)
+    mentor_id           integer REFERENCES Mentorteams(m_id),
+    user_id             integer REFERENCES Users(user_id),
+    PRIMARY KEY (mentor_id, user_id)
 );
 
 
 --- RUSDATABASE ---
 DROP TABLE IF EXISTS Russer CASCADE;
 CREATE TABLE Russer(
-    r_id                serial PRIMARY KEY,
+    rus_id              serial PRIMARY KEY,
 
     name                text NOT NULL,
     gender              text CHECK (gender IN ('male', 'female', 'other')),
@@ -116,6 +132,7 @@ CREATE TABLE Russer(
     zipcode             text,
     city                text,
 
+    moving              boolean DEFAULT FALSE,
     move_time           text,
     new_address         text,
     new_zipcode         text,
@@ -143,25 +160,23 @@ CREATE TABLE Russer(
     attending_campus    boolean,
     attending_rustour   boolean,
 
-    rustour             integer REFERENCES Tours(t_id),
-    dutyteam            integer REFERENCES Dutyteams(d_id),
-
-    mentor              integer REFERENCES Mentorteams(m_id)
+    rustour             integer REFERENCES Tours(tour_id),
+    mentor              integer REFERENCES Mentorteams(mentor_id)
 );
 
 DROP TABLE IF EXISTS Friends CASCADE;
 CREATE TABLE Friends(
-    r_id1               integer REFERENCES Russer(r_id),
-    r_id2               integer REFERENCES Russer(r_id),
-    CHECK (r_id1 < r_id2), -- we assume friendship is a symmetric relation, and can thus keep an order in the friendships.
-    PRIMARY KEY (r_id1, r_id2)
+    rus_id1             integer REFERENCES Russer(rus_id),
+    rus_id2             integer REFERENCES Russer(rus_id),
+    CHECK (rus_id1 < rus_id2), -- we assume friendship is a symmetric relation, and can thus keep an order in the friendships.
+    PRIMARY KEY (rus_id1, rus_id2)
 );
 
 DROP TABLE IF EXISTS Friends_of_us CASCADE;
 CREATE TABLE Friends_of_us(
-    r_id                integer REFERENCES Russer(r_id),
-    username            text REFERENCES Users(username),
-    PRIMARY KEY(r_id, username)
+    rus_id              integer REFERENCES Russer(rus_id),
+    user_id             integer REFERENCES Users(user_id),
+    PRIMARY KEY(rus_id, user_id)
 );
 
 
@@ -170,18 +185,19 @@ CREATE TABLE Friends_of_us(
 --- FRONT PAGE ---
 DROP TABLE IF EXISTS News CASCADE;
 CREATE TABLE News(
-    n_id                serial PRIMARY KEY,
-    creator             text REFERENCES Users(username),
+    news_id             serial PRIMARY KEY,
+    creator             integer REFERENCES Users(user_id),
     created             timestamp NOT NULL,
+    last_updated        timestamp DEFAULT NULL,
     title               text,
-    text                text
+    body                text
 );
 
 DROP TABLE IF EXISTS News_access CASCADE;
 CREATE TABLE News_access(
-    n_id                integer REFERENCES News(n_id),
+    news_id             integer REFERENCES News(news_id),
     groupname           text REFERENCES Groups(groupname),
-    PRIMARY KEY (n_id, groupname)
+    PRIMARY KEY (news_id, groupname)
 );
 
 -- --- SCHEDULE ---
@@ -219,8 +235,8 @@ CREATE TABLE News_access(
 --- BOOKKEEPER ---
 DROP TABLE IF EXISTS Books CASCADE;
 CREATE TABLE Books(
-    b_id                serial PRIMARY KEY,
-    creator             text REFERENCES Users(username),
+    book_id             serial PRIMARY KEY,
+    creator             integer REFERENCES Users(user_id),
     created             timestamp NOT NULL,
     title               text,
     description         text
@@ -228,10 +244,10 @@ CREATE TABLE Books(
 
 DROP TABLE IF EXISTS Entries CASCADE;
 CREATE TABLE Entries(
-    e_id                serial PRIMARY KEY,
-    b_id                integer REFERENCES Books(b_id) NOT NULL,
+    entry_id            serial PRIMARY KEY,
+    book_id             integer REFERENCES Books(book_id) NOT NULL,
     date                date,
-    creditor            text REFERENCES Users(username),
+    creditor            integer REFERENCES Users(user_id),
     description         text,
     amount_text         text, -- The unevaluated text,
     amount              integer -- and its result.
@@ -240,29 +256,29 @@ CREATE TABLE Entries(
 
 DROP TABLE IF EXISTS Debts CASCADE;
 CREATE TABLE Debts(
-    e_id                integer REFERENCES Entries(e_id),
-    debtor              text REFERENCES Users(username),
+    entry_id            integer REFERENCES Entries(entry_id),
+    debtor              integer REFERENCES Users(user_id),
     share_text          text,  -- The unevaluated text,
     share               integer, -- and its result.
-    PRIMARY KEY (e_id, debtor)
+    PRIMARY KEY (entry_id, debtor)
 );
 
 DROP TABLE IF EXISTS Book_participants CASCADE;
 CREATE TABLE Book_participants(
-    b_id                integer REFERENCES Books(b_id),
-    participant         text REFERENCES Users(username),
-    PRIMARY KEY (b_id, participant)
+    book_id             integer REFERENCES Books(book_id),
+    participant         integer REFERENCES Users(user_id),
+    PRIMARY KEY (book_id, participant)
 );
 
 DROP TABLE IF EXISTS Payments CASCADE;
 CREATE TABLE Payments(
-    b_id                integer REFERENCES Books(b_id),
+    book_id             integer REFERENCES Books(book_id),
     date                date,
-    creditor            text REFERENCES Users(username),
-    debtor              text REFERENCES Users(username),
+    creditor            integer REFERENCES Users(user_id),
+    debtor              integer REFERENCES Users(user_id),
     amount              integer,
     confirmed           text CHECK (confirmed in ('confirmed', 'rejected', 'unconfirmed')),
-    PRIMARY KEY (b_id, creditor, debtor)
+    PRIMARY KEY (book_id, creditor, debtor)
 );
 
 COMMIT;
