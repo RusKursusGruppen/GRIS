@@ -85,27 +85,27 @@ CREATE TABLE Tests(
 class Transactions(DatabaseTestBase):
     def test_1(self):
         result = None
-        with data.Transaction() as t:
+        with data.transaction() as t:
             result = t.execute("SELECT value FROM Tests")
             self.assertDataUnchanged()
         self.assertDataMatches(result)
         self.assertDataUnchanged()
 
     def test_2(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             self.assertDataUnchanged()
         self.assertValuesInserted("a")
 
     def test_3(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             self.assertRaises(ProgrammingError, t.execute, "INSERT INTO Tests(value) VALUES(?, ?)", "b", 0)
             self.assertRaises(InternalError, t.execute, "INSERT INTO Tests(value) VALUES(?)", "c")
         self.assertDataUnchanged()
 
     def test_4(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
                 t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
@@ -114,7 +114,7 @@ class Transactions(DatabaseTestBase):
         self.assertValuesInserted("a", "b")
 
     def test_5(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
                 t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
@@ -125,7 +125,7 @@ class Transactions(DatabaseTestBase):
         self.assertDataUnchanged()
 
     def test_6(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             self.assertRaises(ProgrammingError, t.execute, "INSERT INTO Tests(value) VALUES(?, ?)", "b", 0)
             self.assertRaises(InternalError, t.execute, "INSERT INTO Tests(value) VALUES(?)", "c")
@@ -136,7 +136,7 @@ class Transactions(DatabaseTestBase):
         self.assertDataUnchanged()
 
     def test_7(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
                 t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
@@ -148,7 +148,7 @@ class Transactions(DatabaseTestBase):
         self.assertDataUnchanged()
 
     def test_8(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
                 t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
@@ -156,10 +156,64 @@ class Transactions(DatabaseTestBase):
             self.assertDataUnchanged()
         self.assertValuesInserted("a", "b")
 
+
     def test_9(self):
-        with data.Transaction() as t:
+        with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
-            with data.Transaction() as q:
+            with data.transaction() as t:
+                t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
+                self.assertDataUnchanged()
+            self.assertDataUnchanged()
+        self.assertValuesInserted("a", "b")
+
+    def test_10(self):
+        with data.transaction() as t:
+            t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
+            with data.transaction() as t:
+                t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
+                self.assertRaises(ProgrammingError, t.execute, "INSERT INTO Tests(value) VALUES(?, ?)", "c", 0)
+                self.assertRaises(InternalError, t.execute, "INSERT INTO Tests(value) VALUES(?)", "d")
+                self.assertDataUnchanged()
+            self.assertDataUnchanged()
+        self.assertDataUnchanged()
+
+    def test_11(self):
+        with data.transaction() as t:
+            t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
+            self.assertRaises(ProgrammingError, t.execute, "INSERT INTO Tests(value) VALUES(?, ?)", "b", 0)
+            self.assertRaises(InternalError, t.execute, "INSERT INTO Tests(value) VALUES(?)", "c")
+            with data.transaction() as t:
+                self.assertRaises(InternalError, t.execute, "INSERT INTO Tests(value) VALUES(?)", "d")
+                self.assertDataUnchanged()
+            self.assertDataUnchanged()
+        self.assertDataUnchanged()
+
+    def test_12(self):
+        with data.transaction() as t:
+            t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
+            with data.transaction() as t:
+                t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
+                self.assertDataUnchanged()
+            t.execute("INSERT INTO Tests(value) VALUES(?)", "c")
+            self.assertRaises(ProgrammingError, t.execute, "INSERT INTO Tests(value) VALUES(?, ?)", "d", 0)
+            self.assertRaises(InternalError, t.execute, "INSERT INTO Tests(value) VALUES(?)", "e")
+            self.assertDataUnchanged()
+        self.assertDataUnchanged()
+
+    def test_13(self):
+        with data.transaction() as t:
+            t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
+            with data.transaction() as t:
+                t.execute("INSERT INTO Tests(value) VALUES(?)", "b")
+                self.assertDataUnchanged()
+            self.assertDataUnchanged()
+        self.assertValuesInserted("a", "b")
+
+    def test_14(self):
+        """Same as test_9 but in two different transactions"""
+        with data.transaction() as t:
+            t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
+            with data.new_transaction() as q:
                 q.execute("INSERT INTO Tests(value) VALUES(?)", "b")
                 self.assertDataUnchanged()
             self.assertValuesInserted("b")
