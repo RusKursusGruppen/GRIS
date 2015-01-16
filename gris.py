@@ -2,7 +2,7 @@
 
 import atexit
 
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, session
 from flask_mail import Mail
 import flask_mail
 
@@ -18,11 +18,13 @@ mail = Mail(app)
 from server.usermanager import blueprint as usermanager_blueprint
 app.register_blueprint(usermanager_blueprint)
 
+from server.news import blueprint as news_blueprint
+app.register_blueprint(news_blueprint)
+
 
 @app.route("/", defaults={"path":""})
 @app.route("/<path:path>")
 def index(path):
-    print(app.url_map)
     return "Hello, World!"
 
 if __name__ == "__main__":
