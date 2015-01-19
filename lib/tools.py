@@ -27,6 +27,12 @@ def success(message=None):
 def now():
     return datetime.datetime.now(datetime.timezone.utc)
 
+def rkgyear(date=None):
+    if date is None:
+        date = now()
+    date = date - dateutil.relativedelta.relativedelta(months=+6)
+    return date.year
+
 def sleep(start, end=None):
     if end is not None:
         time.sleep(start, end)
