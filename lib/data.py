@@ -363,7 +363,7 @@ class BucketMaster():
 
     def all_keys(self):
         # Not all safe items are guaranteed to be in the unsafe ones
-        return itertools.chain(self.safe_keys(), self.unsafe_keys())
+        return itertools.chain(self.unsafe_keys(), self.safe_keys())
 
 
     def safe_items(self):
@@ -373,8 +373,8 @@ class BucketMaster():
         safe = set(self.safe_keys())
         return ((k, v) for k,v in self._bucket._unsafe.items() if k not in safe)
 
-    def all_items(self, bucket):
-        return itertools.chain(self.safe_items(), self.unsafe_items())
+    def all_items(self):
+        return itertools.chain(self.unsafe_items(), self.safe_items())
 
 
     def safe_dict(self):
