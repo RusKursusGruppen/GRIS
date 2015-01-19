@@ -18,6 +18,12 @@ def abort(code=None, description=None):
         _abort(code)
     _abort(code, description)
 
+def success(message=None):
+    result = dict(success=True)
+    if message is not None:
+        result["message"] = message
+    return jsonify(result)
+
 def now():
     return datetime.datetime.now(datetime.timezone.utc)
 
