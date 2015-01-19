@@ -1,0 +1,20 @@
+
+big news
+
+{{name}}
+
+<div class="news-list">
+  <div class="news-article" ng-repeat="article in news">
+    <div class="news-header">
+      <div class="title">{{article.title}}</div>
+      <div class="news-bar">
+        <div class="news-created">{{article.created}}</div>
+        <!-- TODO: Last updated icon with tooltip -->
+        <div class="news-creator">{{article.creator}}</div>
+      </div>
+    </div>
+    <div class="news-body">
+      {{article.body}}
+    </div>
+  </div>
+</div>
