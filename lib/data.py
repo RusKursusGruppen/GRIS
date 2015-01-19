@@ -195,6 +195,13 @@ class QueryList(list):
             result.append(row[0])
         return result
 
+    def by_key(self, key):
+        return {row[key]:row for row in self}
+
+    def __html__(self):
+        return dict(length=len(self),
+                    values=[item.__html__() for item in self])
+
 
 class Bucket():
     def __init__(self, *unsafe,  **kwargs):
@@ -274,6 +281,9 @@ class Bucket():
 
     def __neg__(self):
         self._lock = False
+
+    def __html__(self):
+        return self().all_dict()
 
     def __iter__(self):
         return ((k, self[k]) for k in dir(self) if not k.startswith("_"))

@@ -3,6 +3,7 @@
 import datetime, random, time
 from functools import wraps
 import werkzeug
+import flask
 from flask import request, session
 
 def abort(code=None, description=None):
@@ -30,6 +31,10 @@ def sleep(start, end=None):
     else:
         time.sleep(start)
 
+def jsonify(*args, **kwargs):
+    args = [item.__html__() if hasattr(item, "__html__") else item
+            for item in args]
+    return flask.jsonify(*args, **kwargs)
 
 def logged_in(*args):
     # EXPLANATION: logged_in is called as a decorator
