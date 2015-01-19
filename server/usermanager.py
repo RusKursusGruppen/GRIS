@@ -4,7 +4,7 @@ import random, string, time
 
 from flask import Blueprint, request, session
 
-from lib.tools import abort, logged_in, now
+from lib.tools import abort, jsonify, logged_in, now
 
 blueprint = Blueprint("usermanager", __name__, url_prefix="/api")
 from gris import data
@@ -58,8 +58,13 @@ def validate_password(password):
     return len(password) > 0
 
 ### SESSIONS ###
-@blueprint.route("/usermanager/login", methods=["POST"])
-def login():
+@blueprint.route("/usermanager/authenticated", methods=["GET", "POST"])
+def authenticated():
+    logged_in = "logged_in" in session and session["logged_in"]
+    return jsonify(authenticated=logged_in)
+
+@blueprint.route("/usermanager/authenticate", methods=["POST"])
+def authenticate():
     b = data.Bucket(request.form)
     loginname = loginname(b.username)
     users = data.execute("SELECT user_id, username, password, deleted FROM Users WHERE loginname = ?", loginname)
@@ -75,10 +80,10 @@ def login():
 
     update_password(user.user_id, b.raw_password)
 
-    actual_login(user.user_id, user.username)
+    login(user.user_id, user.username)
     return "Success"
 
-def actual_login(user_id, username):
+def login(user_id, username):
     session["logged_in"] = True
     session["user_id"] = user_id
     session["username"] = username
@@ -266,7 +271,7 @@ def renew_forgotten_password():
         data.execute("DELETE FROM User_forgotten_password_keys WHERE key = ?", key)
         update_password(username, b.new1)
 
-        actual_login(user.user_id, user.username)
+        login(user.user_id, user.username)
 
         return "Success"
 
@@ -316,4 +321,4 @@ def new_user():
         data.execute("DELETE FROM User_creation_keys WHERE key = ?", key)
         create_user(b.username, b.password1, b.name, b.email)
 
-        actual_login(b.user_id, b.username)
+        login(b.user_id, b.username)
