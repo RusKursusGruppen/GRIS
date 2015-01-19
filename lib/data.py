@@ -2,7 +2,7 @@
 
 import sys, itertools
 import psycopg2, psycopg2.extras
-from flask import _app_ctx_stack
+from flask import request, _app_ctx_stack
 
 from lib import log
 
@@ -32,6 +32,17 @@ class BucketDatabase():
         ctx = self._stack.top
         if hasattr(ctx, "bucket_transaction_stack"):
             ctx.bucket_transaction_stack.clear()
+
+    def request(self, force=False):
+        unsafe = []
+        if request.args is not None:
+            unsafe.append(request.args)
+        if request.form is not None:
+            unsafe.append(request.form)
+        json = request.get_json(silent=True, force=force)
+        if json is not None and json != False:
+            unsafe.append(json)
+        return self.Bucket(*unsafe)
 
     def Bucket(self, *args, **kwargs):
         return Bucket(*args, **kwargs)
