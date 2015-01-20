@@ -45,10 +45,12 @@ class BucketDatabase():
         return self.Bucket(*unsafe)
 
     def Bucket(self, *args, **kwargs):
-        return Bucket(*args, **kwargs)
+        b = Bucket(*args, **kwargs)
+        b._bucketDatabase = self
+        return b
 
     def bucket_and_master(self, *args, **kwargs):
-        bucket = Bucket(*args, **kwargs)
+        bucket = self.Bucket(*args, **kwargs)
         master = BucketMaster(bucket)
         return bucket, master
 
@@ -70,8 +72,10 @@ class BucketDatabase():
             return t.executemany(query, *args)
 
     def script(self, filename):
-        with self.transaction() as t:
-            return t.script(query, *args)
+        with open(filename) as file:
+            content = file.read()
+            with self.transaction() as t:
+                return t.execute(content)
 
     def _push_transaction(self, transaction):
         ctx = self._stack.top
@@ -216,6 +220,7 @@ class QueryList(list):
 
 class Bucket():
     def __init__(self, *unsafe,  **kwargs):
+        self._bucketDatabase = None
         self._lock = False
 
         self._unsafe = {}
@@ -259,6 +264,8 @@ class Bucket():
             self[item]
             return True
         except NameError:
+            return False
+        except KeyError:
             return False
 
     def __getitem__(self, item):
@@ -314,22 +321,24 @@ class Bucket():
         sql = args[0]
         args = args[1:]
 
-        setstatm = ", ".join(["{0} = ?".format(c) for c in self])
+        setstatm = ", ".join(["{0} = ?".format(k) for k,_ in self])
         if sql.lower().find(" set ") == -1:
             sql = sql.replace("$", "SET $")
         sql = sql.replace("$", setstatm)
 
-        values = [self[c] for c in self]
+        values = [self[k] for k,_ in self]
         values.extend(args)
 
-        return execute(sql, *values)
+        if self._bucketDatabase is None:
+            raise Exception("No associated BucketDatabase")
+        return self._bucketDatabase.execute(sql, *values)
 
     def __ge__(self, dest):
         """Insert entry into database"""
         sql = "INSERT INTO {0}(".format(dest)
-        keys = [c for c in self]
+        keys = [k for k,_ in self]
         questions = ["?"] * len(keys)
-        values = [self[c] for c in self]
+        values = [self[k] for k,_ in self]
 
         sql += ",".join(keys)
         sql += ") VALUES ("
@@ -337,7 +346,9 @@ class Bucket():
         sql += ")"
         sql += " returning *"
 
-        result = execute(sql, *values)
+        if self._bucketDatabase is None:
+            raise Exception("No associated BucketDatabase")
+        result = self._bucketDatabase.execute(sql, *values)
         return result.one_or_more()
 
 class BucketMaster():
