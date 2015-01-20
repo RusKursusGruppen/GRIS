@@ -4,7 +4,10 @@ import random, string, time
 
 from flask import Blueprint, request, session
 
-from lib.tools import abort, jsonify, logged_in, now
+from lib import mail, password
+from lib.tools import abort, empty, jsonify, logged_in, now, sleep, success
+
+import config
 
 blueprint = Blueprint("usermanager", __name__, url_prefix="/api")
 from gris import data
@@ -37,11 +40,12 @@ def set_user_groups(user_id, groups):
     with data.transaction() as t:
         t.execute("DELETE FROM Group_users WHERE user_id = ?", user_id)
         for group in groups:
-            group_add_user(user_id, group)
+            add_user_to_group(user_id, group)
 
 
 def add_user_to_group(user_id, group):
-    data.execute("INSERT INTO Group_users(user_id, groupname) VALUES(?,?)", user_id, group)
+    group_id = data.execute("SELECT group_id FROM Groups WHERE groupname = ?", group).scalar()
+    data.execute("INSERT INTO Group_users(user_id, group_id) VALUES(?,?)", user_id, group_id)
 
 
 def remove_user_from_group(user_id, group):
@@ -66,8 +70,8 @@ def authenticated():
 @blueprint.route("/usermanager/authenticate", methods=["POST"])
 def authenticate():
     b = data.Bucket(request.form)
-    loginname = loginname(b.username)
-    users = data.execute("SELECT user_id, username, password, deleted FROM Users WHERE loginname = ?", loginname)
+    name = loginname(b.username)
+    users = data.execute("SELECT user_id, username, password, deleted FROM Users WHERE loginname = ?", name)
 
     sleep(config.SLEEP_ATTEMPT)
     if empty(users) or not password.check(b.raw_password, users.one()["password"]):
@@ -81,18 +85,20 @@ def authenticate():
     update_password(user.user_id, b.raw_password)
 
     login(user.user_id, user.username)
-    return "Success"
+    return success()
+
+@blueprint.route("/usermanager/unauthenticate", methods=["GET", "POST"])
+def unauthenticate():
+    logout()
+    return success()
 
 def login(user_id, username):
     session["logged_in"] = True
     session["user_id"] = user_id
     session["username"] = username
 
-
-@blueprint.route("/usermanager/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
-    return "Success"
 
 ### USERS ###
 @blueprint.route("/usermanager/users", methods=["GET"])
@@ -160,7 +166,7 @@ def settings():
     b.about_me
     b >> ("UPDATE Users $ WHERE user_id = ?", user_id)
 
-    return "Success"
+    return success()
 
 
 
@@ -220,7 +226,7 @@ def change_password():
         abort(400, "illegal password")
 
     update_password(username, b.new1)
-    return "Success"
+    return success()
 
 
 @blueprint.route("/usermanager/password/forgot", methods=["POST"])
@@ -273,7 +279,7 @@ def renew_forgotten_password():
 
         login(user.user_id, user.username)
 
-        return "Success"
+        return success()
 
 
 ### USER INVITATION ###
