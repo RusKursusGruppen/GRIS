@@ -8,6 +8,7 @@ from flask import request, session
 
 import gris
 
+
 class AbortException(Exception):
     def __init__(self, code, description=None):
         self.code = code
@@ -88,7 +89,7 @@ def logged_in(*args):
                     session["login_origin"] = request.path
                     abort(403)
                 else:
-                    groups = lib.data.execute("SELECT groupname FROM Group_users WHERE user_id = ?", session["user_id"])
+                    groups = gris.data.execute("SELECT groupname FROM Group_users WHERE user_id = ?", session["user_id"])
                     for group in groups:
                         if group["groupname"] in rights:
                             return fn(*args, **kwargs)
