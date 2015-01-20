@@ -7,6 +7,9 @@ from flask_mail import Mail
 import flask_mail
 
 from lib.data import BucketDatabase
+# from lib import data as data_module
+from lib.tools import AbortException, jsonify
+
 import config
 
 app = Flask(__name__)
@@ -42,5 +45,9 @@ def test():
     print(b)
     return "yay"
 
-if __name__ == "__main__":
-    app.run(config.HOST, config.PORT)
+@app.errorhandler(AbortException)
+def abort_handler(error):
+    return jsonify(dict(code=error.code, message=error.description)), error.code
+
+# for error_code in range(0, 1000):
+    # app.error_handler_spec[None][error_code] = abort_handler

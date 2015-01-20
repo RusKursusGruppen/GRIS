@@ -6,6 +6,13 @@ import werkzeug
 import flask
 from flask import request, session
 
+import gris
+
+class AbortException(Exception):
+    def __init__(self, code, description=None):
+        self.code = code
+        self.description = description
+
 def abort(code=None, description=None):
     _abort = werkzeug.exceptions.abort
     if code is None:
@@ -14,9 +21,9 @@ def abort(code=None, description=None):
         if not isinstance(code, int):
             description = code
             code = 500
-            _abort(code, description)
-        _abort(code)
-    _abort(code, description)
+            raise AbortException(code, description)
+        raise AbortException(code)
+    raise AbortException(code, description)
 
 def success(message=None):
     result = dict(success=True)
