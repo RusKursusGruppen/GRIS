@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
 
+if __name__ == "__main__":
+    print("""\
+You probably want to run run.py instead:
+    python run.py
+
+Remember to activate the virtual environment first.
+Please consult the README for details.""")
+    import sys
+    sys.exit()
+
+
 import atexit
 
 from flask import Flask, Blueprint, send_file, session
