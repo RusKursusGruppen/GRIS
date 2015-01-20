@@ -2,23 +2,23 @@
 
 from flask import Blueprint, request, session
 
-from lib.tools import abort, jsonify, logged_in, now, success
+from lib.tools import abort, is_admin, jsonify, logged_in, now, success
 
 blueprint = Blueprint("news", __name__, url_prefix="/api")
 from gris import data
 
 
-@blueprint.route('/news')
+@blueprint.route("/news")
 @logged_in
 def news():
-    news = data.execute("SELECT * FROM News ORDER BY created DESC")
+    news = data.execute("SELECT * FROM News ORDER BY created ASC")
     return jsonify(news)
 
-@blueprint.route('/news/new', methods=["POST"])
+@blueprint.route("/news/new", methods=["GET", "POST"])
 @logged_in
 def new():
     b = data.Bucket(request.form)
-    b.creator = session['user_id']
+    b.creator = session["user_id"]
     b.created = now()
     if b.title == "":
         abort(400, "illegal title")
@@ -26,7 +26,7 @@ def new():
     b >= "News"
     return success()
 
-@blueprint.route('/news/update', methods=["POST"])
+@blueprint.route("/news/update", methods=["POST"])
 @logged_in
 def update():
     b = data.Bucket(request.form)
@@ -45,7 +45,7 @@ def update():
     b >> ("UPDATE News $ WHERE news_id = ?", b["news_id"])
     return success()
 
-@blueprint.route('/news/delete', methods=["POST"])
+@blueprint.route("/news/delete", methods=["POST"])
 @logged_in
 def delete():
     b = data.Bucket(request.form)
