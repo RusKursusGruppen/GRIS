@@ -99,6 +99,6 @@ def logged_in(*args):
 
 def is_admin():
     if "is_admin" not in flask.g:
-        groups = lib.data.execute("SELECT groupname FROM Group_users WHERE user_id = ?", session["user_id"]).scalars()
+        groups = gris.data.execute("SELECT groupname FROM Group_users INNER JOIN Groups USING (group_id) WHERE user_id = ?", session["user_id"]).scalars()
         flask.g.is_admin = "admin" in groups
     return flask.g.is_admin
