@@ -55,6 +55,9 @@ def jsonify(*args, **kwargs):
             for item in args]
     return flask.jsonify(*args, **kwargs)
 
+def empty(lst):
+    return lst == None or len(lst) == 0
+
 def logged_in(*args):
     # EXPLANATION: logged_in is called as a decorator
     if callable(args[0]):
