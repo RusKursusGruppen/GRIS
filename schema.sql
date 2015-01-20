@@ -18,7 +18,7 @@ CREATE TABLE Users(
     city                text,
     birthday            date,
 
-    diku_age            text, -- Might be better as a nullable reference to the rus instance of this user?
+    diku_age            text, -- Might be better as a nullable reference to the rus instance of this user
     about_me            text,
 
     password            text NOT NULL,
@@ -27,7 +27,8 @@ CREATE TABLE Users(
 
 DROP TABLE IF EXISTS Groups CASCADE;
 CREATE TABLE Groups(
-    groupname           text PRIMARY KEY
+    group_id            serial PRIMARY KEY,
+    groupname           text UNIQUE NOT NULL
 );
 INSERT INTO Groups(groupname) VALUES('admin');
 INSERT INTO Groups(groupname) VALUES('admin_mail_log');
@@ -38,8 +39,8 @@ INSERT INTO Groups(groupname) VALUES('mentor');
 DROP TABLE IF EXISTS User_groups CASCADE;
 CREATE TABLE Group_users(
     user_id             integer REFERENCES Users(user_id),
-    groupname           text REFERENCES Groups(groupname),
-    PRIMARY KEY (username, groupname)
+    group_id            integer REFERENCES Groups(group_id),
+    PRIMARY KEY (user_id, group_id)
 );
 
 
@@ -72,7 +73,7 @@ DROP TABLE IF EXISTS Tours_tutors CASCADE;
 CREATE TABLE Tours_tutors(
     tour_id             integer REFERENCES Tours(tour_id),
     user_id             integer REFERENCES Users(user_id),
-    PRIMARY KEY (t_id, user_id)
+    PRIMARY KEY (tour_id, user_id)
 );
 
 DROP TABLE IF EXISTS Team_categories CASCADE;
@@ -80,22 +81,16 @@ CREATE TABLE Team_categories(
     team_category_id    serial PRIMARY KEY,
     tour_id             integer REFERENCES Tours(tour_id) NOT NULL,
     category            text NOT NULL,
-    UNIQUE (tour_id, name)
+    UNIQUE (tour_id, category)
 );
 
 DROP TABLE IF EXISTS Teams CASCADE;
 CREATE TABLE Teams(
     team_id             serial PRIMARY KEY,
     team_category_id    integer REFERENCES Team_categories(team_category_id),
-    tour_id             integer REFERENCES Tours(tour_id),
-    team_name           text
-);
+    team_name           text,
+    UNIQUE (team_category_id, team_name)
 
-DROP TABLE IF EXISTS Team_members CASCADE;
-CREATE TABLE Team_members(
-    team_id             integer REFERENCES Teams(team_id),
-    rus_id              integer REFERENCES Russer(rus_id),
-    PRIMARY KEY (team_id, rus_id)
 );
 
 
@@ -104,12 +99,13 @@ DROP TABLE IF EXISTS Mentor_teams CASCADE;
 CREATE TABLE Mentor_teams(
     mentor_id           serial PRIMARY KEY,
     mentor_team_name    text,
+    notes               text,
     year                integer
 );
 
 DROP TABLE IF EXISTS Mentors CASCADE;
 CREATE TABLE Mentors(
-    mentor_id           integer REFERENCES Mentorteams(m_id),
+    mentor_id           integer REFERENCES Mentor_teams(mentor_id),
     user_id             integer REFERENCES Users(user_id),
     PRIMARY KEY (mentor_id, user_id)
 );
@@ -119,14 +115,20 @@ CREATE TABLE Mentors(
 DROP TABLE IF EXISTS Russer CASCADE;
 CREATE TABLE Russer(
     rus_id              serial PRIMARY KEY,
+    year                int NOT NULL,
 
-    name                text NOT NULL,
-    gender              text CHECK (gender IN ('male', 'female', 'other')),
-    birthday            date,
+    filled_by           integer REFERENCES Users(user_id),
+    last_updated        timestamp DEFAULT NULL,
 
-    filled_by           text,
     can_contact         boolean DEFAULT TRUE,
     called              boolean DEFAULT FALSE,
+
+    name                text NOT NULL,
+    ku_id               int,
+    gender              text CHECK (gender IN ('male', 'female', 'other')),
+    birthday            date,
+    phone               text,
+    email               text,
     co                  text,
     address             text,
     zipcode             text,
@@ -137,9 +139,6 @@ CREATE TABLE Russer(
     new_address         text,
     new_zipcode         text,
     new_city            text,
-
-    phone               text,
-    email               text,
 
     vacation            text,
     priority            text,
@@ -161,7 +160,7 @@ CREATE TABLE Russer(
     attending_rustour   boolean,
 
     rustour             integer REFERENCES Tours(tour_id),
-    mentor              integer REFERENCES Mentorteams(mentor_id)
+    mentor              integer REFERENCES Mentor_teams(mentor_id)
 );
 
 DROP TABLE IF EXISTS Friends CASCADE;
@@ -180,6 +179,12 @@ CREATE TABLE Friends_of_us(
 );
 
 
+DROP TABLE IF EXISTS Team_members CASCADE;
+CREATE TABLE Team_members(
+    team_id             integer REFERENCES Teams(team_id),
+    rus_id              integer REFERENCES Russer(rus_id),
+    PRIMARY KEY (team_id, rus_id)
+);
 
 
 --- FRONT PAGE ---
