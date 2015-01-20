@@ -3,9 +3,8 @@
 from smtplib import SMTPRecipientsRefused
 import flask_mail
 
-from gris import db, mail
-
-import models
+from lib.data import Bucket
+from gris import data, mail
 import config
 
 class Message(flask_mail.Message):
@@ -38,11 +37,12 @@ class Message(flask_mail.Message):
 
     def to_admins(self, override=False):
         if override or config.MAIL_ADMINS:
-            admins = (db.session.query(models.User)
-                      .filter(models.User.groups.any(groupname="admin"))\
-                      .filter(models.User.email != None).all())
-
-            return self.send([admin.email for admin in admins])
+            admin_emails = data.execute("""SELECT email
+                                           FROM Users
+                                           INNER JOIN Group_users USING (user_id)
+                                           INNER JOIN Groups USING (group_id)
+                                           WHERE groupname = ?""", "admin_mail_log").scalars()
+            return self.send(admin_emails)
 
 class Template():
     def __init__(self, subject=None, body=None, html=True):
