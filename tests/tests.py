@@ -29,5 +29,4 @@ if __name__ == "__main__":
     config.MAIL_ADMINS = False
 
     with app.test_request_context():
-        # unittest.main(failfast=True)
-        print("No testing done")
+        unittest.main(failfast=True)
