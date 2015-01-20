@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from gris import data
-from reset_db import rest_db
+from gris import app, data
+from admin.reset_db import reset_db
 from server import usermanager
 
 def test_db():
@@ -12,4 +12,5 @@ def test_db():
     usermanager.create_user('tiger','123', 'TIGER')
 
 if __name__ == "__main__":
-    test_db()
+    with app.app_context():
+        test_db()

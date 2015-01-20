@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from gris import data
+from gris import app, data
 
 def reset_db():
     data.execute("DROP SCHEMA public CASCADE; CREATE SCHEMA public")
-    data.script("../schema.sql")
+    data.script("schema.sql")
 
 if __name__ == "__main__":
-    init_db()
+    with app.app_context():
+        reset_db()
