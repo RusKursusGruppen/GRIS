@@ -82,7 +82,7 @@ CREATE TABLE Tests(
 #     def test_script(self):
 #         lib_data.script("some filename")
 
-class Transactions(DatabaseTestBase):
+class TestTransactions(DatabaseTestBase):
     def test_1(self):
         result = None
         with data.transaction() as t:
@@ -218,3 +218,34 @@ class Transactions(DatabaseTestBase):
                 self.assertDataUnchanged()
             self.assertValuesInserted("b")
         self.assertValuesInserted("a", "b")
+
+
+
+class TestBuckets(DatabaseTestBase):
+    def test_1(self):
+        b = data.Bucket()
+        b.value = "right"
+        b >= "Tests"
+        self.assertValuesInserted("right")
+
+    def test_2(self):
+        b = data.Bucket()
+        b.value = "right"
+        b["non-existing"] = "wrong"
+        b >= "Tests"
+        self.assertValuesInserted("right")
+
+
+    def test_3(self):
+        b = data.Bucket()
+        b["value"] = "wrong"
+        b.value = "right"
+        b >= "Tests"
+        self.assertValuesInserted("right")
+
+    def test_4(self):
+        b = data.Bucket()
+        b.value = "right"
+        result = (b >= "Tests")
+        self.assertEqual(result.value, "right")
+        self.assertEqual(result.type, 1)

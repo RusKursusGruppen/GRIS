@@ -18,6 +18,7 @@ class Now(unittest.TestCase):
 class Abort(unittest.TestCase):
     def test_1(self):
         exception = werkzeug.exceptions.InternalServerError
+        exception = AbortException
         self.assertRaises(exception, abort)
         self.assertRaises(exception, abort, 500)
         self.assertRaises(exception, abort, 500, "hello")
@@ -28,6 +29,7 @@ class Abort(unittest.TestCase):
         self.assertRaises(exception, abort, description=["hello", "bye"])
     def test_2(self):
         exception = werkzeug.exceptions.NotFound
+        exception = AbortException
         self.assertRaises(exception, abort, 404)
         self.assertRaises(exception, abort, 404, "hello")
         self.assertRaises(exception, abort, 404, ["hello", "bye"])
@@ -41,6 +43,7 @@ class Abort(unittest.TestCase):
 
     def test_3(self):
         exception = werkzeug.exceptions.InternalServerError
+        exception = AbortException
 
         raised = self.getException(exception, abort)
         self.assertIsInstance(raised, exception)
@@ -71,6 +74,7 @@ class Abort(unittest.TestCase):
 
     def test_3(self):
         exception = werkzeug.exceptions.NotFound
+        exception = AbortException
 
         raised = self.getException(exception, abort, 404, "hello")
         self.assertIsInstance(raised, exception)
