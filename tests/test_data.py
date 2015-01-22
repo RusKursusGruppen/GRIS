@@ -72,18 +72,18 @@ CREATE TABLE Tests(
 # TODO: reset database
 
 # class TopLevel(unittest.TestCase):
-#     def test_execute(self):
+#     def test_01_execute(self):
 #         lib_data.execute("SELECT * FROM Tours");
 
-#     def test_executemany(self):
+#     def test_02_executemany(self):
 #         lib_data.executemany("SELECT * FROM Tours");
 #         lib_data.executemany("SELECT * FROM Tours WHERE tour_id = ?", [1, 2, 3]);
 
-#     def test_script(self):
+#     def test_03_script(self):
 #         lib_data.script("some filename")
 
 class TestTransactions(DatabaseTestBase):
-    def test_1(self):
+    def test_01(self):
         result = None
         with data.transaction() as t:
             result = t.execute("SELECT value FROM Tests")
@@ -91,20 +91,20 @@ class TestTransactions(DatabaseTestBase):
         self.assertDataMatches(result)
         self.assertDataUnchanged()
 
-    def test_2(self):
+    def test_02(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             self.assertDataUnchanged()
         self.assertValuesInserted("a")
 
-    def test_3(self):
+    def test_03(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             self.assertRaises(ProgrammingError, t.execute, "INSERT INTO Tests(value) VALUES(?, ?)", "b", 0)
             self.assertRaises(InternalError, t.execute, "INSERT INTO Tests(value) VALUES(?)", "c")
         self.assertDataUnchanged()
 
-    def test_4(self):
+    def test_04(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
@@ -113,7 +113,7 @@ class TestTransactions(DatabaseTestBase):
             self.assertDataUnchanged()
         self.assertValuesInserted("a", "b")
 
-    def test_5(self):
+    def test_05(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
@@ -124,7 +124,7 @@ class TestTransactions(DatabaseTestBase):
             self.assertDataUnchanged()
         self.assertDataUnchanged()
 
-    def test_6(self):
+    def test_06(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             self.assertRaises(ProgrammingError, t.execute, "INSERT INTO Tests(value) VALUES(?, ?)", "b", 0)
@@ -135,7 +135,7 @@ class TestTransactions(DatabaseTestBase):
             self.assertDataUnchanged()
         self.assertDataUnchanged()
 
-    def test_7(self):
+    def test_07(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
@@ -147,7 +147,7 @@ class TestTransactions(DatabaseTestBase):
             self.assertDataUnchanged()
         self.assertDataUnchanged()
 
-    def test_8(self):
+    def test_08(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with t:
@@ -157,7 +157,7 @@ class TestTransactions(DatabaseTestBase):
         self.assertValuesInserted("a", "b")
 
 
-    def test_9(self):
+    def test_09(self):
         with data.transaction() as t:
             t.execute("INSERT INTO Tests(value) VALUES(?)", "a")
             with data.transaction() as t:
@@ -222,13 +222,13 @@ class TestTransactions(DatabaseTestBase):
 
 
 class TestBuckets(DatabaseTestBase):
-    def test_1(self):
+    def test_01(self):
         b = data.Bucket()
         b.value = "right"
         b >= "Tests"
         self.assertValuesInserted("right")
 
-    def test_2(self):
+    def test_02(self):
         b = data.Bucket()
         b.value = "right"
         b["non-existing"] = "wrong"
@@ -236,14 +236,14 @@ class TestBuckets(DatabaseTestBase):
         self.assertValuesInserted("right")
 
 
-    def test_3(self):
+    def test_03(self):
         b = data.Bucket()
         b["value"] = "wrong"
         b.value = "right"
         b >= "Tests"
         self.assertValuesInserted("right")
 
-    def test_4(self):
+    def test_04(self):
         b = data.Bucket()
         b.value = "right"
         result = (b >= "Tests")

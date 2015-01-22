@@ -7,7 +7,7 @@ import werkzeug
 from lib.tools import *
 
 class Now(unittest.TestCase):
-    def test_1(self):
+    def test_01(self):
         n = now().replace(tzinfo=None)
         utc = datetime.datetime.utcnow()
         delta = utc - n
@@ -16,7 +16,7 @@ class Now(unittest.TestCase):
 
 
 class Abort(unittest.TestCase):
-    def test_1(self):
+    def test_01(self):
         exception = werkzeug.exceptions.InternalServerError
         exception = AbortException
         self.assertRaises(exception, abort)
@@ -27,7 +27,7 @@ class Abort(unittest.TestCase):
         self.assertRaises(exception, abort, ["hello", "bye"])
         self.assertRaises(exception, abort, description="hello")
         self.assertRaises(exception, abort, description=["hello", "bye"])
-    def test_2(self):
+    def test_02(self):
         exception = werkzeug.exceptions.NotFound
         exception = AbortException
         self.assertRaises(exception, abort, 404)
@@ -41,7 +41,7 @@ class Abort(unittest.TestCase):
             return e
         return None
 
-    def test_3(self):
+    def test_03(self):
         exception = werkzeug.exceptions.InternalServerError
         exception = AbortException
 
@@ -72,7 +72,7 @@ class Abort(unittest.TestCase):
         self.assertIsInstance(raised, exception)
         self.assertEqual(raised.description, ["hello", "bye"])
 
-    def test_3(self):
+    def test_04(self):
         exception = werkzeug.exceptions.NotFound
         exception = AbortException
 

@@ -10,11 +10,11 @@ from server import usermanager
 from gris import app
 
 class TestAuthentication(ApplicationTestBase):
-    def test_1_authenticate_1(self):
+    def test_01_authenticate_1(self):
         result = self.post("/api/usermanager/authenticate", data={"username":"rkg", "raw_password":"123"})
         self.assertSuccess()
 
-    def test_2_authenticate_2(self):
+    def test_02_authenticate_2(self):
         with self.app:
             result = self.post("/api/usermanager/authenticate", data={"username":"rkg", "raw_password":"123"})
             self.assertSuccess()
@@ -22,7 +22,7 @@ class TestAuthentication(ApplicationTestBase):
             self.assertEqual(session["user_id"], 1)
             self.assertEqual(session["username"], "rkg")
 
-    def test_3_unauthenticate_1(self):
+    def test_03_unauthenticate_1(self):
         with self.app:
             result = self.post("/api/usermanager/unauthenticate")
             self.assertSuccess()
@@ -30,7 +30,7 @@ class TestAuthentication(ApplicationTestBase):
             self.assertFalse(hasattr(session, "user_id"))
             self.assertFalse(hasattr(session, "username"))
 
-    def test_4_unauthenticate_2(self):
+    def test_04_unauthenticate_2(self):
         "unauthenticate while not authenticated"
         with self.app:
             result = self.post("/api/usermanager/unauthenticate")
@@ -39,19 +39,19 @@ class TestAuthentication(ApplicationTestBase):
             self.assertFalse(hasattr(session, "user_id"))
             self.assertFalse(hasattr(session, "username"))
 
-    def test_5_is_not_authenticated(self):
+    def test_05_is_not_authenticated(self):
         result = self.post_json("/api/usermanager/authenticated")
         self.assertSuccessful()
         self.assertEqual(result["authenticated"], False)
 
-    def test_6_is_authenticated(self):
+    def test_06_is_authenticated(self):
         self.post("/api/usermanager/authenticate", data={"username":"rkg", "raw_password":"123"})
         self.assertSuccess()
         result = self.post_json("/api/usermanager/authenticated")
         self.assertSuccessful()
         self.assertEqual(result["authenticated"], True)
 
-    def test_7_is_authenticated_session(self):
+    def test_07_is_authenticated_session(self):
         with self.app:
             self.post("/api/usermanager/authenticate", data={"username":"rkg", "raw_password":"123"})
             result = self.post_json("/api/usermanager/authenticated")
@@ -61,7 +61,7 @@ class TestAuthentication(ApplicationTestBase):
             self.assertEqual(session["user_id"], 1)
             self.assertEqual(session["username"], "rkg")
 
-    def test_8_each_case_will_start_unauthenticate(self):
+    def test_08_each_case_will_start_unauthenticate(self):
         with self.app:
             result = self.post_json("/api/usermanager/authenticated")
             self.assertSuccessful()
