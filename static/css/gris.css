@@ -1,0 +1,80 @@
+html {
+    height: 100% !important;
+    /*min-height: 100% !important;*/
+    /*min-height: 100%; height: auto !important; height: 100%; margin: 0 auto -250px;*/
+}
+body-old {
+    /*background: #eee4e4;
+    height: 100% !important;
+    min-height: 100% !important;
+    margin: 0;
+    background-repeat: no-repeat !important;
+    padding:0;
+    background-attachment: fixed;*/
+    background: #eee4e4;
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background: -webkit-linear-gradient(160deg, #FBD3E9 10%, #BB377D 100%) fixed; /* Chrome 10+, Saf5.1+ */
+    background:    -moz-linear-gradient(160deg, #FBD3E9 10%, #BB377D 100%); /* FF3.6+ */
+    background:     -ms-linear-gradient(160deg, #FBD3E9 10%, #BB377D 100%); /* IE10 */
+    background:      -o-linear-gradient(160deg, #FBD3E9 10%, #BB377D 100%); /* Opera 11.10+ */
+    background:         linear-gradient(160deg, #FBD3E9 10%, #BB377D 100%); /* W3C */
+}
+body{
+    background: #fbd3e9; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #fbd3e9 10%, #bb377d 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right bottom, color-stop(10%,#fbd3e9), color-stop(100%,#bb377d)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(-45deg, #fbd3e9 10%,#bb377d 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(-45deg, #fbd3e9 10%,#bb377d 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(-45deg, #fbd3e9 10%,#bb377d 100%); /* IE10+ */
+    background: linear-gradient(135deg, #fbd3e9 10%,#bb377d 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbd3e9', endColorstr='#bb377d',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+
+kage {
+    background: #eee4e4;
+    background: #00e400;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#cbccc8)) fixed;
+    background: -webkit-linear-gradient(top, #2F2727, #1a82f7);
+}
+h1, h2 {
+    display: block;
+    margin: 0;
+    color: #FF76B4;
+    border-bottom: 2px solid #eee;
+}
+.content {
+    background: white;
+    border: 5px solid #ccc;
+    padding: 0.8em;
+}
+
+
+.right {
+    float:right;
+}
+
+.t {
+    color: #00AA11;
+
+    }
+
+.news .body {
+    margin-bottom: 2em;
+}
+.news-bar {
+    display: block;
+    margin 0;
+    margin-bottom: 1em;
+    background: #eee;
+    /* color:#4444ee; */
+    font-size: 6pt;
+    font-style: italic;
+}
+.news .header a {
+    color: #720000;
+    text-decoration:none;
+    font-size: 8pt
+}
