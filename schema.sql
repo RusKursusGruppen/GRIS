@@ -21,8 +21,14 @@ CREATE TABLE Users(
     diku_age            text, -- Might be better as a nullable reference to the rus instance of this user
     about_me            text,
 
-    password            text NOT NULL,
     deleted             boolean NOT NULL DEFAULT FALSE -- Field for marking a user as deleted
+);
+
+DROP TABLE IF EXISTS Passwords CASCADE;
+CREATE TABLE Passwords(
+    user_id             integer REFERENCES Users(user_id),
+    password            text NOT NULL,
+    PRIMARY KEY (user_id)
 );
 
 DROP TABLE IF EXISTS Groups CASCADE;
