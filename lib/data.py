@@ -5,6 +5,7 @@ import psycopg2, psycopg2.extras
 from flask import request, _app_ctx_stack
 
 from lib import log
+from lib.tools import abort
 
 class BucketDatabase():
     def __init__(self, app=None, context_stack=None):
@@ -301,7 +302,9 @@ class Bucket():
         self._lock = False
 
     def __html__(self):
-        return self().all_dict()
+        dict = self().all_dict()
+        dict = {k:v.__html__() if hasattr(v, "__html__") else v for k,v in dict.items()}
+        return dict
 
     def __iter__(self):
         return ((k, self[k]) for k in dir(self) if not k.startswith("_"))
