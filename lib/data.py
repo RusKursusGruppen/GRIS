@@ -187,7 +187,7 @@ class QueryList(list):
     def one(self, code=None, description=None):
         if len(self) != 1:
             if code is None and description is None:
-                description = "There are {} rows in the result, but only one was expected!".format(len(self))
+                description = "There are {} rows in the result, but 1 was expected!".format(len(self))
             abort(code, description)
         else:
             return self[0]
@@ -196,7 +196,7 @@ class QueryList(list):
         row = self.one(code, description)
         if len(row) != 1:
             if code is None and description is None:
-                description = "There are {} columns in the result, but only one was expected!".format(len(self))
+                description = "There are {} columns in the result, but 1 was expected!".format(len(self))
             abort(code, description)
         return row[0]
 
