@@ -29,10 +29,17 @@ class ApplicationTestBase(unittest.TestCase):
         return loads(self.post(*args, **kwargs))
 
     def assertAborted(self, code, message=None):
-        self.assertEqual(self.result.status_code, code)
+        success = self.result.status_code == code
         data = loads(self.result.get_data())
-        self.assertEqual(data["code"], code)
-        self.assertEqual(data["message"], message)
+        success &= data["code"] == code
+        success &= data["message"] == message
+        if not success:
+            msg ="<{data_code}: {data_message}> is not == <{code}: {message}>"
+            msg = msg.format(data_code=repr(data["code"]),
+                             data_message=repr(data["message"]),
+                             code=repr(code),
+                             message=repr(message))
+            self.fail(msg)
 
     def assertSuccessful(self):
         self.assertEqual(self.result.status, "200 OK")
