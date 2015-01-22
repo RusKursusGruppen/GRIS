@@ -1,0 +1,26 @@
+<form name="form" novalidate ng-submit="login()">
+  <div class="form-group">
+    <div ng-class="{'has-error':(form.$submitted || form.username.$touched) && form.username.$error.required != undefined}">
+      <label class="control-label" for="username">Brugernavn</label>
+      <input type="text" class="form-control" id="username" placeholder="Brugernavn..." ng-model="username" name="username" required>
+      <div ng-show="(form.$submitted || form.username.$touched) && form.username.$error.required">
+        <span class="help-block">Du skal angive et brugernavn</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div ng-class="{'has-error':(form.$submitted || form.password.$touched) && form.password.$error.required != undefined}">
+      <label class="control-label" for="password">password</label>
+      <input type="password" class="form-control" id="password" placeholder="Løsen..." ng-model="password" name="password" required>
+      <div ng-show="(form.$submitted || form.password.$touched) && form.password.$error.required">
+        <span class="help-block">Du skal angive et løsen</span>
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Login</button>
+  <button type="button" class="btn btn-default btn-sm right" ng-click="forgot(form)">Glemt løsen</button>
+</form>
+
+{{message}}
