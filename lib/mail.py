@@ -51,10 +51,11 @@ class Template():
         self.html = html
 
     def format(self, *args, **kwargs):
+        # TODO: all strings must be escaped!! else we could get injections into the html sent as emails!
         format_args = dict()
         for arg in args:
             if isinstance(arg, Bucket):
-                format_args.update(arg().safe_dict())
+                format_args.update(arg().all_dict())
             else:
                 format_args.update(arg)
         format_args.update(**kwargs)
