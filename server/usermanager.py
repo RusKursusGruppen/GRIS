@@ -22,10 +22,15 @@ def create_user(username, raw_password, name=None, email=None, groups=[]):
     b = data.Bucket()
     b.username = username
     b.loginname = loginname(username)
-    b.password = password.encode(raw_password)
     b.name = name
     b.email = email
     user = (b >= "Users")
+
+    pb = data.Bucket()
+    pb.user_id = user.user_id
+    pb.password = password.encode(raw_password)
+    pb >= "Passwords"
+
     set_user_groups(user.user_id, groups)
 
     mail.new_user_adminmail.format(b).to_admins()
@@ -33,7 +38,7 @@ def create_user(username, raw_password, name=None, email=None, groups=[]):
 
 def update_password(user_id, raw_password):
     passwd = password.encode(raw_password)
-    data.execute("UPDATE Users SET password = ? WHERE user_id = ?", passwd, user_id)
+    data.execute("UPDATE Passwords SET password = ? WHERE user_id = ?", passwd, user_id)
 
 
 def set_user_groups(user_id, groups):
@@ -71,16 +76,16 @@ def authenticated():
 def authenticate():
     b = data.Bucket(request.form)
     name = loginname(b.username)
-    users = data.execute("SELECT user_id, username, password, deleted FROM Users WHERE loginname = ?", name)
+    users = data.execute("SELECT user_id, username, password, deleted FROM Users INNER JOIN Passwords Using (user_id) WHERE loginname = ?", name)
 
     sleep(config.SLEEP_ATTEMPT)
     if empty(users) or not password.check(b.raw_password, users.one()["password"]):
         sleep(config.SLEEP_FAIL)
-        abort(400, "invalid username or password")
+        abort("invalid username or password")
 
     user = users.one()
     if user.deleted:
-        abort(400, "user deleted")
+        abort("user deleted")
 
     update_password(user.user_id, b.raw_password)
 
@@ -128,7 +133,7 @@ def users():
 def user():
     user_id = request.args.get("user_id", None)
     if user_id is None:
-        abort(400, "unspecified user")
+        abort("unspecified user")
     users = data.execute("""SELECT
     user_id,
     username,
@@ -213,17 +218,17 @@ def generate_key(bucket, table, keyname=None):
 @logged_in
 def change_password():
     user_id = session["user_id"]
-    current_password = data.execute("SELECT password FROM Users WHERE user_id = ?", user_id).scalar()
+    current_password = data.execute("SELECT password FROM Passwords WHERE user_id = ?", user_id).scalar()
     b = data.Bucket(request.form)
     if not password.check(b.current_password, current_password):
         logout()
         abort(304, "incorrect password")
 
     if b.new_password1 != b.new_password2:
-        abort(400, "unequal passwords")
+        abort("unequal passwords")
 
     if not validate_password(b.new_password2):
-        abort(400, "illegal password")
+        abort("illegal password")
 
     update_password(username, b.new1)
     return success()
@@ -232,15 +237,15 @@ def change_password():
 @blueprint.route("/usermanager/password/forgot", methods=["POST"])
 def forgot_password():
     #TODO: Should the current password be deleted in the database? or would that be anoying as other people could delete your password if they know your username."
-    username = request.form.get("username", None)
+    username = data.request().username
     if username is None:
-        abort(400, "unspecified username")
+        abort("unspecified username")
     user = data.execute("SELECT user_id, username, name, email, phone FROM Users WHERE loginname = ?",
                         loginname(username)).one(400, "No such user")
 
     if user.email is None:
         mail.forgot_password_no_email_adminmail.format(user).to_admins()
-        abort("User has no email, please contact an admin.")
+        abort("no email")
 
     already_forgotten = data.execute("SELECT count(*) FROM User_forgotten_password_keys WHERE user_id = ?", user.user_id).scalar()
     if already_forgotten > 0:
@@ -269,10 +274,10 @@ def renew_forgotten_password():
         b = data.Bucket(request.form)
 
         if b.new_password1 != b.new_password2:
-            abort(400, "unequal passwords")
+            abort("unequal passwords")
 
         if not validate_password(b.new_password1):
-            abort(400, "invalid password")
+            abort("invalid password")
 
         data.execute("DELETE FROM User_forgotten_password_keys WHERE key = ?", key)
         update_password(username, b.new1)
@@ -316,13 +321,13 @@ def new_user():
     if request.method == "POST":
         b = data.Bucket(request.form)
         if not validate_username(b.username):
-            abort(400, "invalid username")
+            abort("invalid username")
 
         if b.new_password1 != b.new_password2:
-            abort(400, "unequal passwords")
+            abort("unequal passwords")
 
         if not validate_password(b.new_password1):
-            abort(400, "invalid password")
+            abort("invalid password")
 
         data.execute("DELETE FROM User_creation_keys WHERE key = ?", key)
         create_user(b.username, b.password1, b.name, b.email)
