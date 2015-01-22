@@ -12,7 +12,12 @@ from gris import data
 @logged_in
 def news():
     news = data.execute("SELECT * FROM News ORDER BY created ASC")
-    return jsonify(news)
+    users = data.execute("SELECT * FROM Users").by_key("user_id")
+    for article in news:
+        article.creator = users[article.creator]
+    result = jsonify(news)
+
+    return result
 
 @blueprint.route("/news/new", methods=["GET", "POST"])
 @logged_in
@@ -21,8 +26,9 @@ def new():
     b.creator = session["user_id"]
     b.created = now()
     if b.title == "":
-        abort(400, "illegal title")
-    b.body
+        abort("illegal title")
+    if b.body == "":
+        abort("illegal body")
     b >= "News"
     return success()
 
@@ -30,17 +36,18 @@ def new():
 @logged_in
 def update():
     b = data.Bucket(request.form)
-    news = data.execute("SELECT * FROM News WHERE news_id = ?", b["news_id"]).one()
+    news = data.execute("SELECT * FROM News WHERE news_id = ?", b["news_id"]).one("no such news_id")
     b.last_updated = now()
     if session["user_id"] != news["creator"] or not is_admin():
         abort(403, "You are not the creator")
 
     if "title" in b:
         if b.title == "":
-            abort(400, "illegal title")
+            abort("illegal title")
 
     if "body" in b:
-        b.body
+        if b.body == "":
+            abort("illegal body")
 
     b >> ("UPDATE News $ WHERE news_id = ?", b["news_id"])
     return success()
