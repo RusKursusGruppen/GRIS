@@ -112,22 +112,7 @@ def unauthenticate():
 @logged_in
 def users():
     deleted = request.args.get("deleted", False)
-    users = data.execute("""SELECT
-    user_id,
-    username,
-    loginname
-    created,
-    name,
-    email,
-    phone,
-    driverslicence,
-    address,
-    zipcode,
-    city,
-    birthday,
-    diku_age,
-    about_me
-    FROM Users WHERE deleted = ?""", deleted)
+    users = data.execute("SELECT * FROM Users WHERE deleted = ?", deleted)
     return users
 
 @blueprint.route("/usermanager/user", methods=["GET"])
@@ -136,23 +121,7 @@ def user():
     user_id = request.args.get("user_id", None)
     if user_id is None:
         abort("unspecified user")
-    users = data.execute("""SELECT
-    user_id,
-    username,
-    loginname,
-    created,
-    name,
-    email,
-    phone,
-    driverslicence,
-    address,
-    zipcode,
-    city,
-    birthday,
-    diku_age,
-    about_me,
-    deleted
-    FROM Users WHERE user_id = ?""", user_id).one(404, "No such user")
+    users = data.execute("SELECT * FROM Users WHERE user_id = ?", user_id).one(404, "No such user")
 
     #TODO: tour information and mentor information
     return users
