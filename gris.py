@@ -50,12 +50,6 @@ app.register_blueprint(blueprint)
 def index(path):
     return send_file("static/html/index.html")
 
-@app.route("/test", methods=["GET", "POST"])
-def test():
-    b = data.request()
-    print(b)
-    return "yay"
-
 @app.errorhandler(AbortException)
 def abort_handler(error):
     return jsonify(dict(code=error.code, message=error.description)), error.code
