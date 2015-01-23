@@ -67,13 +67,13 @@ def validate_password(password):
     return len(password) > 0
 
 ### SESSIONS ###
-@blueprint.route("/usermanager/authenticated", methods=["GET", "POST"])
-def authenticated():
+@blueprint.route("/usermanager/logged_in", methods=["GET", "POST"])
+def is_logged_in():
     logged_in = "logged_in" in session and session["logged_in"]
-    return jsonify(authenticated=logged_in)
+    return jsonify(logged_in=logged_in)
 
-@blueprint.route("/usermanager/authenticate", methods=["POST"])
-def authenticate():
+@blueprint.route("/usermanager/login", methods=["POST"])
+def login():
     b = data.Bucket(request.form)
     name = loginname(b.username)
     users = data.execute("SELECT user_id, username, password, deleted FROM Users INNER JOIN Passwords Using (user_id) WHERE loginname = ?", name)
@@ -89,20 +89,22 @@ def authenticate():
 
     update_password(user.user_id, b.raw_password)
 
-    login(user.user_id, user.username)
+    authenticate(user.user_id, user.username)
+
+    user = data.execute("ELECT * FROM Users WHERE user_id = ?", user.user_id).one()
+    return jsonify(success=True, user=user)
+
+@blueprint.route("/usermanager/logout", methods=["GET", "POST"])
+def logout():
+    unauthenticate()
     return success()
 
-@blueprint.route("/usermanager/unauthenticate", methods=["GET", "POST"])
-def unauthenticate():
-    logout()
-    return success()
-
-def login(user_id, username):
+def authenticate(user_id, username):
     session["logged_in"] = True
     session["user_id"] = user_id
     session["username"] = username
 
-def logout():
+def unauthenticate():
     session.clear()
 
 ### USERS ###
