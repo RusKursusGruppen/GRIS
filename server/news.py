@@ -11,18 +11,16 @@ from gris import data
 @blueprint.route("/news")
 @logged_in
 def news():
-    news = data.execute("SELECT * FROM News ORDER BY created ASC")
+    news = data.execute("SELECT * FROM News ORDER BY created DESC")
     users = data.execute("SELECT * FROM Users").by_key("user_id")
     for article in news:
         article.creator = users[article.creator]
-    result = jsonify(news)
-
-    return result
+    return jsonify(news)
 
 @blueprint.route("/news/new", methods=["GET", "POST"])
 @logged_in
 def new():
-    b = data.Bucket(request.form)
+    b = data.request()
     b.creator = session["user_id"]
     b.created = now()
     if b.title == "":
@@ -35,7 +33,7 @@ def new():
 @blueprint.route("/news/update", methods=["POST"])
 @logged_in
 def update():
-    b = data.Bucket(request.form)
+    b = data.request()
     news = data.execute("SELECT * FROM News WHERE news_id = ?", b["news_id"]).one("no such news_id")
     b.last_updated = now()
     if session["user_id"] != news["creator"] or not is_admin():
@@ -55,7 +53,7 @@ def update():
 @blueprint.route("/news/delete", methods=["POST"])
 @logged_in
 def delete():
-    b = data.Bucket(request.form)
+    b = data.request()
     news = data.execute("SELECT * FROM News WHERE news_id = ?", b["news_id"]).one()
     if session["user_id"] != news["creator"] or not is_admin():
         abort(403, "You are not the creator")
