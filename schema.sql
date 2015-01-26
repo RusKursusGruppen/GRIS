@@ -68,10 +68,10 @@ CREATE TABLE User_forgotten_password_keys(
 DROP TABLE IF EXISTS Tours CASCADE;
 CREATE TABLE Tours(
     tour_id             serial PRIMARY KEY,
+    year                integer,
+    type                text CHECK(type IN ('p', 't', 'm')),
     tour_name           text,
     theme               text,
-    type                text CHECK(type IN ('p', 't', 'm')),
-    year                integer,
     notes               text
 );
 
@@ -123,14 +123,27 @@ CREATE TABLE Russer(
     rus_id              serial PRIMARY KEY,
     year                int NOT NULL,
 
-    filled_by           integer REFERENCES Users(user_id),
-    last_updated        timestamp DEFAULT NULL,
-
     can_contact         boolean DEFAULT TRUE,
     called              boolean DEFAULT FALSE,
 
     name                text NOT NULL,
     ku_id               int,
+
+    attending_uniday    boolean,
+    attending_campus    boolean,
+    attending_rustour   boolean,
+
+    rustour             integer REFERENCES Tours(tour_id),
+    mentor              integer REFERENCES Mentor_teams(mentor_id)
+);
+
+DROP TABLE IF EXISTS Rus_info CASCADE;
+CREATE TABLE Rus_info(
+    rus_id              integer PRIMARY KEY REFERENCES Russer(rus_id),
+
+    filled_by           integer REFERENCES Users(user_id),
+    last_updated        timestamp DEFAULT NULL,
+
     gender              text CHECK (gender IN ('male', 'female', 'other')),
     birthday            date,
     phone               text,
@@ -159,14 +172,7 @@ CREATE TABLE Russer(
     plays_instrument    text,
     other               text,
     tshirt              text,
-    paid                boolean DEFAULT FALSE,
-
-    attending_uniday    boolean,
-    attending_campus    boolean,
-    attending_rustour   boolean,
-
-    rustour             integer REFERENCES Tours(tour_id),
-    mentor              integer REFERENCES Mentor_teams(mentor_id)
+    paid                boolean DEFAULT FALSE
 );
 
 DROP TABLE IF EXISTS Friends CASCADE;
