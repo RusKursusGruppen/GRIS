@@ -52,9 +52,22 @@ def sleep(start, end=None):
         time.sleep(start)
 
 def jsonify(*args, **kwargs):
-    args = [item.__html__() if hasattr(item, "__html__") else item
-            for item in args]
-    return flask.jsonify(*args, **kwargs)
+    result = []
+    for arg in args:
+        if hasattr(arg, "json"):
+            result.append(arg.json(simple=False))
+        elif hasattr(arg, "__html__"):
+            result.append(arg.__html__())
+        else:
+            result.append(arg)
+
+    for k,v in kwargs.items():
+        if hasattr(v, "json"):
+            v = v.json(simple=True)["values"]
+        elif hasattr(v, "__html__"):
+            v = v.__html__()
+        kwargs[k] = v
+    return flask.jsonify(*result, **kwargs)
 
 def empty(lst):
     return lst == None or len(lst) == 0
