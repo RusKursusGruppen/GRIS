@@ -218,6 +218,11 @@ class QueryList(list):
         return dict(length=len(self),
                     values=[item.__html__() for item in self])
 
+    def json(self, simple=None):
+        if simple:
+            return self.__html__()["values"]
+        else:
+            return self.__html__()
 
 class Bucket():
     def __init__(self, *unsafe,  **kwargs):
