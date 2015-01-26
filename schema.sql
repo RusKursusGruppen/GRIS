@@ -40,6 +40,7 @@ INSERT INTO Groups(groupname) VALUES('admin');
 INSERT INTO Groups(groupname) VALUES('admin_mail_log');
 INSERT INTO Groups(groupname) VALUES('rkg');
 INSERT INTO Groups(groupname) VALUES('mentor');
+INSERT INTO Groups(groupname) VALUES('trusted');
 
 
 DROP TABLE IF EXISTS User_groups CASCADE;
