@@ -115,3 +115,7 @@ def is_admin():
         groups = gris.data.execute("SELECT groupname FROM Group_users INNER JOIN Groups USING (group_id) WHERE user_id = ?", session["user_id"]).scalars()
         flask.g.is_admin = "admin" in groups
     return flask.g.is_admin
+
+def get(key):
+    "Returns getter function"
+    return lambda x: x[key]
