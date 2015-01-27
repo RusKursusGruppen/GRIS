@@ -1,5 +1,5 @@
 
-grisApp.directive("isActiveNav", function($location) {
+gris.directive("isActiveNav", function($location) {
     return {
         restrict: "A",
         link: function(scope, element) {
