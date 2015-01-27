@@ -1,26 +1,30 @@
 <!doctype html>
-<html lang="en" ng-app="grisApp">
+<html lang="en" ng-app="gris">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GRIS</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/css/gris.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular-route.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular-route.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular-sanitize.min.js"></script>
 
     <script src="/static/js/gris.js"></script>
     <script src="/static/js/directives.js"></script>
+    <script src="/static/js/filters.js"></script>
     <script src="/static/js/login.js"></script>
     <script src="/static/js/news.js"></script>
+    <script src="/static/js/rustours.js"></script>
   </head>
 
-  <body>
-    <div class="navbar navbar-default navbar-static-top">
+  <body ng-controller="grisCtrl">
+    <div ng-if="logged_in" class="navbar navbar-default navbar-static-top">
       <div class="container">
         <div class="navbar-header">
           <!-- Mobile menu -->
@@ -41,11 +45,26 @@
             <li><a is-active-nav href="/#/rusmanager">Rusmanager</a></li>
             <li><a is-active-nav href="/#/users">Brugere</a></li>
             <li><a is-active-nav href="/#/bookkeeper">Regnskab</a></li>
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Mere<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/#/rustours">Rusture</a></li>
+                <li><a href="/#/" ng-click="logout()">Log ud</a></li>
+              </ul>
+            </li>
           </ul>
         </div>
       </div>
     </div>
 
+    <span class="right">hello</span>
+    <div ng-if="local_menu &&local_menu.length > 0" >
+      <div class="local-menu page container content">
+        <span ng-repeat="item in local_menu">
+          <a href="{{item.href}}" ng-click="item.click">{{item.text}}</a>
+        </span>
+      </div>
+    </div>
     <div class="page">
       <div class="container">
         <div class="content">

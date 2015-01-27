@@ -1,0 +1,26 @@
+<form name="form" novalidate ng-submit="create_new(form)">
+  <div class="form-group">
+    <div ng-class="{'has-error':(form.$submitted || form.title.$touched) && form.title.$error.required != undefined}">
+      <label class="control-label" for="newsCreateTitle">Overskrift</label>
+      <input type="text" class="form-control" id="newsCreateTitle" placeholder="Titel..." ng-model="title" name="title" required>
+      <div ng-show="(form.$submitted || form.title.$touched) && form.title.$error.required">
+        <span class="help-block">Der mangler en overskrift</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div ng-class="{'has-error':(form.$submitted || form.body.$touched) && form.body.$error.required != undefined}">
+      <label class="control-label" for="newsCreateBody">Brødtekst</label>
+      <textarea class="form-control" id="newsCreateBody" rows=10 placeholder="Tekst..." ng-model="body" name="body" required></textarea>
+      <div ng-show="(form.$submitted || form.body.$touched) && form.body.$error.required">
+        <span class="help-block">Der mangler en brødtekst</span>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <a role="button" class="btn btn-default" href="/#/news">Anuller</a>
+    <button type="submit" class="btn btn-primary">Opret</button>
+  </div>
+</form>
+</div>

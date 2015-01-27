@@ -1,0 +1,20 @@
+{{message}}
+<div class="year" ng-repeat="year in years">
+  <h2>{{year}}</h2>
+  <div class="rustour" ng-repeat="tour in rustours[year]">
+    <h4><a href="/#/rustours?{{tour.tour_id}}" ng-click="select(tour, $event)">{{tour.tour_name}}</a></h4>
+    <div ng-show="selected === tour">
+      <!-- {{tour.type | rustourType}}<br> -->
+      <p ng-bind-html="tour.type | rustourTypeIcon"></p>
+      <p><b>Tema:</b> {{tour.theme}}</p>
+      <b>Om:</b>
+      <p>
+        {{tour.notes}}
+      </p>
+      <div ng-repeat="tutor in tour.tutors">
+        {{tutor.username}}
+      </div>
+      <hr>
+    </div>
+  </div>
+</div>

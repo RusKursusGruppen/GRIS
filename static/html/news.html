@@ -1,43 +1,37 @@
-<div ng-show="creating_mode">
-  <form name="form" novalidate ng-submit="create_new(form)">
-    <div class="form-group">
-      <div ng-class="{'has-error':(form.$submitted || form.title.$touched) && form.title.$error.required != undefined}">
-        <label class="control-label" for="newsCreateTitle">Overskrift</label>
-        <input type="text" class="form-control" id="newsCreateTitle" placeholder="Titel..." ng-model="title" name="title" required>
-        <div ng-show="(form.$submitted || form.title.$touched) && form.title.$error.required">
-          <span class="help-block">Der mangler en overskrift</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div ng-class="{'has-error':(form.$submitted || form.body.$touched) && form.body.$error.required != undefined}">
-        <label class="control-label" for="newsCreateBody">Brødtekst</label>
-        <textarea class="form-control" id="newsCreateBody" rows=10 placeholder="Tekst..." ng-model="body" name="body" required></textarea>
-        <div ng-show="(form.$submitted || form.body.$touched) && form.body.$error.required">
-          <span class="help-block">Der mangler en brødtekst</span>
-        </div>
-      </div>
-    </div>
-    <button type="button" class="btn btn-default" ng-click="cancel(form)">Anuller</button>
-    <button type="submit" class="btn btn-primary">Opret</button>
-    </form>
-</div>
-
-<div ng-hide="creating_mode">
-  <button class="btn btn-default" ng-click="creating_mode = true">Ny nyhed</button>
-  <div class="news-list">
-    <div class="news" ng-repeat="article in news">
-      <div class="header">
+<div class="news-list">
+  <div class="news" ng-repeat="article in news">
+    <div class="header">
+      <div ng-hide="editing === article">
         <h2>{{article.title}}</h2>
-        <div class="news-bar">
-          <span class="created">{{article.created}}</span>
-          <!-- TODO: Last updated icon with tooltip -->
-          <span class="creator right">{{article.creator.username}}</span>
-        </div>
       </div>
-      <div class="body">
-        {{article.body}}
+      <div ng-show="editing === article">
+        <input type="text" class="form-control" id="newsEditTitle" ng-model="article.title" name="title" required>
+      </div>
+      <div class="news-bar">
+        <span class="created">{{article.created}}</span>
+        <!-- TODO: Last updated icon with tooltip -->
+        <span class="creator right">{{article.creator.username}}</span>
+      </div>
+      <div ng-if="article.creator.user_id === me.user_id || me.is_admin">
+        <a href="" ng-click="edit(article)"><i class="fa fa-pencil-square-o right"></i></a>
+        <!-- <button class="btn btn-default btn-xs right"><i class="fa fa-pencil-square-o"></i></button> -->
+        <!-- <button class="right"><i class="fa fa-pencil-square-o"></i></button> -->
+        <!-- <button class="btn btn-default right btn-xs" ng-click="edit(article)">rediger</button> -->
+      </div>
+    </div>
+    <div class="body">
+      {{article.body}}
+    </div>
+    <div ng-if="editing === article">
+      <textarea class="form-control" id="newsEditBody" rows=10 ng-model="article.body" name="body" required></textarea>
+      <!-- <button class="btn btn-default" ng-click="cancel()">Anuller</button> -->
+      <!-- <button class="btn btn-primary" ng-click="submit()">Gem ændringer</button> -->
+      <!-- <button class="btn btn-danger btn-xs" ng-click="delete()">Slet</button> -->
+
+      <div class="right">
+        <button class="btn btn-danger btn-xs" ng-click="delete()">Slet</button>
+        <button class="btn btn-default" ng-click="cancel()">Anuller</button>
+        <button class="btn btn-primary" ng-click="submit()">Gem ændringer</button>
       </div>
     </div>
   </div>
