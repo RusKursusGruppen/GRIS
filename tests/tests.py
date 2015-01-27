@@ -9,6 +9,7 @@ import config
 from test_tools import *
 from test_data import *
 from test_usermanager import *
+from test_rustours import *
 from test_news import *
 
 # REMEMBER TEST METHODS ARE RUN IN ALPHABETICAL ORDER

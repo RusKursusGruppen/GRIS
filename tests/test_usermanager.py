@@ -12,12 +12,18 @@ from gris import app
 class TestAuthentication(ApplicationTestBase):
     def test_01_login_1(self):
         result = self.post("/api/usermanager/login", data={"username":"rkg", "raw_password":"123"})
-        self.assertSuccess()
+        self.assertSuccessful()
 
     def test_02_login_2(self):
         with self.app:
-            result = self.post("/api/usermanager/login", data={"username":"rkg", "raw_password":"123"})
-            self.assertSuccess()
+            result = self.post_json("/api/usermanager/login", data={"username":"rkg", "raw_password":"123"})
+            self.assertSuccessful()
+            self.assertEqual(result["user"]["user_id"], 1)
+            self.assertEqual(result["user"]["username"], "rkg")
+            self.assertFalse("password" in result)
+            self.assertTrue("admin" in result["user"]["groups"])
+            self.assertTrue(result["user"]["is_admin"])
+
             self.assertEqual(session["logged_in"], True)
             self.assertEqual(session["user_id"], 1)
             self.assertEqual(session["username"], "rkg")
@@ -46,7 +52,7 @@ class TestAuthentication(ApplicationTestBase):
 
     def test_06_is_logged_in(self):
         self.post("/api/usermanager/login", data={"username":"rkg", "raw_password":"123"})
-        self.assertSuccess()
+        self.assertSuccessful()
         result = self.post_json("/api/usermanager/logged_in")
         self.assertSuccessful()
         self.assertEqual(result["logged_in"], True)
@@ -54,6 +60,7 @@ class TestAuthentication(ApplicationTestBase):
     def test_07_is_logged_in_session(self):
         with self.app:
             self.post("/api/usermanager/login", data={"username":"rkg", "raw_password":"123"})
+            self.assertSuccessful()
             result = self.post_json("/api/usermanager/logged_in")
             self.assertSuccessful()
             self.assertEqual(result["logged_in"], True)

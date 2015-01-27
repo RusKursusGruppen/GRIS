@@ -36,14 +36,14 @@ class TestNews(ApplicationTestBase):
         self.assertSuccessful()
         self.assertEqual(result["length"], 2)
 
-        self.assertEqual(result["values"][0]["news_id"], 1)
-        self.assertEqual(result["values"][0]["title"], "Hello, World!")
-        self.assertEqual(result["values"][0]["body"], "Welcome to GRIS!")
+        self.assertEqual(result["values"][0]["news_id"], 2)
+        self.assertEqual(result["values"][0]["title"], "Second message")
+        self.assertEqual(result["values"][0]["body"], "With a body")
         self.assertEqual(result["values"][0]["creator"]["user_id"], 1)
 
-        self.assertEqual(result["values"][1]["news_id"], 2)
-        self.assertEqual(result["values"][1]["title"], "Second message")
-        self.assertEqual(result["values"][1]["body"], "With a body")
+        self.assertEqual(result["values"][1]["news_id"], 1)
+        self.assertEqual(result["values"][1]["title"], "Hello, World!")
+        self.assertEqual(result["values"][1]["body"], "Welcome to GRIS!")
         self.assertEqual(result["values"][1]["creator"]["user_id"], 1)
 
     def test_07_update(self):
@@ -54,10 +54,10 @@ class TestNews(ApplicationTestBase):
         result = self.get_json("/api/news")
         self.assertSuccessful()
         self.assertEqual(result["length"], 2)
-        self.assertEqual(result["values"][1]["news_id"], 2)
-        self.assertEqual(result["values"][1]["title"], "Second message!")
-        self.assertEqual(result["values"][1]["body"], "With a body!")
-        self.assertEqual(result["values"][1]["creator"]["user_id"], 1)
+        self.assertEqual(result["values"][0]["news_id"], 2)
+        self.assertEqual(result["values"][0]["title"], "Second message!")
+        self.assertEqual(result["values"][0]["body"], "With a body!")
+        self.assertEqual(result["values"][0]["creator"]["user_id"], 1)
 
     def test_08_update(self):
         self.post("/api/usermanager/login", data={"username":"rkg", "raw_password":"123"})
@@ -67,10 +67,10 @@ class TestNews(ApplicationTestBase):
         result = self.get_json("/api/news")
         self.assertSuccessful()
         self.assertEqual(result["length"], 2)
-        self.assertEqual(result["values"][1]["news_id"], 2)
-        self.assertEqual(result["values"][1]["title"], "Second message!")
-        self.assertEqual(result["values"][1]["body"], "With a body")
-        self.assertEqual(result["values"][1]["creator"]["user_id"], 1)
+        self.assertEqual(result["values"][0]["news_id"], 2)
+        self.assertEqual(result["values"][0]["title"], "Second message!")
+        self.assertEqual(result["values"][0]["body"], "With a body")
+        self.assertEqual(result["values"][0]["creator"]["user_id"], 1)
 
     def test_09_delete(self):
         self.post("/api/usermanager/login", data={"username":"rkg", "raw_password":"123"})
@@ -80,10 +80,10 @@ class TestNews(ApplicationTestBase):
         result = self.get_json("/api/news")
         self.assertSuccessful()
         self.assertEqual(result["length"], 3)
-        self.assertEqual(result["values"][2]["news_id"], 3)
-        self.assertEqual(result["values"][2]["title"], "third")
-        self.assertEqual(result["values"][2]["body"], "content")
-        self.assertEqual(result["values"][2]["creator"]["user_id"], 1)
+        self.assertEqual(result["values"][0]["news_id"], 3)
+        self.assertEqual(result["values"][0]["title"], "third")
+        self.assertEqual(result["values"][0]["body"], "content")
+        self.assertEqual(result["values"][0]["creator"]["user_id"], 1)
 
         result = self.post("/api/news/delete", data={"news_id":3})
         self.assertSuccess()
@@ -91,8 +91,8 @@ class TestNews(ApplicationTestBase):
         result = self.get_json("/api/news")
         self.assertSuccessful()
         self.assertEqual(result["length"], 2)
-        self.assertEqual(result["values"][0]["news_id"], 1)
-        self.assertEqual(result["values"][1]["news_id"], 2)
+        self.assertEqual(result["values"][1]["news_id"], 1)
+        self.assertEqual(result["values"][0]["news_id"], 2)
 
     #TODO: test update and delete as wrong user
     def test_10_update_as_wrong_user(self):
