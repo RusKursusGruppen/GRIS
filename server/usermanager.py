@@ -42,15 +42,18 @@ def update_password(user_id, raw_password):
 
 
 def set_user_groups(user_id, groups):
-    with data.transaction() as t:
-        t.execute("DELETE FROM Group_users WHERE user_id = ?", user_id)
+    with data.transaction():
+        data.execute("DELETE FROM Group_users WHERE user_id = ?", user_id)
         for group in groups:
             add_user_to_group(user_id, group)
 
 
 def add_user_to_group(user_id, group):
-    group_id = data.execute("SELECT group_id FROM Groups WHERE groupname = ?", group).scalar()
-    data.execute("INSERT INTO Group_users(user_id, group_id) VALUES(?,?)", user_id, group_id)
+    with data.transaction():
+        if group == "admin":
+            add_user_to_group(user_id, "trusted")
+        group_id = data.execute("SELECT group_id FROM Groups WHERE groupname = ?", group).scalar()
+        data.execute("INSERT INTO Group_users(user_id, group_id) VALUES(?,?)", user_id, group_id)
 
 
 def remove_user_from_group(user_id, group):
@@ -70,11 +73,20 @@ def validate_password(password):
 @blueprint.route("/usermanager/logged_in", methods=["GET", "POST"])
 def is_logged_in():
     logged_in = "logged_in" in session and session["logged_in"]
-    return jsonify(logged_in=logged_in)
+    if logged_in:
+        with data.transaction():
+            user = data.execute("SELECT * FROM Users WHERE user_id = ?", session["user_id"]).one()
+            groups = data.execute("SELECT groupname FROM Groups INNER JOIN Group_users USING (group_id) WHERE user_id = ?", session["user_id"]).scalars()
+            user.groups = groups
+            user.is_admin = "admin" in groups
+            user.is_trusted = "admin" in groups
+    else:
+        user = None
+    return jsonify(logged_in=logged_in, user=user)
 
 @blueprint.route("/usermanager/login", methods=["POST"])
 def login():
-    b = data.Bucket(request.form)
+    b = data.request()
     name = loginname(b.username)
     users = data.execute("SELECT user_id, username, password, deleted FROM Users INNER JOIN Passwords Using (user_id) WHERE loginname = ?", name)
 
@@ -91,8 +103,7 @@ def login():
 
     authenticate(user.user_id, user.username)
 
-    user = data.execute("ELECT * FROM Users WHERE user_id = ?", user.user_id).one()
-    return jsonify(success=True, user=user)
+    return is_logged_in()
 
 @blueprint.route("/usermanager/logout", methods=["GET", "POST"])
 def logout():
@@ -108,12 +119,13 @@ def unauthenticate():
     session.clear()
 
 ### USERS ###
-@blueprint.route("/usermanager/users", methods=["GET"])
+@blueprint.route("/usermanager/users")
 @logged_in
 def users():
-    deleted = request.args.get("deleted", False)
-    users = data.execute("SELECT * FROM Users WHERE deleted = ?", deleted)
-    return users
+    with data.transaction():
+        users = data.execute("SELECT * FROM Users WHERE deleted = ?", false)
+        deleted = data.execute("SELECT * FROM Users WHERE deleted = ?", true)
+    return jsonify(users=users, deleted=deleted)
 
 @blueprint.route("/usermanager/user", methods=["GET"])
 @logged_in
@@ -130,7 +142,7 @@ def user():
 @logged_in
 def settings():
     user_id = session["user_id"]
-    b = data.Bucket(request.form)
+    b = data.request()
     b.name
     b.email
     b.phone
@@ -190,7 +202,7 @@ def generate_key(bucket, table, keyname=None):
 def change_password():
     user_id = session["user_id"]
     current_password = data.execute("SELECT password FROM Passwords WHERE user_id = ?", user_id).scalar()
-    b = data.Bucket(request.form)
+    b = data.request()
     if not password.check(b.current_password, current_password):
         logout()
         abort(304, "incorrect password")
@@ -242,7 +254,7 @@ def renew_forgotten_password():
         key = request.args.get("key", None)
         forgotten = data.execute("SELECT * FROM User_forgotten_password_keys WHERE key = ?", key).one("The link you used expired/does not exist")
 
-        b = data.Bucket(request.form)
+        b = data.request()
 
         if b.new_password1 != b.new_password2:
             abort("unequal passwords")
@@ -290,7 +302,7 @@ def new_user():
     result = data.execute("SELECT key, email FROM User_creation_keys WHERE key = ?", key).one("The link you used expired/does not exist")
 
     if request.method == "POST":
-        b = data.Bucket(request.form)
+        b = data.request()
         if not validate_username(b.username):
             abort("invalid username")
 
