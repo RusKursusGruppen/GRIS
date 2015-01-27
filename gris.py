@@ -11,17 +11,11 @@ Please consult the README for details.""")
     sys.exit()
 
 
-import atexit
-
-from flask import Flask, Blueprint, send_file, session
+from flask import Flask, send_file
 from flask_mail import Mail
-import flask_mail
 
 from lib.data import BucketDatabase
-# from lib import data as data_module
 from lib.tools import AbortException, jsonify
-
-import config
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -45,10 +39,11 @@ from server.rusmanager import blueprint
 app.register_blueprint(blueprint)
 
 
-@app.route("/", defaults={"path":""})
+@app.route("/", defaults={"path": ""})
 # @app.route("/<path:path>")
 def index(path):
     return send_file("static/html/index.html")
+
 
 @app.errorhandler(AbortException)
 def abort_handler(error):
