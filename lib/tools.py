@@ -63,7 +63,7 @@ def jsonify(*args, **kwargs):
 
     for k,v in kwargs.items():
         if hasattr(v, "json"):
-            v = v.json(simple=True)["values"]
+            v = v.json(simple=True)
         elif hasattr(v, "__html__"):
             v = v.__html__()
         kwargs[k] = v
