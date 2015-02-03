@@ -48,6 +48,9 @@ gris.controller("grisCtrl", function($scope, $rootScope, $http, $location) {
                         $rootScope.logged_in = data.logged_in;
                         $location.url("/login");
                     }})
+                .error(function(data) {
+                    console.log("Could not call logged_in: ", data);
+                });
         }
     };
     $scope.$on("$routeChangeStart", function(next, current) {
