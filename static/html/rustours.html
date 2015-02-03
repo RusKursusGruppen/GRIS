@@ -5,14 +5,15 @@
     <h4><a href="/#/rustours?{{tour.tour_id}}" ng-click="select(tour, $event)">{{tour.tour_name}}</a></h4>
     <div ng-show="selected === tour">
       <!-- {{tour.type | rustourType}}<br> -->
-      <p ng-bind-html="tour.type | rustourTypeIcon"></p>
+      <g-rustour-type tour="tour"></g-rustour-type>
       <p><b>Tema:</b> {{tour.theme}}</p>
       <b>Om:</b>
       <p>
         {{tour.notes}}
       </p>
+      <p><b>Vejledere: </b> {{tour.tutors.length}}</p>
       <div ng-repeat="tutor in tour.tutors">
-        {{tutor.username}}
+        <g-user user="tutor"><g-user>
       </div>
       <hr>
     </div>

@@ -10,7 +10,7 @@
       <div class="news-bar">
         <span class="created">{{article.created}}</span>
         <!-- TODO: Last updated icon with tooltip -->
-        <span class="creator right">{{article.creator.username}}</span>
+        <span class="creator right"><g-user user="article.creator"></g-user></span>
       </div>
       <div ng-if="article.creator.user_id === me.user_id || me.is_admin">
         <a href="" ng-click="edit(article)"><i class="fa fa-pencil-square-o right"></i></a>
