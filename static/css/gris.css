@@ -74,7 +74,46 @@ h1, h2 {
     font-style: italic;
 }
 .news .header a {
-    color: #720000;
+    /* color: #720000; */
+    color: #000000;
     text-decoration:none;
     font-size: 8pt
+}
+
+.user {
+    color: #000000;
+    text-decoration:none;
+}
+
+
+[tooltip]:before {
+    /* needed - do not touch */
+    content: attr(tooltip);
+    position: absolute;
+    opacity: 0;
+
+    /* customizable */
+    transition: all 0.09s ease;
+    padding: 10px;
+    color: #333;
+    border-radius: 5px;
+    box-shadow: 2px 2px 1px silver;
+}
+
+[tooltip]:hover:before {
+    /* needed - do not touch */
+    opacity: 1;
+
+    /* customizable */
+    background: white;
+    /*
+    margin-top: -50px;
+    margin-left: 20px;
+    */
+    margin-top: -40px;
+    margin-left: 0px;
+}
+
+[tooltip]:not([tooltip-persistent]):before {
+    pointer-events: none;
 }
