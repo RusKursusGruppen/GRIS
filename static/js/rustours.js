@@ -1,5 +1,15 @@
 
 gris.controller("rustoursCtrl", function($scope, $http, $rootScope, $location) {
+    $rootScope.local_menu = [];
+
+    if ($scope.me.is_trusted) {
+        $rootScope.local_menu.push({
+            href: "",
+            text: "Ny rustur",
+            click: ""
+        });
+    }
+
     $scope.selected = null;
     $scope.message = "";
 
@@ -7,6 +17,7 @@ gris.controller("rustoursCtrl", function($scope, $http, $rootScope, $location) {
         .success(function(data) {
             $scope.rustours = data.rustours;
             $scope.years = data.years;
+            // tour in link
             var id = parseInt(Object.keys($location.search())[0]) || null;
             if (id !== null) {
                 $scope.years.forEach(function (year) {
@@ -21,6 +32,7 @@ gris.controller("rustoursCtrl", function($scope, $http, $rootScope, $location) {
                 }
             }
         });
+
     $scope.select = function(tour, event) {
         // Deselect tour
         if ($scope.selected === tour) {
@@ -36,7 +48,6 @@ gris.controller("rustoursCtrl", function($scope, $http, $rootScope, $location) {
             $http.post("/api/rustours/tour", {tour_id: tour.tour_id})
                 .success(function(data) {
                     for (var key in data.tour) {
-                        console.log(key);
                         $scope.selected[key] = data.tour[key];
                     }
                     $scope.selected.tutors = data.tutors;
