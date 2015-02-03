@@ -35,7 +35,7 @@ gris.config(function($routeProvider) {
 });
 
 gris.controller("grisCtrl", function($scope, $rootScope, $http, $location) {
-    $rootScope.local_menu = [];
+    $rootScope.submenu = [];
     $rootScope.logged_in = null;
     $scope.check_logged_in = function() {
         if (!$rootScope.logged_in) {

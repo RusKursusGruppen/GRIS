@@ -1,9 +1,9 @@
 
 gris.controller("rustoursCtrl", function($scope, $http, $rootScope, $location) {
-    $rootScope.local_menu = [];
+    $rootScope.submenu = [];
 
     if ($scope.me.is_trusted) {
-        $rootScope.local_menu.push({
+        $rootScope.submenu.push({
             href: "",
             text: "Ny rustur",
             click: ""

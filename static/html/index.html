@@ -58,8 +58,8 @@
     </div>
 
     <span class="right">hello</span>
-    <div ng-if="local_menu &&local_menu.length > 0" >
-      <div class="local-menu page container content">
+    <div ng-if="submenu && submenu.length > 0" >
+      <div class="submenu page container content">
         <span ng-repeat="item in local_menu">
           <a href="{{item.href}}" ng-click="item.click">{{item.text}}</a>
         </span>

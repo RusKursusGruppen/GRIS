@@ -1,6 +1,6 @@
 
 gris.controller("newsCtrl", function($scope, $http, $rootScope) {
-    $rootScope.local_menu = [{href:"/#/news/create", text:"Ny nyhed", click:""}];
+    $rootScope.submenu = [{href:"/#/news/create", text:"Ny nyhed", click:""}];
     $http.get("/api/news")
         .success(function(data) {
             $scope.news = data.values;
